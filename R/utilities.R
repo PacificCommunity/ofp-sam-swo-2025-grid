@@ -32,5 +32,13 @@ full_download <- function(folder, up=TRUE, ...)
 {
   dir.create(folder, recursive=TRUE, showWarnings=FALSE)
   condor_download(local.dir=folder, ...)
-  unlink(file.path(folder, c("tmp", "var", "_condor_stderr", "_condor_stdout")))
+  unlink(file.path(folder, c("tmp", "var", "_condor_stderr", "_condor_stdout")),
+         recursive=TRUE)
+}
+
+condor_to_penguin <- function(folder)
+{
+  # penguin_session <- ssh_connect("penguin")
+  # ssh_exec_wait(session, paste("mkdir -p", remote.dir))
+  # scp_upload(session, files=Start.tar.gz, to=remote.dir)
 }
