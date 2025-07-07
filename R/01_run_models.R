@@ -8,6 +8,6 @@ session <- ssh_connect("nouofpsubmit")
 
 # Initial test
 
-full_submit("N_05_76_54Amax",     "ss_3.30.23.2")
-full_submit("N_05_76_54Amax_opt", "ss_3.30.23.2")
-full_submit("simple_small",       "ss_3.30.23.2")
+full_submit("N_05_76_54Amax",     "ss_3.30.23.1")
+full_submit("N_05_76_54Amax_opt", "ss_3.30.23.1")
+full_submit("simple_small",       "ss_3.30.23.1")
