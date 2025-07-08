@@ -1,0 +1,25 @@
+library(condor)
+source("utilities.R")
+
+options(width=160)
+
+session <- ssh_connect("nouofpsubmit")
+
+(jobs <- condor_dir())
+
+
+#####################################################################
+## run full_submit for all folders except those in exclude_folders ##
+#####################################################################
+
+base_folder <- "02_one_offs"
+exclude_folders <- c("base")  # Add folders to exclude here
+ss_version <- "ss_3.30.23.1"
+
+# Generate and print commands
+commands <- generate_full_submit_commands(base_folder, exclude_folders, ss_version)
+cat(commands, sep = "\n")
+
+### Execute the generated commands
+eval(parse(text = commands))
+

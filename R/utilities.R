@@ -42,3 +42,26 @@ condor_to_penguin <- function(folder)
   # ssh_exec_wait(session, paste("mkdir -p", remote.dir))
   # scp_upload(session, files=Start.tar.gz, to=remote.dir)
 }
+
+
+
+# Function to generate full_submit commands automatically
+generate_full_submit_commands <- function(base_folder, exclude_folders = NULL, ss_version = "ss_3.30.23.1") {
+  # Get all items in the base folder
+  all_items <- list.files(base_folder, full.names = FALSE)
+  
+  # Filter only directories
+  folders <- all_items[file.info(file.path(base_folder, all_items))$isdir]
+  
+  # Remove excluded folders if specified
+  if (!is.null(exclude_folders)) {
+    folders <- folders[!folders %in% exclude_folders]
+  }
+  
+  # Generate full_submit commands
+  commands <- paste0('full_submit("', base_folder, '/', folders, '", "', ss_version, '")')
+  
+  return(commands)
+}
+
+
