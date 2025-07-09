@@ -71,31 +71,31 @@ print(ctlBase_original)
 # Define factor groups for factorial design
 factor_groups <- list(
   
-  
+
   # Growth scenarios with parameter_offset_approach control
   Growth = list(
-    
+
     "External" = list(
       mg_params = list(
-       
+
         ## female
         "L_at_Amin_Fem_GP_1" = list(INIT = 86.709, PHASE = -4),
         "L_at_Amax_Fem_GP_1" = list(INIT = 257.982, PHASE = -4),
         "VonBert_K_Fem_GP_1" = list(INIT = 0.153, PHASE = -4),
         "CV_young_Fem_GP_1" = list(INIT = 0.144, PHASE = -3),
         "CV_old_Fem_GP_1" = list(INIT = 0.08, PHASE = -3),
-        
+
         ## male  (offset values needed)
         "L_at_Amin_Mal_GP_1" = list(INIT = , PHASE = -4),
         "L_at_Amax_Mal_GP_1" = list(INIT = , PHASE = -4),
         "VonBert_K_Mal_GP_1" = list(INIT = , PHASE = -4),
         "CV_young_Mal_GP_1" = list(INIT =  , PHASE = -3),
         "CV_old_Mal_GP_1" = list(INIT = , PHASE = -3)
-        
+
       ),
-      parameter_offset_approach = 2 # changed 1 to 2
+      parameter_offset_approach = 2 
     ),
-    
+
     "Estimated" = list(
       mg_params = list(
         "L_at_Amin_Fem_GP_1" = list(PHASE = 4),
@@ -103,42 +103,42 @@ factor_groups <- list(
         "VonBert_K_Fem_GP_1" = list(PHASE = 4),
         "CV_young_Fem_GP_1" = list(PHASE = -3),
         "CV_old_Fem_GP_1" = list(PHASE = -3),
-        
-        
+
+
         "L_at_Amin_Mal_GP_1" = list(INIT= , PHASE = -4),
         "L_at_Amax_Mal_GP_1" = list(INIT= , PHASE = -4),
         "VonBert_K_Mal_GP_1" = list(INIT= , PHASE = -4),
         "CV_young_Mal_GP_1" = list(INIT= , PHASE = -3),
         "CV_old_Mal_GP_1" = list(INIT= , PHASE = -3)
-        
+
       ),
-      parameter_offset_approach = 2 #male=fem*exp(male_parm),
+      parameter_offset_approach = 2 
     )
   ),
-  
-  
-  
+
+
+
   # Steepness scenarios
   Steepness = list(
-    
+
     "0.7" = list(
       sr_params = list(
         "SR_BH_steep" = list(INIT = 0.7)
       )
     ),
-    
+
     "0.8" = list(
       sr_params = list(
         "SR_BH_steep" = list(INIT = 0.8)
       )
     ),
-    
+
     "0.9" = list(
       sr_params = list(
         "SR_BH_steep" = list(INIT = 0.9)
       )
     )
-    
+
   ),
 
 
@@ -150,7 +150,7 @@ factor_groups <- list(
         "NatM_p_1_Fem_GP_1" = list(PHASE = 3)
       )
     ),
-    
+
     ## !! NEED TO BE UPDATED WITH NEW VALUES
     "M50th" = list(
       mg_params = list(
@@ -181,14 +181,14 @@ factor_groups <- list(
 
   # Data weights scenarios
   DataWts = list(
-    
-    "base" = list(
+
+    "Base" = list(
       line_adjustments = data.frame(
         Line = c(1),
         Multiplier = c(1)
       )
     ),
-    
+
 
     "0.2weight" = list(
       line_adjustments = data.frame(
@@ -196,21 +196,21 @@ factor_groups <- list(
         Multiplier = c(0.2, 0.2, 0.2)
       )
     ),
-    
+
     "5weight" = list(
       line_adjustments = data.frame(
         Line = c(18, 19, 20),
         Multiplier = c(5, 5, 5)
       )
     ),
-    
+
     "0.2length" = list(
       line_adjustments = data.frame(
         Line = seq(1:16),
         Multiplier = rep(0.2, 16)
       )
     ),
-    
+
     "5length" = list(
       line_adjustments = data.frame(
         Line = seq(1:16),
@@ -219,7 +219,7 @@ factor_groups <- list(
     )
 
   ),
-  
+
   # Movement scenarios based on current parameter values
   movement = list(
     
