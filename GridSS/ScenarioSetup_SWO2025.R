@@ -79,18 +79,18 @@ factor_groups <- list(
       mg_params = list(
 
         ## female
-        "L_at_Amin_Fem_GP_1" = list(INIT = 86.709, PHASE = -4),
-        "L_at_Amax_Fem_GP_1" = list(INIT = 257.982, PHASE = -4),
-        "VonBert_K_Fem_GP_1" = list(INIT = 0.153, PHASE = -4),
-        "CV_young_Fem_GP_1" = list(INIT = 0.144, PHASE = -3),
-        "CV_old_Fem_GP_1" = list(INIT = 0.08, PHASE = -3),
+        "L_at_Amin_Fem_GP_1" = list(INIT = 86.7085152834443, PHASE = -4),
+        "L_at_Amax_Fem_GP_1" = list(INIT = 257.982055205666, PHASE = -4),
+        "VonBert_K_Fem_GP_1" = list(INIT = 0.153478185118902, PHASE = -4),
+        "CV_young_Fem_GP_1" = list(INIT = 0.148, PHASE = -3),
+        "CV_old_Fem_GP_1" = list(INIT = 0.074, PHASE = -3),
 
         ## male  (offset values needed)
-        "L_at_Amin_Mal_GP_1" = list(INIT = , PHASE = -4),
-        "L_at_Amax_Mal_GP_1" = list(INIT = , PHASE = -4),
-        "VonBert_K_Mal_GP_1" = list(INIT = , PHASE = -4),
-        "CV_young_Mal_GP_1" = list(INIT =  , PHASE = -3),
-        "CV_old_Mal_GP_1" = list(INIT = , PHASE = -3)
+        "L_at_Amin_Mal_GP_1" = list(INIT = 0, PHASE = -4),
+        "L_at_Amax_Mal_GP_1" = list(INIT = -0.22160488, PHASE = -4),
+        "VonBert_K_Mal_GP_1" = list(INIT = 0.570508, PHASE = -4),
+        "CV_young_Mal_GP_1" = list(INIT = 0.156079321, PHASE = -3),
+        "CV_old_Mal_GP_1" = list(INIT = -0.055569851, PHASE = -3)
 
       ),
       parameter_offset_approach = 2 
@@ -98,18 +98,17 @@ factor_groups <- list(
 
     "Estimated" = list(
       mg_params = list(
-        "L_at_Amin_Fem_GP_1" = list(PHASE = 4),
-        "L_at_Amax_Fem_GP_1" = list(PHASE = 4),
-        "VonBert_K_Fem_GP_1" = list(PHASE = 4),
-        "CV_young_Fem_GP_1" = list(PHASE = -3),
-        "CV_old_Fem_GP_1" = list(PHASE = -3),
-
-
-        "L_at_Amin_Mal_GP_1" = list(INIT= , PHASE = -4),
-        "L_at_Amax_Mal_GP_1" = list(INIT= , PHASE = -4),
-        "VonBert_K_Mal_GP_1" = list(INIT= , PHASE = -4),
-        "CV_young_Mal_GP_1" = list(INIT= , PHASE = -3),
-        "CV_old_Mal_GP_1" = list(INIT= , PHASE = -3)
+        "L_at_Amin_Fem_GP_1" = list(LO=30, HI=150, INIT=41.683, PHASE = 4),
+        "L_at_Amax_Fem_GP_1" = list(LO=130, HI=300, INIT=244.063, PHASE = 4),
+        "VonBert_K_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.244668, PHASE = 4),
+        "CV_young_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.148, PHASE = -3),
+        "CV_old_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.074, PHASE = -3),
+        
+        "L_at_Amin_Mal_GP_1" = list(INIT = 0, PHASE = -4),
+        "L_at_Amax_Mal_GP_1" = list(INIT = -0.22160488, PHASE = -4),
+        "VonBert_K_Mal_GP_1" = list(INIT = 0.570508, PHASE = -4),
+        "CV_young_Mal_GP_1" = list(INIT = 0.156079321, PHASE = -3),
+        "CV_old_Mal_GP_1" = list(INIT = -0.055569851, PHASE = -3)
 
       ),
       parameter_offset_approach = 2 
@@ -147,31 +146,30 @@ factor_groups <- list(
 
     "Mest" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(PHASE = 3)
+        "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT=0.1725436, PRIOR=-1.3860415, PR_SD=0.31, PR_type=3, PHASE = 3),        # NatM_Lorenzen_Fem_GP_1
+        "NatM_p_1_Fem_GP_1" = list(LO=-1, HI=1, INIT=0.107186654, PRIOR=0.3, PR_SD=99, PR_type=0, PHASE = -3)         # NatM_Lorenzen_Mal_GP_1  
       )
     ),
 
     ## !! NEED TO BE UPDATED WITH NEW VALUES
     "M50th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.2500632, PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
       )
     ),
 
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
     "M90th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.3720375, PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
       )
     ),
 
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
     "M10th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.1725436, PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
       )
     )
 
