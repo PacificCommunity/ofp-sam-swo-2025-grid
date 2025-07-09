@@ -13,7 +13,7 @@ session <- ssh_connect("nouofpsubmit")
 #####################################################################
 
 base_folder <- "02_one_offs"
-exclude_folders <- c("base")  # Add folders to exclude here
+exclude_folders <- c("base","base_O_07_85_EstMPr2_inputs","base_O_09_98_FBallPh_inputs")  # Add folders to exclude here
 ss_version <- "ss_3.30.23.1"
 
 # Generate and print commands
