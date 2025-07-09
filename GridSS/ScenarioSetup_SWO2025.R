@@ -86,7 +86,7 @@ factor_groups <- list(
         "CV_old_Fem_GP_1" = list(INIT = 0.074, PHASE = -3),
 
         ## male  (offset values needed)
-        "L_at_Amin_Mal_GP_1" = list(INIT = 0, PHASE = -4),
+        "L_at_Amin_Mal_GP_1" = list(INIT = 0.0, PHASE = -4),
         "L_at_Amax_Mal_GP_1" = list(INIT = -0.22160488, PHASE = -4),
         "VonBert_K_Mal_GP_1" = list(INIT = 0.570508, PHASE = -4),
         "CV_young_Mal_GP_1" = list(INIT = 0.156079321, PHASE = -3),
@@ -98,13 +98,13 @@ factor_groups <- list(
 
     "Estimated" = list(
       mg_params = list(
-        "L_at_Amin_Fem_GP_1" = list(LO=30, HI=150, INIT=41.683, PHASE = 4),
-        "L_at_Amax_Fem_GP_1" = list(LO=130, HI=300, INIT=244.063, PHASE = 4),
+        "L_at_Amin_Fem_GP_1" = list(LO=30.0, HI=150.0, INIT=41.683, PHASE = 4),
+        "L_at_Amax_Fem_GP_1" = list(LO=130.0, HI=300.0, INIT=244.063, PHASE = 4),
         "VonBert_K_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.244668, PHASE = 4),
         "CV_young_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.148, PHASE = -3),
         "CV_old_Fem_GP_1" = list(LO=0.01, HI=0.5, INIT=0.074, PHASE = -3),
 
-        "L_at_Amin_Mal_GP_1" = list(INIT = 0, PHASE = -4),
+        "L_at_Amin_Mal_GP_1" = list(INIT = 0.0, PHASE = -4),
         "L_at_Amax_Mal_GP_1" = list(INIT = -0.22160488, PHASE = -4),
         "VonBert_K_Mal_GP_1" = list(INIT = 0.570508, PHASE = -4),
         "CV_young_Mal_GP_1" = list(INIT = 0.156079321, PHASE = -3),
@@ -147,28 +147,28 @@ factor_groups <- list(
     "Mest" = list(
       mg_params = list(
         "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT=0.1725436, PRIOR=-1.3860415, PR_SD=0.31, PR_type=3, PHASE = 3),        # NatM_Lorenzen_Fem_GP_1
-        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT=0.107186654, PRIOR=0.3, PR_SD=99, PR_type=0, PHASE = -3)         # NatM_Lorenzen_Mal_GP_1
+        "NatM_p_1_Mal_GP_1" = list(LO=-1.0, HI=1.0, INIT=0.107186654, PRIOR=0.3, PR_SD=99.0, PR_type=0, PHASE = -3)         # NatM_Lorenzen_Mal_GP_1
       )
     ),
 
     "M50th" = list(
       mg_params = list(
         "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.2500632, PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
+        "NatM_p_1_Mal_GP_1" = list(LO=-1.0, HI=1.0, INIT = 0.107186654, PHASE = -3)
       )
     ),
 
     "M90th" = list(
       mg_params = list(
         "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.3720375, PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
+        "NatM_p_1_Mal_GP_1" = list(LO=-1.0, HI=1.0, INIT = 0.107186654, PHASE = -3)
       )
     ),
 
     "M10th" = list(
       mg_params = list(
         "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT = 0.1725436, PHASE = -3),
-        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT = 0.107186654, PHASE = -3)
+        "NatM_p_1_Mal_GP_1" = list(LO=-1.0, HI=1.0, INIT = 0.107186654, PHASE = -3)
       )
     )
 
@@ -182,7 +182,7 @@ factor_groups <- list(
     "Base" = list(
       line_adjustments = data.frame(
         Line = c(1),
-        Multiplier = c(1)
+        Multiplier = c(1.0)
       )
     ),
 
@@ -197,7 +197,7 @@ factor_groups <- list(
     "5weight" = list(
       line_adjustments = data.frame(
         Line = c(18, 19, 20),
-        Multiplier = c(5, 5, 5)
+        Multiplier = c(5.0, 5.0, 5.0)
       )
     ),
 
@@ -211,7 +211,7 @@ factor_groups <- list(
     "5length" = list(
       line_adjustments = data.frame(
         Line = seq(1:16),
-        Multiplier = rep(5, 16)
+        Multiplier = rep(5.0, 16)
       )
     )
 
@@ -224,24 +224,24 @@ movement = list(
   "NoMov"= list(
     mg_params = list(
       # Area 1 to 2 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
 
       # Area 2 to 1 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3)
+      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -25.0, PHASE = -3)
     )
   ),
 
@@ -249,24 +249,24 @@ movement = list(
   "Base"= list(
     mg_params = list(
       # Area 1 to 2 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -2.59027, PHASE = -3),
 
       # Area 2 to 1 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3)
+      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -3.68888, PHASE = -3)
     )
   ),
 
@@ -274,24 +274,24 @@ movement = list(
   "2Mov"= list(
     mg_params = list(
       # Area 1 to 2 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+      "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26.0, HI=4.0, INIT = -1.89712, PHASE = -3),
 
       # Area 2 to 1 - reduce movement
-      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
-      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3)
+      "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3),
+      "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26.0, HI=4.0, INIT = -2.99573, PHASE = -3)
     )
   )
 )
