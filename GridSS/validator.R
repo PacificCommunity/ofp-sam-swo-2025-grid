@@ -16,7 +16,7 @@ base_dir <- "02_one_offs/base/"
 scenarios_dir <- "02_one_offs/"
 base_ctl_file <- file.path(base_dir, "swo2025.ctl")
 base_dat_file <- file.path(base_dir, "swo2025.dat")
-tolerance <- 1e-4  # Very small tolerance to avoid rounding issues
+tolerance <- 1e-5  # Very small tolerance to avoid rounding issues
 
 # Function to extract changes
 extract_changes <- function(scenario_name, base_ctl) {
