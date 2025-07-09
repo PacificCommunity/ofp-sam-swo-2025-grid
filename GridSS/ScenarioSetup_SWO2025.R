@@ -96,7 +96,8 @@ factor_groups <- list(
       parameter_offset_approach = 1 #direct,
     ),
     
-    "MLE" = list(
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "MLE" = list(   
       mg_params = list(
         "L_at_Amin_Fem_GP_1" = list(INIT = 40, PHASE = -4),
         "L_at_Amax_Fem_GP_1" = list(INIT = 260, PHASE = -4),
@@ -142,92 +143,98 @@ factor_groups <- list(
       )
     )
     
-  # ),
-  # 
-  # 
-  # # Natural mortality scenarios
-  # Natmort = list(
-  #   
-  #   "Mest" = list(
-  #     mg_params = list(
-  #       "NatM_p_1_Fem_GP_1" = list(PHASE = 3)
-  #     )
-  #   ),
-  #   
-  #   "Mhc" = list(
-  #     mg_params = list(
-  #       "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
-  #     )
-  #   ),
-  #   
-  #   "Mmle" = list(
-  #     mg_params = list(
-  #       "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
-  #     )
-  #   ),
-  #   
-  #   "M10th" = list(
-  #     mg_params = list(
-  #       "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
-  #     )
-  #   )
-  #   
-  # ),
-  # 
-  # 
-  # 
-  # # Data weights scenarios
-  # DataWts = list(
-  #   
-  #   "2age" = list(
-  #     line_adjustments = data.frame(
-  #       Line = c(17),
-  #       Multiplier = c(2)
-  #     )
-  #   ),
-  #   
-  #   "2weight" = list(
-  #     line_adjustments = data.frame(
-  #       Line = c(18, 19, 20),
-  #       Multiplier = c(2, 2, 2)
-  #     )
-  #   ),
-  #   
-  #   
-  #   "2length" = list(
-  #     line_adjustments = data.frame(
-  #       Line = seq(1:17),
-  #       Multiplier = rep(2, 17)
-  #     )
-  #   )
-  #   
-  # ),
-  # 
-  # 
-  # # Recruitment distribution scenarios
-  # RecProp = list(
-  #   
-  #   "0.3" = list(                
-  #     mg_params = list(   
-  #       "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.0, PHASE = -2),
-  #       "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.0, PHASE = -2)
-  #     )
-  #   ),
-  #   
-  #   "0.5" = list(
-  #     mg_params = list(
-  #       "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.5, PHASE = -2),
-  #       "RecrDist_GP_1_area_2_month_2" = list(INIT = -0.5, PHASE = -2)
-  #     )
-  #   ),
-  #   
-  #   "0.7" = list(
-  #     mg_params = list(
-  #       "RecrDist_GP_1_area_1_month_2" = list(INIT = -0.5, PHASE = -2),
-  #       "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.5, PHASE = -2)
-  #     )
-  #   )
-  #   
+  ),
+
+
+  # Natural mortality scenarios
+  Natmort = list(
+
+    "Mest" = list(
+      mg_params = list(
+        "NatM_p_1_Fem_GP_1" = list(PHASE = 3)
+      )
+    ),
+    
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "Mhc" = list(
+      mg_params = list(
+        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+      )
+    ),
+
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "Mmle" = list(
+      mg_params = list(
+        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+      )
+    ),
+
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "M10th" = list(
+      mg_params = list(
+        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+      )
+    )
+
+  ),
+
+
+
+  # Data weights scenarios
+  DataWts = list(
+
+    "2age" = list(
+      line_adjustments = data.frame(
+        Line = c(17),
+        Multiplier = c(2)
+      )
+    ),
+
+    "2weight" = list(
+      line_adjustments = data.frame(
+        Line = c(18, 19, 20),
+        Multiplier = c(2, 2, 2)
+      )
+    ),
+
+
+    "2length" = list(
+      line_adjustments = data.frame(
+        Line = seq(1:17),
+        Multiplier = rep(2, 17)
+      )
+    )
+
+  ),
+
+
+  # Recruitment distribution scenarios
+  RecProp = list(
+
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "0.3" = list(
+      mg_params = list(
+        "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.0, PHASE = -2),
+        "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.0, PHASE = -2)
+      )
+    ),
+
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "0.5" = list(
+      mg_params = list(
+        "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.5, PHASE = -2),
+        "RecrDist_GP_1_area_2_month_2" = list(INIT = -0.5, PHASE = -2)
+      )
+    ),
+
+    ## !! NEED TO BE UPDATED WITH NEW VALUES
+    "0.7" = list(
+      mg_params = list(
+        "RecrDist_GP_1_area_1_month_2" = list(INIT = -0.5, PHASE = -2),
+        "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.5, PHASE = -2)
+      )
+    )
+
   )
 
   )
