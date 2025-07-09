@@ -17,9 +17,11 @@ exclude_folders <- c("base")  # Add folders to exclude here
 ss_version <- "ss_3.30.23.1"
 
 # Generate and print commands
+setwd("..")
 commands <- generate_full_submit_commands(base_folder, exclude_folders, ss_version)
 cat(commands, sep = "\n")
 
-### Execute the generated commands
-eval(parse(text = commands))
 
+### Execute the generated commands
+setwd("R")
+eval(parse(text = commands))
