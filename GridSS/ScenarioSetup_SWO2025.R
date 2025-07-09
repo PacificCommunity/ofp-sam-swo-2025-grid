@@ -85,27 +85,15 @@ factor_groups <- list(
         "CV_young_Fem_GP_1" = list(INIT = 0.144, PHASE = -3),
         "CV_old_Fem_GP_1" = list(INIT = 0.08, PHASE = -3),
         
-        ## male
-        "L_at_Amin_Mal_GP_1" = list(INIT = 84.994, PHASE = -4),
-        "L_at_Amax_Mal_GP_1" = list(INIT = 206.703, PHASE = -4),
-        "VonBert_K_Mal_GP_1" = list(INIT = 0.261, PHASE = -4),
-        "CV_young_Mal_GP_1" = list(INIT =  0.173, PHASE = -3),
-        "CV_old_Mal_GP_1" = list(INIT = 0.07, PHASE = -3)
+        ## male  (offset values needed)
+        "L_at_Amin_Mal_GP_1" = list(INIT = , PHASE = -4),
+        "L_at_Amax_Mal_GP_1" = list(INIT = , PHASE = -4),
+        "VonBert_K_Mal_GP_1" = list(INIT = , PHASE = -4),
+        "CV_young_Mal_GP_1" = list(INIT =  , PHASE = -3),
+        "CV_old_Mal_GP_1" = list(INIT = , PHASE = -3)
         
       ),
-      parameter_offset_approach = 1 #direct,
-    ),
-    
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "MLE" = list(   
-      mg_params = list(
-        "L_at_Amin_Fem_GP_1" = list(INIT = 40, PHASE = -4),
-        "L_at_Amax_Fem_GP_1" = list(INIT = 260, PHASE = -4),
-        "VonBert_K_Fem_GP_1" = list(INIT = 0.3, PHASE = -4),
-        "CV_young_Fem_GP_1" = list(INIT = 0.148, PHASE = -3),
-        "CV_old_Fem_GP_1" = list(INIT = 0.148, PHASE = -3)
-      ),
-      parameter_offset_approach = 2 #male=fem*exp(male_parm),
+      parameter_offset_approach = 2 # changed 1 to 2
     ),
     
     "Estimated" = list(
@@ -113,8 +101,16 @@ factor_groups <- list(
         "L_at_Amin_Fem_GP_1" = list(PHASE = 4),
         "L_at_Amax_Fem_GP_1" = list(PHASE = 4),
         "VonBert_K_Fem_GP_1" = list(PHASE = 4),
-        "CV_young_Fem_GP_1" = list(PHASE = 3),
-        "CV_old_Fem_GP_1" = list(PHASE = 3)
+        "CV_young_Fem_GP_1" = list(PHASE = -3),
+        "CV_old_Fem_GP_1" = list(PHASE = -3),
+        
+        
+        "L_at_Amin_Mal_GP_1" = list(INIT= , PHASE = -4),
+        "L_at_Amax_Mal_GP_1" = list(INIT= , PHASE = -4),
+        "VonBert_K_Mal_GP_1" = list(INIT= , PHASE = -4),
+        "CV_young_Mal_GP_1" = list(INIT= , PHASE = -3),
+        "CV_old_Mal_GP_1" = list(INIT= , PHASE = -3)
+        
       ),
       parameter_offset_approach = 2 #male=fem*exp(male_parm),
     )
@@ -156,23 +152,26 @@ factor_groups <- list(
     ),
     
     ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "Mhc" = list(
+    "M50th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
       )
     ),
 
     ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "Mmle" = list(
+    "M90th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
       )
     ),
 
     ## !! NEED TO BE UPDATED WITH NEW VALUES
     "M10th" = list(
       mg_params = list(
-        "NatM_p_1_Fem_GP_1" = list(INIT = 0.3, PHASE = -3)
+        "NatM_p_1_Fem_GP_1" = list(INIT = , PHASE = -3),
+        "NatM_p_1_Mal_GP_1" = list(INIT = 0.107, PHASE = -3)
       )
     )
 
@@ -182,60 +181,154 @@ factor_groups <- list(
 
   # Data weights scenarios
   DataWts = list(
-
-    "2age" = list(
+    
+    "base" = list(
       line_adjustments = data.frame(
-        Line = c(17),
-        Multiplier = c(2)
+        Line = c(1),
+        Multiplier = c(1)
       )
     ),
+    
 
-    "2weight" = list(
+    "0.2weight" = list(
       line_adjustments = data.frame(
         Line = c(18, 19, 20),
-        Multiplier = c(2, 2, 2)
+        Multiplier = c(0.2, 0.2, 0.2)
       )
     ),
-
-
-    "2length" = list(
+    
+    "5weight" = list(
       line_adjustments = data.frame(
-        Line = seq(1:17),
-        Multiplier = rep(2, 17)
+        Line = c(18, 19, 20),
+        Multiplier = c(5, 5, 5)
+      )
+    ),
+    
+    "0.2length" = list(
+      line_adjustments = data.frame(
+        Line = seq(1:16),
+        Multiplier = rep(0.2, 16)
+      )
+    ),
+    
+    "5length" = list(
+      line_adjustments = data.frame(
+        Line = seq(1:16),
+        Multiplier = rep(5, 16)
       )
     )
 
   ),
-
-
-  # Recruitment distribution scenarios
-  RecProp = list(
-
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "0.3" = list(
+  
+  # Movement scenarios based on current parameter values
+  movement = list(
+    
+    # no movement
+    "NoMov"= list(
       mg_params = list(
-        "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.0, PHASE = -2),
-        "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.0, PHASE = -2)
+        # Area 1 to 2 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        
+        # Area 2 to 1 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -25, PHASE = -3)
       )
     ),
-
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "0.5" = list(
+    
+    # middle in the screenshot
+    "Base"= list(
       mg_params = list(
-        "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.5, PHASE = -2),
-        "RecrDist_GP_1_area_2_month_2" = list(INIT = -0.5, PHASE = -2)
+        # Area 1 to 2 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -2.59027, PHASE = -3),
+        
+        # Area 2 to 1 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -3.68888, PHASE = -3)
       )
     ),
-
-    ## !! NEED TO BE UPDATED WITH NEW VALUES
-    "0.7" = list(
+    
+    # High movement scenario (less negative = more movement; not sure please double check before running)
+    "2Mov"= list(
       mg_params = list(
-        "RecrDist_GP_1_area_1_month_2" = list(INIT = -0.5, PHASE = -2),
-        "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.5, PHASE = -2)
+        # Area 1 to 2 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_1_to_2" = list(LO=-26, HI=4, INIT = -1.89712, PHASE = -3),
+        
+        # Area 2 to 1 - reduce movement
+        "MoveParm_A_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_B_seas_1_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_A_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_B_seas_2_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_A_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_B_seas_3_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_A_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3),
+        "MoveParm_B_seas_4_GP_1_from_2_to_1" = list(LO=-26, HI=4, INIT = -2.99573, PHASE = -3)
       )
     )
-
   )
+  
+
+# 
+#   # Recruitment distribution scenarios
+#   RecProp = list(
+# 
+#     ## !! NEED TO BE UPDATED WITH NEW VALUES
+#     "0.3" = list(
+#       mg_params = list(
+#         "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.0, PHASE = -2),
+#         "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.0, PHASE = -2)
+#       )
+#     ),
+# 
+#     ## !! NEED TO BE UPDATED WITH NEW VALUES
+#     "0.5" = list(
+#       mg_params = list(
+#         "RecrDist_GP_1_area_1_month_2" = list(INIT = 0.5, PHASE = -2),
+#         "RecrDist_GP_1_area_2_month_2" = list(INIT = -0.5, PHASE = -2)
+#       )
+#     ),
+# 
+#     ## !! NEED TO BE UPDATED WITH NEW VALUES
+#     "0.7" = list(
+#       mg_params = list(
+#         "RecrDist_GP_1_area_1_month_2" = list(INIT = -0.5, PHASE = -2),
+#         "RecrDist_GP_1_area_2_month_2" = list(INIT = 0.5, PHASE = -2)
+#       )
+#     )
+# 
+#   )
 
   )
 
