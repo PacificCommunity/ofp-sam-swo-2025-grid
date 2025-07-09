@@ -147,7 +147,7 @@ factor_groups <- list(
     "Mest" = list(
       mg_params = list(
         "NatM_p_1_Fem_GP_1" = list(LO=0.05, HI=0.45, INIT=0.1725436, PRIOR=-1.3860415, PR_SD=0.31, PR_type=3, PHASE = 3),        # NatM_Lorenzen_Fem_GP_1
-        "NatM_p_1_Fem_GP_1" = list(LO=-1, HI=1, INIT=0.107186654, PRIOR=0.3, PR_SD=99, PR_type=0, PHASE = -3)         # NatM_Lorenzen_Mal_GP_1
+        "NatM_p_1_Mal_GP_1" = list(LO=-1, HI=1, INIT=0.107186654, PRIOR=0.3, PR_SD=99, PR_type=0, PHASE = -3)         # NatM_Lorenzen_Mal_GP_1
       )
     ),
 
