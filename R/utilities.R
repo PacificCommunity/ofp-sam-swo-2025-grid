@@ -36,31 +36,50 @@ full_download <- function(folder, up=TRUE, ...)
          recursive=TRUE)
 }
 
-condor_to_penguin <- function(folder)
+# Examples: condor_to_penguin("Mod1", "penguin:swo/2025/model_runs/grid")
+# condor_to_penguin(c("Mod1", "Mod2"), "penguin:swo/2025/model_runs/grid")
+condor_to_penguin <- function(folder, to="penguin:", top.dir="condor",
+                              verbose=TRUE, session=NULL)
 {
-  # penguin_session <- ssh_connect("penguin")
-  # ssh_exec_wait(session, paste("mkdir -p", remote.dir))
-  # scp_upload(session, files=Start.tar.gz, to=remote.dir)
-}
+  # Look for user session
+  if(is.null(session))
+    session <- get("session", pos=.GlobalEnv, inherits=FALSE)
 
+  # Construct condor.dir path
+  condor.dir <- if(top.dir != "") file.path(top.dir, folder) else folder
+
+  for(i in seq_along(folder))
+  {
+    # Confirm that condor.dir exists on Condor
+    check <- ssh_exec_internal(session, paste("cd", condor.dir[i]), error=FALSE)
+    if(check$status > 0)
+      stop("'", condor.dir[i], "' not found on Condor submitter")
+    # Copy from Condor to Penguin
+    if(verbose)
+      cat("Copying", paste(folder[i], collapse=", "), "... ")
+    ssh_exec_stdout(paste("scp -p -r", condor.dir[i], to))
+    if(verbose)
+      cat("done\n")
+  }
+}
 
 
 # Function to generate full_submit commands automatically
 generate_full_submit_commands <- function(base_folder, exclude_folders = NULL, ss_version = "ss_3.30.23.1") {
   # Get all items in the base folder
   all_items <- list.files(base_folder, full.names = FALSE)
-  
+
   # Filter only directories
   folders <- all_items[file.info(file.path(base_folder, all_items))$isdir]
-  
+
   # Remove excluded folders if specified
   if (!is.null(exclude_folders)) {
     folders <- folders[!folders %in% exclude_folders]
   }
-  
+
   # Generate full_submit commands
   commands <- paste0('full_submit("', base_folder, '/', folders, '", "', ss_version, '")')
-  
+
   return(commands)
 }
 
