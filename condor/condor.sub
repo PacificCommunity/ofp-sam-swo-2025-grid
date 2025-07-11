@@ -7,7 +7,7 @@ requirements = (OpSys == "LINUX")
 rank = (-SlotID * Mips)
 request_memory = 7600
 request_disk = 5500000
-when_to_transfer_output = ON_EXIT_OR_EVICT
+when_to_transfer_output = ON_EXIT
 should_transfer_files = YES
 transfer_input_files = Start.tar.gz
 transfer_output_files = End.tar.gz
