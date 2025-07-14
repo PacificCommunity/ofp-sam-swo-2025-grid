@@ -54,8 +54,9 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count<-60
-batch_index<-1
+batch_count <- as.numeric(Sys.getenv("BATCH_COUNT", 60))
+batch_index <- as.numeric(Sys.getenv("BATCH_INDEX", 1))
+
 
 BaseDir <- "diagnostic/base/"
 GridDir <- "grids/"
