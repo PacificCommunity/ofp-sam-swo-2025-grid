@@ -57,6 +57,14 @@ source("R/helpers.R")
 batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 1))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
 
+if (nzchar(Sys.getenv("BATCH_COUNT"))) {
+  cat("Batch processing enabled\n")
+  cat("Total batches:", batch_count, "\n")
+  cat("Current batch:", batch_index, "\n")
+} else {
+  cat("Running in single batch mode\n")
+}
+
 
 BaseDir <- "diagnostic/base/"
 GridDir <- "grids/"
