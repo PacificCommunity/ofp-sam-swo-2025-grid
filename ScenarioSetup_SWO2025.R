@@ -54,7 +54,7 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count <- as.numeric(Sys.getenv("BATCH_COUNT", 60))
+batch_count <- as.numeric(Sys.getenv("BATCH_COUNT", 1))
 batch_index <- as.numeric(Sys.getenv("BATCH_INDEX", 1))
 
 
