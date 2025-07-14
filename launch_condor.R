@@ -15,7 +15,7 @@ github_pat <- Sys.getenv("GIT_PAT")                           # GitHub Personal 
 github_username <- "kyuhank"                                  # GitHub username (e.g., "kyuhank")
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
-docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.1"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
+docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
 remote_dir <- "ofp-sam-swo-2025-ensemble/testRun"                 # Remote directory for CondorBox (e.g., "MFCLtest")
 condor_memory <- "20GB"                                        # Memory request for the Condor job (e.g., "6GB")
 condor_cpus <- 20                                               # CPU request for the Condor job (e.g., 4)
@@ -25,7 +25,7 @@ branch <- "parallel"                                              # Branch of gi
 # Run the job on Condor through CondorBox
 # ---------------------------------------
 
-CondorBox::CondorBox( make_options = "prep vast plot report",
+CondorBox::CondorBox( make_options = "ss3",
   remote_user = remote_user,         # Remote server username (e.g., "kyuhank")
   remote_host = remote_host,         # Remote server address (e.g., "nouofpsubmit.corp.spc.int")
   remote_dir = remote_dir,           # Remote directory for CondorBox (e.g., "MFCLtest")

@@ -54,7 +54,7 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count<-180
+batch_count<-20
 batch_index<-1
 
 BaseDir <- "diagnostic/base/"
