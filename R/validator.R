@@ -5,23 +5,17 @@
 # Date: July 8, 2025
 # Description: Generate comparison table of SS3 scenarios vs base model
 
-library(r4ss)
-library(here)
-library(dplyr)
-
 setwd(here())
 
 # Configuration
-base_dir <- "02_one_offs/base/"
-scenarios_dir <- "02_one_offs/"
-base_ctl_file <- file.path(base_dir, "swo2025.ctl")
-base_dat_file <- file.path(base_dir, "swo2025.dat")
+base_ctl_file <- file.path(BaseDir, "swo2025.ctl")
+base_dat_file <- file.path(BaseDir, "swo2025.dat")
 tolerance <- 1e-5  # Very small tolerance to avoid rounding issues
 
 # Function to extract changes
 extract_changes <- function(scenario_name, base_ctl) {
   
-  scenario_ctl_file <- file.path(scenarios_dir, scenario_name, "swo2025.ctl")
+  scenario_ctl_file <- file.path(GridDir, scenario_name, "swo2025.ctl")
   
   if (!file.exists(scenario_ctl_file)) {
     return(data.frame(Scenario = scenario_name, Parameter_Type = "ERROR", 
@@ -138,7 +132,7 @@ extract_changes <- function(scenario_name, base_ctl) {
 
 # Main process
 base_ctl <- SS_readctl(file = base_ctl_file, datlist = base_dat_file)
-scenario_names <- basename(list.dirs(scenarios_dir, recursive = FALSE)[!grepl("base", basename(list.dirs(scenarios_dir, recursive = FALSE)))])
+scenario_names <- basename(list.dirs(GridDir, recursive = FALSE)[!grepl("base", basename(list.dirs(GridDir, recursive = FALSE)))])
 
 all_changes <- data.frame()
 for (scenario_name in scenario_names) {
@@ -148,7 +142,7 @@ for (scenario_name in scenario_names) {
 # Generate table
 if (nrow(all_changes) > 0) {
   print(all_changes)
-  write.csv(all_changes, file.path(scenarios_dir, "scenario_comparison.csv"), row.names = FALSE)
+  write.csv(all_changes, file.path(GridDir, "scenario_comparison.csv"), row.names = FALSE)
   cat("Table saved to scenario_comparison.csv\n")
   cat("Total meaningful changes detected:", nrow(all_changes), "\n")
 } else {

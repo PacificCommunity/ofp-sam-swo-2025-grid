@@ -1,3 +1,6 @@
 ss3
-condor.sub
-condor_run.sh
+.Rproj.user
+*.Rproj
+grids
+.Rhistory
+.devcontainer

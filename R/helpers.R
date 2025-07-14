@@ -240,3 +240,78 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
   
   return(changes)
 }
+
+
+
+# Function to run ss3 script in scenario folders
+run_scenario_script <- function(scenario_folder, base_path = ".") {
+  
+  # Construct full path
+  full_path <- file.path(base_path, scenario_folder)
+  
+  # Check if folder exists
+  if (!dir.exists(full_path)) {
+    return(list(
+      scenario = scenario_folder,
+      status = "error",
+      error = paste("Directory does not exist:", full_path)
+    ))
+  }
+  
+  cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+  
+  # Save original working directory
+  original_dir <- getwd()
+  
+  tryCatch({
+    # Change to scenario folder
+    setwd(full_path)
+    
+    # Bash script content
+    script_content <- '#!/bin/bash
+
+echo "=== Scenario: $(basename $(pwd)) ==="
+echo "Current working directory: $(pwd)"
+
+chmod 755 ss3
+
+./ss3
+
+s'
+    
+    # Create temporary script file
+    tmp_script <- tempfile(pattern = paste0("scenario_", basename(scenario_folder), "_"), fileext = ".sh")
+    writeLines(script_content, tmp_script)
+    Sys.chmod(tmp_script, mode = "0755")
+    
+    # Execute script
+    result <- system(tmp_script, intern = TRUE)
+    
+    # Clean up temporary file
+    # if (file.exists(tmp_script)) file.remove(tmp_script)
+    
+    cat("Scenario", scenario_folder, "completed successfully\n")
+    
+    return(list(
+      scenario = scenario_folder,
+      status = "success",
+      output = result,
+      path = full_path
+    ))
+    
+  }, error = function(e) {
+    cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+    return(list(
+      scenario = scenario_folder,
+      status = "error",
+      error = e$message,
+      path = full_path
+    ))
+  }, finally = {
+    # Return to original directory
+    setwd(original_dir)
+  })
+}
+
+
+
