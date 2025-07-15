@@ -242,12 +242,11 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
 }
 
 
-
-# Function to run ss3 script in scenario folders
-run_scenario_script <- function(scenario_folder, base_path = ".") {
+# Function to run SS3 script in scenario folders with real-time monitoring
+run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "") {
   
-  # Construct full path
-  full_path <- file.path(base_path, scenario_folder)
+  # Robust path construction to handle double slashes
+  full_path <- normalizePath(file.path(base_path, scenario_folder), mustWork = FALSE)
   
   # Check if folder exists
   if (!dir.exists(full_path)) {
@@ -258,7 +257,43 @@ run_scenario_script <- function(scenario_folder, base_path = ".") {
     ))
   }
   
+  # Set up log file path for real-time monitoring
+  log_file <- file.path(full_path, "ss3_run.log")
+  
+  # Test if we can write to the directory before proceeding
+  tryCatch({
+    # Try to create a test file to verify write permissions
+    test_file <- file.path(full_path, ".write_test")
+    cat("test", file = test_file)
+    if (file.exists(test_file)) {
+      file.remove(test_file)
+    }
+  }, error = function(e) {
+    return(list(
+      scenario = scenario_folder,
+      status = "error",
+      error = paste("Cannot write to directory:", full_path, "- Error:", e$message)
+    ))
+  })
+  
+  # Record start time
+  start_time <- Sys.time()
+  
+  # Use tryCatch for log file creation
+  tryCatch({
+    cat("START:", as.character(start_time), "- Scenario:", scenario_folder, "\n", 
+        file = log_file, append = FALSE)
+  }, error = function(e) {
+    return(list(
+      scenario = scenario_folder,
+      status = "error",
+      error = paste("Cannot create log file:", log_file, "- Error:", e$message)
+    ))
+  })
+  
+  # Print progress to console with start time
   cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+  cat("Start time:", as.character(start_time), "\n")
   
   # Save original working directory
   original_dir <- getwd()
@@ -267,17 +302,31 @@ run_scenario_script <- function(scenario_folder, base_path = ".") {
     # Change to scenario folder
     setwd(full_path)
     
-    # Bash script content
-    script_content <- '#!/bin/bash
+    # Create bash script with enhanced logging for real-time monitoring
+    script_content <- sprintf('#!/bin/bash
 
-echo "=== Scenario: $(basename $(pwd)) ==="
-echo "Current working directory: $(pwd)"
+echo "=== Scenario: $(basename $(pwd)) ===" | tee -a ss3_run.log
+echo "Start time: $(date)" | tee -a ss3_run.log
+echo "Current working directory: $(pwd)" | tee -a ss3_run.log
+echo "SS3 options: %s" | tee -a ss3_run.log
 
+# Check if SS3 exists
+if [ ! -f "ss3" ]; then
+    echo "ERROR: SS3 executable not found" | tee -a ss3_run.log
+    exit 1
+fi
+
+# Make SS3 executable
 chmod 755 ss3
 
-./ss3
+# Run SS3 with real-time output logging
+echo "Starting SS3 execution..." | tee -a ss3_run.log
+./ss3 %s 2>&1 | tee -a ss3_run.log
 
-s'
+# Record completion
+echo "SS3 execution completed at: $(date)" | tee -a ss3_run.log
+echo "Exit code: $?" | tee -a ss3_run.log
+', ss3_options, ss3_options)
     
     # Create temporary script file
     tmp_script <- tempfile(pattern = paste0("scenario_", basename(scenario_folder), "_"), fileext = ".sh")
@@ -287,31 +336,59 @@ s'
     # Execute script
     result <- system(tmp_script, intern = TRUE)
     
-    # Clean up temporary file
-    # if (file.exists(tmp_script)) file.remove(tmp_script)
+    # Record completion time and duration
+    end_time <- Sys.time()
+    duration <- difftime(end_time, start_time, units = "mins")
     
+    cat("COMPLETE:", as.character(end_time), "- Duration:", 
+        round(as.numeric(duration), 2), "minutes\n", 
+        file = log_file, append = TRUE)
+    
+    # Print completion info to console with end time
     cat("Scenario", scenario_folder, "completed successfully\n")
+    cat("End time:", as.character(end_time), "\n")
+    cat("Duration:", round(as.numeric(duration), 2), "minutes\n")
+    
+    # Clean up temporary file (optional)
+    # if (file.exists(tmp_script)) file.remove(tmp_script)
     
     return(list(
       scenario = scenario_folder,
       status = "success",
       output = result,
-      path = full_path
+      path = full_path,
+      duration = duration,
+      start_time = start_time,
+      end_time = end_time
     ))
     
   }, error = function(e) {
+    # Log error with timestamp - with additional error handling
+    error_time <- Sys.time()
+    
+    tryCatch({
+      cat("ERROR:", as.character(error_time), "- Scenario:", scenario_folder, 
+          "- Error:", e$message, "\n", file = log_file, append = TRUE)
+    }, error = function(log_error) {
+      # If we can't write to log file, just print to console
+      cat("Could not write to log file:", log_error$message, "\n")
+    })
+    
+    # Print error info to console with error time
     cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+    cat("Error time:", as.character(error_time), "\n")
+    
     return(list(
       scenario = scenario_folder,
       status = "error",
       error = e$message,
-      path = full_path
+      path = full_path,
+      error_time = error_time
     ))
   }, finally = {
     # Return to original directory
     setwd(original_dir)
   })
 }
-
 
 

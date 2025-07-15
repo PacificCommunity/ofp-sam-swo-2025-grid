@@ -45,7 +45,7 @@ for (i in 1:nBatch) {
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
-    condor_environment = paste0("BATCH_COUNT=",nBatch, " BATCH_INDEX=", i)  # BATCH_INDEX=1, 2, 3, ... 60
+    condor_environment = paste0("BATCH_COUNT=",nBatch, " BATCH_INDEX=", i, " SS3_OPTIONS=-stopph 2 -nohess")  # BATCH_INDEX=1, 2, 3, ... 60
   )
 }
 

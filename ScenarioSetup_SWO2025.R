@@ -54,8 +54,10 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 1))
+batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 180))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
+SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
+
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {
   cat("Batch processing enabled\n")
@@ -76,8 +78,8 @@ base_starter_file <- paste0(BaseDir, "starter.ss")
 exe_file <- "exe/ss_3.30.23.1/ss3"
 
 # Read base control file for reference
-ctlBase_original <- SS_readctl(file = base_ctl_file, datlist = base_dat_file)
-print(ctlBase_original)
+# ctlBase_original <- SS_readctl(file = base_ctl_file, datlist = base_dat_file)
+# print(ctlBase_original)
 
 ###############################
 ##### Scenario setup ##########

@@ -6,6 +6,10 @@ WORKDIR=/workspace
 # inside containers
 ss3: ScenarioSetup_SWO2025.R
 	Rscript ScenarioSetup_SWO2025.R
+	
+# inside containers
+clean: 
+	@if [ -d "grids" ]; then sudo rm -rf grids; fi
 
 # Docker image pull target
 docker-pull:
@@ -21,5 +25,6 @@ docker-interactive:
 		$(DOCKER_IMAGE) tail -f /dev/null
 		
 docker-ss3: ScenarioSetup_SWO2025.R
+	@if [ -d "grids" ]; then sudo chown -R $(whoami) grids && chmod -R u+w grids && rm -rf grids; fi
 	docker run --rm -v "$(CURDIR):$(WORKDIR)" -w $(WORKDIR) $(DOCKER_IMAGE) Rscript ScenarioSetup_SWO2025.R
 
