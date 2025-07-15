@@ -243,7 +243,7 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
 
 
 # Function to run SS3 script in scenario folders with real-time monitoring
-run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "", verbose = TRUE) {
+run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "", verbose = TRUE, scenario_number = NULL) {
   
   # Robust path construction to handle double slashes
   full_path <- normalizePath(file.path(base_path, scenario_folder), mustWork = FALSE)
@@ -252,6 +252,7 @@ run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = 
   if (!dir.exists(full_path)) {
     return(list(
       scenario = scenario_folder,
+      scenario_number = scenario_number,
       status = "error",
       error = paste("Directory does not exist:", full_path)
     ))
@@ -270,6 +271,7 @@ run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = 
   }, error = function(e) {
     return(list(
       scenario = scenario_folder,
+      scenario_number = scenario_number,
       status = "error",
       error = paste("Cannot write to directory:", full_path, "- Error:", e$message)
     ))
@@ -285,18 +287,28 @@ run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = 
   }, error = function(e) {
     return(list(
       scenario = scenario_folder,
+      scenario_number = scenario_number,
       status = "error",
       error = paste("Cannot create log file:", log_file, "- Error:", e$message)
     ))
   })
   
-  # Print progress to console - START TIME ALWAYS SHOWN
-  if (verbose) {
-    cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+  # Print progress to console with scenario number - START TIME ALWAYS SHOWN
+  if (!is.null(scenario_number)) {
+    if (verbose) {
+      cat(sprintf("[%d] Processing scenario: %s in %s\n", scenario_number, scenario_folder, full_path))
+    } else {
+      cat(sprintf("[%d] Processing scenario: %s\n", scenario_number, scenario_folder))
+    }
+    cat(sprintf("[%d] Start time: %s\n", scenario_number, as.character(start_time)))
   } else {
-    cat("Processing scenario:", scenario_folder, "\n")
+    if (verbose) {
+      cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+    } else {
+      cat("Processing scenario:", scenario_folder, "\n")
+    }
+    cat("Start time:", as.character(start_time), "\n")
   }
-  cat("Start time:", as.character(start_time), "\n")
   
   # Save original working directory
   original_dir <- getwd()
@@ -338,7 +350,11 @@ echo "Exit code: $?" | tee -a ss3_run.log
     
     # Execute script with optional real-time output to console
     if (verbose) {
-      cat("=== SS3 Execution Output ===\n")
+      if (!is.null(scenario_number)) {
+        cat(sprintf("[%d] === SS3 Execution Output ===\n", scenario_number))
+      } else {
+        cat("=== SS3 Execution Output ===\n")
+      }
       
       # Open connection to script and read output line by line
       conn <- pipe(paste("bash", tmp_script), open = "r")
@@ -353,7 +369,11 @@ echo "Exit code: $?" | tee -a ss3_run.log
       # Close connection and get exit code
       exit_code <- close(conn)
       
-      cat("=== SS3 Execution Complete ===\n")
+      if (!is.null(scenario_number)) {
+        cat(sprintf("[%d] === SS3 Execution Complete ===\n", scenario_number))
+      } else {
+        cat("=== SS3 Execution Complete ===\n")
+      }
       
     } else {
       # Silent execution - just run the script without real-time output
@@ -371,18 +391,30 @@ echo "Exit code: $?" | tee -a ss3_run.log
         round(as.numeric(duration), 2), "minutes\n", 
         file = log_file, append = TRUE)
     
-    # Print completion info to console - END TIME ALWAYS SHOWN
-    if (verbose) {
-      cat("Scenario", scenario_folder, "completed successfully\n")
+    # Print completion info to console with scenario number - END TIME ALWAYS SHOWN
+    if (!is.null(scenario_number)) {
+      if (verbose) {
+        cat(sprintf("[%d] Scenario %s completed successfully\n", scenario_number, scenario_folder))
+      } else {
+        cat(sprintf("[%d] Scenario %s: %s\n", scenario_number, scenario_folder, 
+                    if(exit_code == 0) "SUCCESS" else "FAILED"))
+      }
+      cat(sprintf("[%d] End time: %s\n", scenario_number, as.character(end_time)))
+      cat(sprintf("[%d] Duration: %.2f minutes\n", scenario_number, round(as.numeric(duration), 2)))
     } else {
-      cat("Scenario", scenario_folder, ":", 
-          if(exit_code == 0) "SUCCESS" else "FAILED", "\n")
+      if (verbose) {
+        cat("Scenario", scenario_folder, "completed successfully\n")
+      } else {
+        cat("Scenario", scenario_folder, ":", 
+            if(exit_code == 0) "SUCCESS" else "FAILED", "\n")
+      }
+      cat("End time:", as.character(end_time), "\n")
+      cat("Duration:", round(as.numeric(duration), 2), "minutes\n")
     }
-    cat("End time:", as.character(end_time), "\n")
-    cat("Duration:", round(as.numeric(duration), 2), "minutes\n")
     
     return(list(
       scenario = scenario_folder,
+      scenario_number = scenario_number,
       status = if(exit_code == 0) "success" else "error",
       output = all_output,
       path = full_path,
@@ -403,16 +435,26 @@ echo "Exit code: $?" | tee -a ss3_run.log
       cat("Could not write to log file:", log_error$message, "\n")
     })
     
-    # Print error info to console - ERROR TIME ALWAYS SHOWN
-    if (verbose) {
-      cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+    # Print error info to console with scenario number - ERROR TIME ALWAYS SHOWN
+    if (!is.null(scenario_number)) {
+      if (verbose) {
+        cat(sprintf("[%d] Scenario %s failed: %s\n", scenario_number, scenario_folder, e$message))
+      } else {
+        cat(sprintf("[%d] Scenario %s: FAILED - %s\n", scenario_number, scenario_folder, e$message))
+      }
+      cat(sprintf("[%d] Error time: %s\n", scenario_number, as.character(error_time)))
     } else {
-      cat("Scenario", scenario_folder, ": FAILED -", e$message, "\n")
+      if (verbose) {
+        cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+      } else {
+        cat("Scenario", scenario_folder, ": FAILED -", e$message, "\n")
+      }
+      cat("Error time:", as.character(error_time), "\n")
     }
-    cat("Error time:", as.character(error_time), "\n")
     
     return(list(
       scenario = scenario_folder,
+      scenario_number = scenario_number,
       status = "error",
       error = e$message,
       path = full_path,
@@ -423,6 +465,3 @@ echo "Exit code: $?" | tee -a ss3_run.log
     setwd(original_dir)
   })
 }
-
-
-
