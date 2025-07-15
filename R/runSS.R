@@ -11,5 +11,5 @@ results_parallel <- mclapply(seq_along(scenario_folders), function(i) {
                       ss3_options = SS3_OPTIONS, 
                       verbose = VERBOSE, 
                       scenario_number = i)
-}, mc.cores = 2)
+}, mc.cores = parallel::detectCores()-1)
 
