@@ -54,11 +54,11 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 60))
+batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 360))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
-SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 1 -nohess")  # Get SS3 options from environment variable
-VERBOSE <- as.logical(Sys.getenv("VERBOSE", FALSE))  # Default to TRUE if not set
-
+SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
+VERBOSE <- as.logical(Sys.getenv("VERBOSE", TRUE))  # Default to TRUE if not set
+nCORES <- as.integer(Sys.getenv("nCORES", 1))  # Default to 1 if not set
 
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {
