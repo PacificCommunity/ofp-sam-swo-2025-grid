@@ -4,7 +4,6 @@ error = $(Cluster).$(Process).condor_mfcl.err
 log = $(Cluster).$(Process).condor_mfcl.log
 output = $(Cluster).$(Process).condor_mfcl.out
 requirements = (OpSys == "LINUX")
-rank = (-SlotID * Mips)
 request_memory = 7600
 request_disk = 5500000
 when_to_transfer_output = ON_EXIT
