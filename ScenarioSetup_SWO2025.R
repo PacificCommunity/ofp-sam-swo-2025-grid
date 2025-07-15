@@ -56,7 +56,9 @@ source("R/helpers.R")
 
 batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 180))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
-SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
+SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 0 -nohess")  # Get SS3 options from environment variable
+VERBOSE <- as.logical(Sys.getenv("VERBOSE", TRUE))  # Default to TRUE if not set
+
 
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {

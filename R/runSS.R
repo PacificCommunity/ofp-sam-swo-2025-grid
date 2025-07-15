@@ -9,5 +9,6 @@ results_parallel <- mclapply( scenario_folders,
                               run_scenario_script,
                               base_path = GridDir,
                               ss3_options = SS3_OPTIONS,
-                              mc.cores = detectCores()-2)
+                              mc.cores = detectCores()-2,
+                              verbose=VERBOSE)
 

@@ -243,7 +243,7 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
 
 
 # Function to run SS3 script in scenario folders with real-time monitoring
-run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "") {
+run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "", verbose = TRUE) {
   
   # Robust path construction to handle double slashes
   full_path <- normalizePath(file.path(base_path, scenario_folder), mustWork = FALSE)
@@ -262,7 +262,6 @@ run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = 
   
   # Test if we can write to the directory before proceeding
   tryCatch({
-    # Try to create a test file to verify write permissions
     test_file <- file.path(full_path, ".write_test")
     cat("test", file = test_file)
     if (file.exists(test_file)) {
@@ -291,8 +290,12 @@ run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = 
     ))
   })
   
-  # Print progress to console with start time
-  cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+  # Print progress to console - START TIME ALWAYS SHOWN
+  if (verbose) {
+    cat("Processing scenario:", scenario_folder, "in", full_path, "\n")
+  } else {
+    cat("Processing scenario:", scenario_folder, "\n")
+  }
   cat("Start time:", as.character(start_time), "\n")
   
   # Save original working directory
@@ -333,8 +336,32 @@ echo "Exit code: $?" | tee -a ss3_run.log
     writeLines(script_content, tmp_script)
     Sys.chmod(tmp_script, mode = "0755")
     
-    # Execute script
-    result <- system(tmp_script, intern = TRUE)
+    # Execute script with optional real-time output to console
+    if (verbose) {
+      cat("=== SS3 Execution Output ===\n")
+      
+      # Open connection to script and read output line by line
+      conn <- pipe(paste("bash", tmp_script), open = "r")
+      all_output <- character()
+      
+      # Read and display output in real-time
+      while (length(line <- readLines(conn, n = 1, warn = FALSE)) > 0) {
+        cat(line, "\n")  # Display in R console immediately
+        all_output <- c(all_output, line)
+      }
+      
+      # Close connection and get exit code
+      exit_code <- close(conn)
+      
+      cat("=== SS3 Execution Complete ===\n")
+      
+    } else {
+      # Silent execution - just run the script without real-time output
+      result <- system(tmp_script, intern = TRUE)
+      exit_code <- attr(result, "status")
+      if (is.null(exit_code)) exit_code <- 0
+      all_output <- result
+    }
     
     # Record completion time and duration
     end_time <- Sys.time()
@@ -344,22 +371,25 @@ echo "Exit code: $?" | tee -a ss3_run.log
         round(as.numeric(duration), 2), "minutes\n", 
         file = log_file, append = TRUE)
     
-    # Print completion info to console with end time
-    cat("Scenario", scenario_folder, "completed successfully\n")
+    # Print completion info to console - END TIME ALWAYS SHOWN
+    if (verbose) {
+      cat("Scenario", scenario_folder, "completed successfully\n")
+    } else {
+      cat("Scenario", scenario_folder, ":", 
+          if(exit_code == 0) "SUCCESS" else "FAILED", "\n")
+    }
     cat("End time:", as.character(end_time), "\n")
     cat("Duration:", round(as.numeric(duration), 2), "minutes\n")
     
-    # Clean up temporary file (optional)
-    # if (file.exists(tmp_script)) file.remove(tmp_script)
-    
     return(list(
       scenario = scenario_folder,
-      status = "success",
-      output = result,
+      status = if(exit_code == 0) "success" else "error",
+      output = all_output,
       path = full_path,
       duration = duration,
       start_time = start_time,
-      end_time = end_time
+      end_time = end_time,
+      exit_code = exit_code
     ))
     
   }, error = function(e) {
@@ -370,12 +400,15 @@ echo "Exit code: $?" | tee -a ss3_run.log
       cat("ERROR:", as.character(error_time), "- Scenario:", scenario_folder, 
           "- Error:", e$message, "\n", file = log_file, append = TRUE)
     }, error = function(log_error) {
-      # If we can't write to log file, just print to console
       cat("Could not write to log file:", log_error$message, "\n")
     })
     
-    # Print error info to console with error time
-    cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+    # Print error info to console - ERROR TIME ALWAYS SHOWN
+    if (verbose) {
+      cat("Scenario", scenario_folder, "failed:", e$message, "\n")
+    } else {
+      cat("Scenario", scenario_folder, ": FAILED -", e$message, "\n")
+    }
     cat("Error time:", as.character(error_time), "\n")
     
     return(list(
@@ -390,5 +423,6 @@ echo "Exit code: $?" | tee -a ss3_run.log
     setwd(original_dir)
   })
 }
+
 
 
