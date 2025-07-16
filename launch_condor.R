@@ -16,9 +16,9 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "10model_test/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
-condor_memory <- "7GB"                                        # Memory request for the Condor job (e.g., "6GB")
-condor_disk <- "8GB"
+remote_dir <- "SWO_full_test/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
+condor_memory <- "7.5GB"                                        # Memory request for the Condor job (e.g., "6GB")
+condor_disk <- "14GB"
 condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
 branch <- "parallel"                                           # Branch of git repository to use 
 
@@ -27,12 +27,12 @@ branch <- "parallel"                                           # Branch of git r
 # ---------------------------------------
 
 nBatch=360              ## 360/4
-maxBatchIndex=5
+maxBatchIndex=20
 
 
 for (i in 1:maxBatchIndex) {
   
-  CondorBox(
+CondorBox::CondorBox(
     make_options = "ss3",
     remote_user = remote_user,
     remote_host = remote_host,
@@ -49,12 +49,12 @@ for (i in 1:maxBatchIndex) {
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
-    custom_batch_name = paste0("quick_", i),
+    custom_batch_name = paste0("full_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
       BATCH_INDEX = paste0(i), 
-      SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
-      #SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
+      #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
+      SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
       nCORES="1",
       VERBOSE = "TRUE"
     )  # BATCH_INDEX=1, 2, 3, ... 60
@@ -68,7 +68,7 @@ for (i in 1:maxBatchIndex) {
 
 for (i in 1:maxBatchIndex) {
   
-  BatchFileHandler(
+  CondorBox::BatchFileHandler(
     remote_user   = remote_user,
     remote_host   = remote_host,
     folder_name   = paste0(remote_dir, "Batch_", i),
@@ -78,13 +78,13 @@ for (i in 1:maxBatchIndex) {
   
 }
   
-###################
-## Extract grids ##
-###################
+#######################################
+## Extract grids directly to penguin ##
+#######################################
 
 for (i in 1:maxBatchIndex) {
   
-  BatchFileHandler(
+  CondorBox::BatchFileHandler(
     remote_user   = remote_user,
     remote_host   = remote_host,
     folder_name   = paste0(remote_dir, "Batch_", i),
@@ -98,4 +98,25 @@ for (i in 1:maxBatchIndex) {
   
 }
 
+
+
+###############################################
+## Extract grids directly to local directory ##
+###############################################
+
+for (i in 1:maxBatchIndex) {
+  
+  CondorBox::BatchFileHandler(
+    remote_user   = remote_user,
+    remote_host   = remote_host,
+    folder_name   = paste0(remote_dir, "Batch_", i),
+    action        = "fetch",
+    fetch_dir     =  "grids",  # Local directory to fetch the grids
+    extract_archive = TRUE,
+    direct_extract = TRUE,
+    archive_name    = "output_archive.tar.gz",  # Archive file to extract
+    extract_folder  = "ofp-sam-swo-2025-ensemble/grids",  # Folder to extract from the archive
+  )
+  
+}
 
