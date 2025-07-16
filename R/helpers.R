@@ -12,7 +12,7 @@ find_params <- function(ctlBase, pattern) {
 }
 
 
-# Function to create individual scenarios (one-off)
+# Function to create individual scenarios (one-off) - UNCHANGED
 create_individual_scenarios <- function(factor_groups) {
   scenarios <- list()
   
@@ -29,7 +29,7 @@ create_individual_scenarios <- function(factor_groups) {
   return(scenarios)
 }
 
-# Function to create factorial combinations
+# Function to create factorial combinations - UNCHANGED
 create_factorial_scenarios <- function(factor_groups, selected_factors) {
   
   # Get selected factor groups
@@ -85,14 +85,15 @@ create_factorial_scenarios <- function(factor_groups, selected_factors) {
   return(scenarios)
 }
 
-
-# Function to apply scenario configurations to control file (FLEXIBLE VERSION)
+# Function to apply scenario configurations to control file (ENHANCED BUT BACKWARDS COMPATIBLE)
 apply_simple_adjustments <- function(ctlBase, config) {
+  
+  # EXISTING FUNCTIONALITY - UNCHANGED
   
   # Global likelihood weight multiplier
   if (!is.null(config$multiplier)) {
-    ctlBase$Variance_adjustment_list$Value <- 
-      ctlBase$Variance_adjustment_list$Value * config$multiplier
+    ctlBase$Variance_adjustment_list$value <- 
+      ctlBase$Variance_adjustment_list$value * config$multiplier
   }
   
   # Line-specific likelihood weight adjustments
@@ -102,8 +103,8 @@ apply_simple_adjustments <- function(ctlBase, config) {
       multiplier <- config$line_adjustments$Multiplier[i]
       
       if (line_num <= nrow(ctlBase$Variance_adjustment_list)) {
-        ctlBase$Variance_adjustment_list$Value[line_num] <- 
-          ctlBase$Variance_adjustment_list$Value[line_num] * multiplier
+        ctlBase$Variance_adjustment_list$value[line_num] <- 
+          ctlBase$Variance_adjustment_list$value[line_num] * multiplier
       }
     }
   }
@@ -149,15 +150,95 @@ apply_simple_adjustments <- function(ctlBase, config) {
     }
   }
   
+  # NEW GENERIC FUNCTIONALITY - ADDED ON TOP
+  
+  # Generic parameter table adjustments (Q_parms, size_selex_parms, age_selex_parms, etc.)
+  generic_param_tables <- c("Q_parms", "size_selex_parms", "age_selex_parms", 
+                            "dirichlet_parms", "tag_parms", "morph_indexing")
+  
+  for (table_name in generic_param_tables) {
+    config_key <- paste0(tolower(table_name))  # e.g., "q_parms", "size_selex_parms"
+    
+    if (!is.null(config[[config_key]]) && !is.null(ctlBase[[table_name]])) {
+      
+      for (param_name in names(config[[config_key]])) {
+        param_settings <- config[[config_key]][[param_name]]
+        
+        param_row <- which(rownames(ctlBase[[table_name]]) == param_name)
+        
+        if (length(param_row) > 0) {
+          # Apply ALL settings provided for this parameter
+          for (setting_name in names(param_settings)) {
+            if (setting_name %in% colnames(ctlBase[[table_name]])) {
+              ctlBase[[table_name]][param_row, setting_name] <- param_settings[[setting_name]]
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  # Generic direct value adjustments (for non-dataframe SS3 elements)
+  direct_adjustments <- c("Nfleets", "Nsurveys", "N_areas", "Nages", 
+                          "spawn_month", "Ngenders", "Nfishfleets", "Nsurveys", 
+                          "Do_AgeKey", "N_platoon", "N_GP", "recr_dist_method",
+                          "recr_global_area", "Fcast_years", "Fcast_selex")
+  
+  for (direct_param in direct_adjustments) {
+    config_key <- tolower(direct_param)
+    
+    if (!is.null(config[[config_key]]) && !is.null(ctlBase[[direct_param]])) {
+      ctlBase[[direct_param]] <- config[[config_key]]
+    }
+  }
+  
+  # Generic list-based adjustments (for complex SS3 structures)
+  if (!is.null(config$custom_adjustments)) {
+    for (adjustment_name in names(config$custom_adjustments)) {
+      adjustment_config <- config$custom_adjustments[[adjustment_name]]
+      
+      # Handle different types of custom adjustments
+      if (adjustment_config$type == "direct_value") {
+        # Direct value replacement
+        if (!is.null(ctlBase[[adjustment_config$target]])) {
+          ctlBase[[adjustment_config$target]] <- adjustment_config$value
+        }
+      } else if (adjustment_config$type == "list_element") {
+        # List element modification
+        if (!is.null(ctlBase[[adjustment_config$target]])) {
+          ctlBase[[adjustment_config$target]][[adjustment_config$element]] <- adjustment_config$value
+        }
+      } else if (adjustment_config$type == "dataframe_modification") {
+        # Custom dataframe modifications
+        target_df <- ctlBase[[adjustment_config$target]]
+        if (!is.null(target_df) && is.data.frame(target_df)) {
+          # Apply row/column specific changes
+          if (!is.null(adjustment_config$row_condition) && !is.null(adjustment_config$column)) {
+            # Find rows matching condition
+            if (adjustment_config$row_condition$type == "rowname") {
+              target_rows <- which(rownames(target_df) %in% adjustment_config$row_condition$values)
+            } else if (adjustment_config$row_condition$type == "column_value") {
+              target_rows <- which(target_df[[adjustment_config$row_condition$column]] %in% adjustment_config$row_condition$values)
+            }
+            
+            if (length(target_rows) > 0) {
+              target_df[target_rows, adjustment_config$column] <- adjustment_config$value
+              ctlBase[[adjustment_config$target]] <- target_df
+            }
+          }
+        }
+      }
+    }
+  }
+  
   return(ctlBase)
 }
 
-
-
-
-# Function to create detailed change summary
+# Function to create detailed change summary (ENHANCED BUT BACKWARDS COMPATIBLE)
 create_change_summary <- function(base_ctl, scenario_ctl) {
   changes <- list()
+  
+  # EXISTING FUNCTIONALITY - UNCHANGED
   
   # Variance adjustments
   base_var <- base_ctl$Variance_adjustment_list
@@ -165,10 +246,10 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
   
   variance_changes <- list()
   for (i in 1:nrow(base_var)) {
-    if (base_var$Value[i] != scenario_var$Value[i]) {
+    if (base_var$value[i] != scenario_var$value[i]) {
       variance_changes[[paste0("Line_", i)]] <- list(
-        original = base_var$Value[i],
-        modified = scenario_var$Value[i],
+        original = base_var$value[i],
+        modified = scenario_var$value[i],
         change_type = "Variance_adjustment"
       )
     }
@@ -177,7 +258,7 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
     changes$variance_adjustments <- variance_changes
   }
   
-  # Parameter offset approach changes (NEW)
+  # Parameter offset approach changes
   if (!is.null(base_ctl$parameter_offset_approach) && !is.null(scenario_ctl$parameter_offset_approach)) {
     if (base_ctl$parameter_offset_approach != scenario_ctl$parameter_offset_approach) {
       changes$parameter_offset_approach <- list(
@@ -238,9 +319,101 @@ create_change_summary <- function(base_ctl, scenario_ctl) {
     }
   }
   
+  # NEW GENERIC FUNCTIONALITY - ADDED ON TOP
+  
+  # Generic parameter table changes detection
+  generic_param_tables <- c("Q_parms", "size_selex_parms", "age_selex_parms", 
+                            "dirichlet_parms", "tag_parms", "morph_indexing")
+  
+  for (table_name in generic_param_tables) {
+    if (!is.null(base_ctl[[table_name]]) && !is.null(scenario_ctl[[table_name]])) {
+      base_table <- base_ctl[[table_name]]
+      scenario_table <- scenario_ctl[[table_name]]
+      
+      if (is.data.frame(base_table) && is.data.frame(scenario_table)) {
+        table_changes <- list()
+        
+        for (param in rownames(base_table)) {
+          for (col in colnames(base_table)) {
+            if (!is.na(base_table[param, col]) && !is.na(scenario_table[param, col])) {
+              if (base_table[param, col] != scenario_table[param, col]) {
+                table_changes[[paste0(param, "_", col)]] <- list(
+                  parameter = param,
+                  column = col,
+                  original = base_table[param, col],
+                  modified = scenario_table[param, col],
+                  change_type = table_name
+                )
+              }
+            }
+          }
+        }
+        
+        if (length(table_changes) > 0) {
+          changes[[table_name]] <- table_changes
+        }
+      }
+    }
+  }
+  
+  # Generic direct value changes detection
+  direct_adjustments <- c("Nfleets", "Nsurveys", "N_areas", "Nages", 
+                          "spawn_month", "Ngenders", "Nfishfleets", "Nsurveys", 
+                          "Do_AgeKey", "N_platoon", "N_GP", "recr_dist_method",
+                          "recr_global_area", "Fcast_years", "Fcast_selex")
+  
+  for (direct_param in direct_adjustments) {
+    if (!is.null(base_ctl[[direct_param]]) && !is.null(scenario_ctl[[direct_param]])) {
+      if (base_ctl[[direct_param]] != scenario_ctl[[direct_param]]) {
+        changes[[direct_param]] <- list(
+          original = base_ctl[[direct_param]],
+          modified = scenario_ctl[[direct_param]],
+          change_type = "direct_value"
+        )
+      }
+    }
+  }
+  
   return(changes)
 }
 
+# NEW HELPER FUNCTION: Generic SS3 structure analyzer
+analyze_ss3_structure <- function(ctl_object) {
+  structure_info <- list()
+  
+  for (element_name in names(ctl_object)) {
+    element <- ctl_object[[element_name]]
+    
+    if (is.data.frame(element)) {
+      structure_info[[element_name]] <- list(
+        type = "dataframe",
+        dimensions = dim(element),
+        columns = colnames(element),
+        rownames_present = !is.null(rownames(element)),
+        sample_rownames = if(!is.null(rownames(element))) head(rownames(element), 5) else NULL
+      )
+    } else if (is.list(element)) {
+      structure_info[[element_name]] <- list(
+        type = "list",
+        length = length(element),
+        names = names(element)
+      )
+    } else if (is.vector(element)) {
+      structure_info[[element_name]] <- list(
+        type = "vector",
+        length = length(element),
+        class = class(element)
+      )
+    } else {
+      structure_info[[element_name]] <- list(
+        type = class(element),
+        length = if(is.null(length(element))) 1 else length(element)
+      )
+    }
+  }
+  
+  return(structure_info)
+}
 
 # Function to run SS3 script in scenario folders with real-time monitoring
 run_scenario_script <- function(scenario_folder, base_path = ".", ss3_options = "", verbose = TRUE, scenario_number = NULL) {

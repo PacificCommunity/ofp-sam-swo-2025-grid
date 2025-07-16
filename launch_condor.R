@@ -16,7 +16,7 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "360jobs_full_nohess/SWO"                 # Remote directory for CondorBox (e.g., "MFCLtest")
+remote_dir <- "10model_test/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
 condor_memory <- "7GB"                                        # Memory request for the Condor job (e.g., "6GB")
 condor_disk <- "8GB"
 condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
@@ -27,16 +27,16 @@ branch <- "parallel"                                           # Branch of git r
 # ---------------------------------------
 
 nBatch=360              ## 360/4
-maxBatchIndex=20
+maxBatchIndex=5
 
 
 for (i in 1:maxBatchIndex) {
   
-  CondorBox::CondorBox(
+  CondorBox(
     make_options = "ss3",
     remote_user = remote_user,
     remote_host = remote_host,
-    remote_dir = paste0(remote_dir, "_Batch_", i),  # _Batch_1, _Batch_2, ... _Batch_60
+    remote_dir = paste0(remote_dir, "Batch_", i),  # _Batch_1, _Batch_2, ... _Batch_60
     github_pat = github_pat,
     github_username = github_username,
     github_org = github_org,
@@ -46,30 +46,56 @@ for (i in 1:maxBatchIndex) {
     condor_cpus = condor_cpus,
     condor_disk = condor_disk,
     stream_error = "TRUE",  
-    stream_out = "TRUE",    
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
+    custom_batch_name = paste0("quick_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
       BATCH_INDEX = paste0(i), 
-      #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
-      SS3_OPTIONS = "-nohess -cbs 2000000000 -gbs 5000000000",
+      SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
+      #SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
       nCORES="1",
-      VERBOSE = "FALSE"
+      VERBOSE = "TRUE"
     )  # BATCH_INDEX=1, 2, 3, ... 60
   )
 }
 
-# ----------------------------------------------------------
-# Retrieve and synchronise the output from the remote server
-# ----------------------------------------------------------
 
-CondorBox::CondorUnbox(
-  remote_user = remote_user,         # Remote server username (e.g., "kyuhank")
-  remote_host = remote_host,         # Remote server address (e.g., "nouofpsubmit.corp.spc.int")
-  remote_dir = remote_dir,           # Remote directory containing the output archive (e.g., "MFCLtest")
-  local_git_dir = getwd(),           # Destination directory on the local machine (e.g., getwd())
-  remote_output_file = "output_archive.tar.gz", # Name of the output archive (e.g., "output_archive.tar.gz")
-  overwrite = F                  # Set to TRUE to overwrite existing files
-)
+################################
+## Delete file (clone_job.sh) ##
+################################
+
+for (i in 1:maxBatchIndex) {
+  
+  BatchFileHandler(
+    remote_user   = remote_user,
+    remote_host   = remote_host,
+    folder_name   = paste0(remote_dir, "Batch_", i),
+    file_name     = "clone_job.sh",
+    action        = "delete"
+  )
+  
+}
+  
+###################
+## Extract grids ##
+###################
+
+for (i in 1:maxBatchIndex) {
+  
+  BatchFileHandler(
+    remote_user   = remote_user,
+    remote_host   = remote_host,
+    folder_name   = paste0(remote_dir, "Batch_", i),
+    action        = "fetch",
+    fetch_dir     = "/run/user/1000/gvfs/sftp:host=penguin.corp.spc.int,user=kyuhank/home/shares/assessments/swo/2025/model_runs/grid",
+    extract_archive = TRUE,
+    direct_extract = TRUE,
+    archive_name    = "output_archive.tar.gz",  # Archive file to extract
+    extract_folder  = "ofp-sam-swo-2025-ensemble/grids",  # Folder to extract from the archive
+  )
+  
+}
+
+

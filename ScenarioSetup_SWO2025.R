@@ -54,12 +54,11 @@ source("R/helpers.R")
 ##### Path Setup and check base files ######
 ############################################
 
-batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 360))
+batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 1))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
 SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
-VERBOSE <- as.logical(Sys.getenv("VERBOSE", TRUE))  # Default to TRUE if not set
-nCORES <- as.integer(Sys.getenv("nCORES", 1))  # Default to 1 if not set
-
+VERBOSE <- as.logical(Sys.getenv("VERBOSE", FALSE))  # Default to FALSE if not set
+nCORES <- as.integer(Sys.getenv("nCORES", 4))  # Default to detectCores()-2 if not set
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {
   cat("Batch processing enabled\n")
@@ -338,10 +337,6 @@ cat("Current FACTORIAL_FACTORS:", paste(FACTORIAL_FACTORS, collapse = ", "), "\n
 ####################################
 
 source("R/genGrid.R")
-# 
-# source("R/validator.R")
 
 source("R/runSS.R")
-
-
 
