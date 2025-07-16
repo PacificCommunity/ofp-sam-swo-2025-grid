@@ -1,5 +1,5 @@
 # Install the CondorBox package from GitHub (force reinstallation if needed)
-remotes::install_github("PacificCommunity/ofp-sam-CondorBox", force = TRUE) ## Force reinstallation if updates are needed
+#remotes::install_github("PacificCommunity/ofp-sam-CondorBox", force = TRUE) ## Force reinstallation if updates are needed
 
 ## Clean up the Docker resources interactively if needed
 # CondorBox::clean_docker_resources_interactive()
@@ -16,24 +16,27 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "ofp-sam-swo-2025-ensemble/SWO_grid"                 # Remote directory for CondorBox (e.g., "MFCLtest")
-condor_memory <- "10GB"                                        # Memory request for the Condor job (e.g., "6GB")
-condor_disk <- "40GB"
-condor_cpus <- 8                                               # CPU request for the Condor job (e.g., 4)
-branch <- "parallel"                                              # Branch of git repository to use 
+remote_dir <- "360jobs_full_nohess/SWO"                 # Remote directory for CondorBox (e.g., "MFCLtest")
+condor_memory <- "7GB"                                        # Memory request for the Condor job (e.g., "6GB")
+condor_disk <- "8GB"
+condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
+branch <- "parallel"                                           # Branch of git repository to use 
 
 # ---------------------------------------
 # Run the job on Condor through CondorBox
 # ---------------------------------------
 
-nBatch=60
+nBatch=360              ## 360/4
+maxBatchIndex=20
 
-for (i in 1:nBatch) {
+
+for (i in 1:maxBatchIndex) {
+  
   CondorBox::CondorBox(
     make_options = "ss3",
     remote_user = remote_user,
     remote_host = remote_host,
-    remote_dir = paste0(remote_dir, "_Batch_", 182),  # _Batch_1, _Batch_2, ... _Batch_60
+    remote_dir = paste0(remote_dir, "_Batch_", i),  # _Batch_1, _Batch_2, ... _Batch_60
     github_pat = github_pat,
     github_username = github_username,
     github_org = github_org,
@@ -48,10 +51,12 @@ for (i in 1:nBatch) {
     rmclone_script = "no",
     ghcr_login = T,
     condor_environment = list(
-      BATCH_COUNT = "180",
-      BATCH_INDEX = "2", 
-      SS3_OPTIONS = "-stopph 2 -nohess",
-      VERBOSE = "TRUE"
+      BATCH_COUNT = paste0(nBatch),
+      BATCH_INDEX = paste0(i), 
+      #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
+      SS3_OPTIONS = "-nohess -cbs 2000000000 -gbs 5000000000",
+      nCORES="1",
+      VERBOSE = "FALSE"
     )  # BATCH_INDEX=1, 2, 3, ... 60
   )
 }

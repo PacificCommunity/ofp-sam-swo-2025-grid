@@ -36,8 +36,8 @@ swo2025.ctl
 2 #1 #5 #1 # Depletion basis:  denom is: 0=skip; 1=X*SPBvirgin; 2=X*SPBmsy; 3=X*SPB_styr; 4=X*SPB_endyr; 5=X*dyn_Bzero;  values>=11 invoke N multiyr (up to 9!) with 10's digit; >100 invokes log(ratio)
 1 # Fraction (X) for Depletion denominator (e.g. 0.4)
 2 #4 # SPR_report_basis:  0=skip; 1=(1-SPR)/(1-SPR_tgt); 2=(1-SPR)/(1-SPR_MSY); 3=(1-SPR)/(1-SPR_Btarget); 4=rawSPR
-3 #4 # F_std_reporting_units: 0=skip; 1=exploitation(Bio); 2=exploitation(Num); 3=sum(Apical_F's); 4=mean F for range of ages (numbers weighted); 5=unweighted mean F for range of ages
-#COND 1 10 # min and max age over which mean F will be calculated, with F=Z-M
+4 #3 #4 # F_std_reporting_units: 0=skip; 1=exploitation(Bio); 2=exploitation(Num); 3=sum(Apical_F's); 4=mean F for range of ages (numbers weighted); 5=unweighted mean F for range of ages
+3 12 #COND 1 10 # min and max age over which mean F will be calculated, with F=Z-M
 2 #0 # F_std_scaling: 0=no scaling; 1=F/Fspr; 2=F/Fmsy; 3=F/Fbtgt; where F means annual F_std, Fmsy means F_std@msy; values >=11 invoke N multiyr (up to 9!) using 10's digit; >100 invokes log(ratio)
 0 # MCMC output detail: integer part (0=default; 1=adds obj func components; 2= +write_report_for_each_mceval); and decimal part (added to SR_LN(R0) on first call to mcmc)
 0 # ALK tolerance ***disabled in code

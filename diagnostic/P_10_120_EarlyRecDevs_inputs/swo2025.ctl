@@ -89,14 +89,14 @@
 #_growth_parms
 #_ LO HI INIT PRIOR PR_SD PR_type PHASE env_var&link dev_link dev_minyr dev_maxyr dev_PH Block Block_Fxn
 # Sex: 1  BioPattern: 1  NatMort
-0.05 0.45 0.1725436         0.3     99      0  -3  0            0        0         0         0      0     0 # NatM_Lorenzen_Fem_GP_1
+0.05 0.45 0.1800810  -1.3860415   0.31      3   3  0            0        0         0         0      0     0 # NatM_Lorenzen_Fem_GP_1
 # Sex: 1  BioPattern: 1  Growth
 #_ LO HI INIT            PRIOR PR_SD PR_type PHASE env_var&link dev_link dev_minyr dev_maxyr dev_PH Block Block_Fxn
 #  30 150 109.319           30      99      0  -4  0            0        0         0         0      0     0 # L_at_Amin_Fem_GP_1
 # 130 300 241.178           160     99      0  -4  0            0        0         0         0      0     0 # L_at_Amax_Fem_GP_1
-  30 150 41.683              30     99      0   4  0            0        0         0         0      0     0 # L_at_Amin_Fem_GP_1
- 130 300 244.063            160     99      0   4  0            0        0         0         0      0     0 # L_at_Amax_Fem_GP_1
-0.01 0.5 0.244668          0.190777 99      0   4  0            0        0         0         0      0     0 # VonBert_K_Fem_GP_1
+  30 150 56.541              30     99      0   4  0            0        0         0         0      0     0 # L_at_Amin_Fem_GP_1
+ 130 300 259.235            160     99      0   4  0            0        0         0         0      0     0 # L_at_Amax_Fem_GP_1
+0.01 0.5 0.1784530          0.190777 99      0   4  0            0        0         0         0      0     0 # VonBert_K_Fem_GP_1
 0.01 0.5 0.148              0.1     99      0  -3  0            0        0         0         0      0     0 # CV_young_Fem_GP_1
 0.01 0.5 0.074              0.15    99      0  -3  0            0        0         0         0      0     0 # CV_old_Fem_GP_1
 #0.01 0.5 0.165722935322514 0.1     99      0  -3  0            0        0         0         0      0     0 # CV_young_Fem_GP_1
@@ -132,17 +132,8 @@
 # Hermaphroditism
 #  Recruitment Distribution 
 #_ LO HI INIT     PRIOR     PR_SD PR_type PHASE env_var&link dev_link dev_minyr dev_maxyr dev_PH Block Block_Fxn
-#  -4   4 -0.5     0         99      0        2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_2
-#  -4   4 -0.8     0         99      0        2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_2
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_5
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_5
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_8
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_8
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_11
-#  -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_11
-#  
-  -4   4 -0.5     0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_2
-  -4   4 -0.5     0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_2
+  -4   4 0.0      0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_2
+  -4   4 1.0986   0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_2
   -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_5
   -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_2_month_5
   -4   4 -1000    0         99      0       -2  0            0        0         0         0      0     0 # RecrDist_GP_1_area_1_month_8
@@ -187,26 +178,26 @@
 0  # 0/1 to use steepness in initial equ recruitment calculation
 0  #  future feature:  0/1 to make realized sigmaR a function of SR curvature
 #_   LO     HI   INIT  PRIOR  PR_SD PR_type PHASE env-var use_dev dev_mnyr dev_mxyr dev_PH Block Blk_Fxn #  parm_name
-      5     18 9.46556    14      5       0     1       0       0        0        0      0     0       0 # SR_LN(R0)
+      5    8.5 7.39186   8.0    0.1       1     1       0       0        0        0      0     0       0 # SR_LN(R0)
     0.2      1    0.8    0.8    0.2       0    -5       0       0        0        0      0     0       0 # SR_BH_steep
      -2      2    0.5    0.8    0.5       0    -3       0       0        0        0      0     0       0 # SR_sigmaR
      -5      5      0      0      1       0    -4       0       0        0        0      0     0       0 # SR_regime
       0      2      0      1     50       0   -50       0       0        0        0      0     0       0 # SR_autocorr
 #_no timevary SR parameters
 1 #do_recdev:  0=none; 1=devvector (R=F(SSB)+dev); 2=deviations (R=F(SSB)+dev); 3=deviations (R=R0*dev; dev2=R-f(SSB)); 4=like 3 with sum(dev2) adding penalty
-1995 # 1992 # first year of main recr_devs; early devs can preceed this era
+1990 # 1992 # first year of main recr_devs; early devs can preceed this era
 2021 #2017 # last year of main recr_devs; forecast devs start in following year
 4 #_recdev phase 
 1 # (0/1) to read 13 advanced options
- 0 # -5 #_recdev_early_start (0=none; neg value makes relative to recdev_start)
+ 1969 #0 # -5 #_recdev_early_start (0=none; neg value makes relative to recdev_start)
  1 #-4 #_recdev_early_phase
  0 #_forecast_recruitment phase (incl. late recr) (0 value resets to maxphase+1)
  1 #_lambda for Fcast_recr_like occurring before endyr+1
-1966.3   #_last_early_yr_nobias_adj_in_MPD 
-1996.0   #_first_yr_fullbias_adj_in_MPD 
-2017.0   #_last_yr_fullbias_adj_in_MPD 
-2028.1   #_first_recent_yr_nobias_adj_in_MPD 
-0.998  #_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models) 
+1984.2   #_last_early_yr_nobias_adj_in_MPD 
+1995.3   #_first_yr_fullbias_adj_in_MPD 
+2020.9   #_last_yr_fullbias_adj_in_MPD 
+2027.6   #_first_recent_yr_nobias_adj_in_MPD 
+0.9773  #_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models)
 # 1948.6 #_last_yr_nobias_adj_in_MPD; begin of ramp
 # 1994 #_first_yr_fullbias_adj_in_MPD; begin of plateau
 # 1995.6 #_last_yr_fullbias_adj_in_MPD
@@ -227,7 +218,7 @@
 #  4.09483 -0.0576199 -0.219241 -0.335722 -0.358665 -0.665003 -0.386877 -0.0776514 0.233353 -0.0794323 0.486326 -0.117399 0.270971 -0.260048 1.23784 0.078826 0.168862 -0.161865 0.16362 0.568909 -0.467445 -0.29193 0.398305 -0.264736 -0.198543 0.00273891 0.0933689 0.344508 -0.116756 0.510385 0.491845 0.362456 -0.0796259 0.16416 0.0381569 -1.18523 -0.242684 -0.716091 -0.303311#
 #Fishing Mortality info 
 0.2 #0.5 #0.2 #0.5 # F ballpark value in units of annual_F
-2001 # F ballpark year (neg value to disable)
+-2001 # F ballpark year (neg value to disable)
 4 # F_Method:  1=Pope midseason rate; 2=F as parameter; 3=F as hybrid; 4=fleet-specific parm/hybrid (#4 is superset of #2 and #3 and is recommended)
 2.9 # 2.2 # max F (methods 2-4) or harvest fraction (method 1)
 # read list of fleets that do F as parameter; unlisted fleets stay hybrid, bycatch fleets must be included with start_PH=1, high F fleets should switch early
@@ -292,9 +283,9 @@
 #_Q_parms(if_any);Qunits_are_ln(q)
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
            -20            15      -10.5671             0             1             0         -1          0          0          0          0          0          0          0  #  LnQ_base_20.IDX.AU.1(20)
-           -0.2           0.5     -0.0534666           0.0           1             0          4          0          0          0          0          0          0          0  #  Q extra SD_20.IDX.AU.1(20)
+           -0.2           0.5     -0.0721226           0.0           1             0          4          0          0          0          0          0          0          0  #  Q extra SD_20.IDX.AU.1(20)
            -20            15      -14.4344             0             1             0         -1          0          0          0          0          0          0          0  #  LnQ_base_21.IDX.NZ.2(21)
-           -0.2           0.5      0.0583826           0.0           1             0          4          0          0          0          0          0          0          0  #  Q extra SD_21.IDX.NZ.2(21)
+           -0.2           0.5      0.0684961           0.0           1             0          4          0          0          0          0          0          0          0  #  Q extra SD_21.IDX.NZ.2(21)
 #           -20            15      -14.2382             0             1             0         -1          0          0          0          0          0          0          0  #  LnQ_base_22.IDX.EU.2(22)
 #           -0.2           0.5      0.4                 0.0           1             0          4          0          0          0          0          0          0          0  #  Q extra SD_22.IDX.EU.2(22)
 #_no timevary Q parameters
@@ -389,29 +380,29 @@
 #_          LO            HI          INIT         PRIOR         PR_SD       PR_type      PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 #_LO     HI  INIT    PRIOR PR_SD PR_type PHASE    env-var    use_dev   dev_mnyr   dev_mxyr     dev_PH      Block    Blk_Fxn  #  parm_name
 # 1   01.DW.1N LenSelex
-  40	300	    144.327	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_01.DW.1N(1)       
- -10	 10	   -1.24687  -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_01.DW.1N(1)       
- -10	 10	    7.29677    0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_01.DW.1N(1)       
- -10	 10	    7.38285	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_01.DW.1N(1)       
+  40	300	    145.638	 100	99	0	 -2	0	0	0	0	0	0	0	#_SizeSel_P_1_01.DW.1N(1)       
+ -10	 10	   -3.47143  -10	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_2_01.DW.1N(1)       
+ -10	 10	    7.98143    0	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_3_01.DW.1N(1)       
+ -10	 10	    8.44500	   0	99	0	 -5	0	0	0	0	0	0	0	#_SizeSel_P_4_01.DW.1N(1)       
 -999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_01.DW.1N(1)       
--999	  9	   -1.10639	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_01.DW.1N(1)        
+-999	  9	   -4.15616	   0	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_6_01.DW.1N(1)        
 # 2   02.DW.1C LenSelex
-  40	300	    125.472	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_02.DW.1C(2)       
- -10	 10	   -0.209581 -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_02.DW.1C(2)       
- -10	 10	    6.70844	   0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_02.DW.1C(2)       
- -10	 10	    9.99585	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_02.DW.1C(2)       
+  40	300	    122.095	 100	99	0	 -2	0	0	0	0	0	0	0	#_SizeSel_P_1_02.DW.1C(2)       
+ -10	 10	  0.0417905  -10	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_2_02.DW.1C(2)       
+ -10	 10	    6.65136	   0	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_3_02.DW.1C(2)       
+ -10	 10	    5.55245	   0	99	0	 -5	0	0	0	0	0	0	0	#_SizeSel_P_4_02.DW.1C(2)       
 -999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_02.DW.1C(2)       
--999	  9	   -495.013	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_02.DW.1C(2)      
+-999	  9	   -1.29538	   0	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_6_02.DW.1C(2)      
 # 3   03.DW.1S LenSelex
-  40    300     150.098  100    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_1_03.DW.1S(3)
-   1    100     99.8585   10    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_2_03.DW.1S(3)   
+  40    300     127.745  100    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_1_03.DW.1S(3)
+   1    100     99.6333   10    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_2_03.DW.1S(3)   
 # 4   04.AU.1N LenSelex
-  40	300	    144.327	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_04.AU.1N(4)       
- -10	 10	   -1.24687  -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_04.AU.1N(4)       
- -10	 10	    7.29677    0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_04.AU.1N(4)       
- -10	 10	    7.38285	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_04.AU.1N(4)       
+  40	300	    138.777	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_04.AU.1N(4)       
+ -10	 10	   -1.21477  -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_04.AU.1N(4)       
+ -10	 10	    7.00416    0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_04.AU.1N(4)       
+ -10	 10	    7.82016	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_04.AU.1N(4)       
 -999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_04.AU.1N(4)       
--999	  9	   -1.10639	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_04.AU.1N(4)        
+-999	  9	   -494.997	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_04.AU.1N(4)        
 #  40	300	    187.408	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_04.AU.1N(4)       
 # -10	 10	        -10	 -10	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_2_04.AU.1N(4)       
 # -10	 10	    7.57029	   0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_04.AU.1N(4)       
@@ -457,22 +448,22 @@
 #-999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_10.DW.2N(10)       
 #-999	  9	   0.345301	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_10.DW.2N(10)      
 # 11  11.DW.2C LenSelex
-  40	300	 	160.834	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_11.DW.2C(11)       
- -10	 10	   -0.719876 -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_11.DW.2C(11)       
- -10	 10	    7.29806	   0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_11.DW.2C(11)       
- -10	 10	   -1.83732	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_11.DW.2C(11)       
+  40	300	 	163.145	 100	99	0	 -2	0	0	0	0	0	0	0	#_SizeSel_P_1_11.DW.2C(11)       
+ -10	 10	  -0.746439  -10	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_2_11.DW.2C(11)       
+ -10	 10	    7.36421	   0	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_3_11.DW.2C(11)       
+ -10	 10	    9.97019	   0	99	0	 -5	0	0	0	0	0	0	0	#_SizeSel_P_4_11.DW.2C(11)       
 -999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_11.DW.2C(11)       
--999	  9	    2.25754	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_11.DW.2C(11)  
+-999	  9	   -495.003	   0	99	0	 -3	0	0	0	0	0	0	0	#_SizeSel_P_6_11.DW.2C(11)  
 # 12  12.DW.2S LenSelex
-  40    300     295.584  100    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_1_12.DW.2S(12)
-   1    100     92.1615   10    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_2_12.DW.2S(12)                
+  40    300     191.459  100    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_1_12.DW.2S(12)
+   1    100     66.9474   10    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_2_12.DW.2S(12)                
 # 13  13.NZ.2C LenSelex 
-  40	300	    121.147	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_13.NZ.2C(13)       
- -10	 10	   -2.33481	 -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_13.NZ.2C(13)       
- -10	 10	    6.29561	   0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_13.NZ.2C(13)       
- -10	 10	    7.92573	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_13.NZ.2C(13)       
+  40	300	    121.597	 100	99	0	  2	0	0	0	0	0	0	0	#_SizeSel_P_1_13.NZ.2C(13)       
+ -10	 10	   -2.49759	 -10	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_2_13.NZ.2C(13)       
+ -10	 10	    6.31948	   0	99	0	  4	0	0	0	0	0	0	0	#_SizeSel_P_3_13.NZ.2C(13)       
+ -10	 10	    8.90801	   0	99	0	  5	0	0	0	0	0	0	0	#_SizeSel_P_4_13.NZ.2C(13)       
 -999	  9	       -999	-999	99	0	 -4	0	0	0	0	0	0	0	#_SizeSel_P_5_13.NZ.2C(13)       
--999	  9	   -0.57496	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_13.NZ.2C(13)   
+-999	  9	   -494.993	   0	99	0	  3	0	0	0	0	0	0	0	#_SizeSel_P_6_13.NZ.2C(13)   
 # 14  14.NZ.2S LenSelex
 #  40    300         100  100    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_1_14.NZ.2S(14)
 #   1    100          10   10    99  0     3 0   0   0   0 0.5  0    0   #_SizeSel_P_2_14.NZ.2S(14)   
@@ -569,26 +560,26 @@
  #_7=mult_by_generalized_sizecomp
 #_Factor  Fleet  Value
 	4	1	0.0        # spiky .1N
-	4	2	0.005      # spiky .1C      
-	4	3	0.05       # a few smooth rest small and spiky .1S
-	4	6	0.05       # .1S - only 2 qtrs
-	4	7	0.005      # spiky .1C - only 2 qtrs
-	4	8	0.01       # little spiky .1N 
-	4	10	0.0001     # bimodal .2N
-	4	11	0.01       # occasional spikes .2C   
+	4	2	0.000005      # spiky .1C      
+	4	3	0.20539       # a few smooth rest small and spiky .1S
+	4	6	0.00001       # .1S - only 2 qtrs
+	4	7	0.000005      # spiky .1C - only 2 qtrs
+	4	8	0.00001       # little spiky .1N 
+	4	10	0.0000001     # bimodal .2N
+	4	11	0.000002       # occasional spikes .2C   
 	4	12	0.0        # few samples .2S
-	4	13	0.01       # filtered out - no samples .2C
-	4	14	0.01        # occasional good samples + many tiny sample sizes, good time series .2S
+	4	13	0.0       # filtered out - no samples .2C
+	4	14	0.059524        # occasional good samples + many tiny sample sizes, good time series .2S
 	4	15	0.0        # bimodal .2N
-	4	16	0.05       # smooth .2C
+	4	16	0.00001       # smooth .2C
 	4	17	0.0        # so-so .2S - only 3 qtrs
-	4	18	0.000      # bimodal .2N
-	4	19	0.01       # occasional spikes .2C 
+	4	18	0.0        # bimodal .2N
+	4	19	0.000002       # occasional spikes .2C 
 #	4	22	1          # index fishery
-    5   5   0.6
-	7	4	0.02
-	7	5	0.02
-	7	13	0.02
+    5   5   0.60918
+	7	4	0.289056
+	7	5	0.2555
+	7	13	0.052141
 #	7	14	0.01       # fewer than lengths .2S
 #	7	23	0.1        # separate NZ.2S
  -9999      1    0  # terminator

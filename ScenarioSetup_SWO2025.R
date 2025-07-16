@@ -70,7 +70,7 @@ if (nzchar(Sys.getenv("BATCH_COUNT"))) {
 }
 
 
-BaseDir <- "diagnostic/base/"
+BaseDir <- "diagnostic/P_10_120_EarlyRecDevs_inputs/"
 GridDir <- "grids/"
 
 base_ctl_file <- paste0(BaseDir, "swo2025.ctl")
