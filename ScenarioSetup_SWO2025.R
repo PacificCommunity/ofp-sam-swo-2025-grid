@@ -325,5 +325,5 @@ cat("Current FACTORIAL_FACTORS:", paste(FACTORIAL_FACTORS, collapse = ", "), "\n
 
 source("R/genGrid.R")
 
-#source("R/runSS.R")
+source("R/runSS.R")
 
