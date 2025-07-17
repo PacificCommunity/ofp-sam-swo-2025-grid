@@ -38,3 +38,7 @@ Axis Number | Axis label | Dimension of axis
 6 | Mortality | 2
  
 <img width="877" height="222" alt="image" src="https://github.com/user-attachments/assets/41205018-6d18-4c6b-8cbe-160f93159599" />
+
+
+<img width="963" height="680" alt="image" src="https://github.com/user-attachments/assets/6b260771-df0d-4ce3-90a1-63f60776672c" />
+
