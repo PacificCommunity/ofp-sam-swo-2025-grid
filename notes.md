@@ -1,3 +1,5 @@
+# Main Ensemble axes
+
 Variable    | Levels                                 | Control file                                | R object
 ----------- | -------------------------------------- | ------------------------------------------- | --------------------------
 Growth      | internal, external                     | `L_at_Amin` and `parameter_offset_approach` | `MG_parms`
@@ -14,11 +16,21 @@ Growth  Steepness  Natmort  DataWts  RecProp  Movement
 2       * 3        * 2      * 5      * 2      * 3      = 360
 ```   
 
-Probably not in grid:
+# Extra dimension
+
+Probably as parallel to the previous ensemble (with different base models):
 
 Variable    | Levels                                 | Control file                                | R object
 ----------- | -------------------------------------- | ------------------------------------------- | --------------------------
 CPUE series | NZ, observer, EU                       |                                             |
+
+Ensemble size:
+
+```
+1st Grid   CPUE
+360        * 3    = 1080
+```
+
 
 # Jemery's rant
 
