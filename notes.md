@@ -48,3 +48,7 @@ Axis Number | Axis label | Dimension of axis
 
 <img width="752" height="746" alt="image" src="https://github.com/user-attachments/assets/ab4beb2b-4937-43e4-aa71-cce2b6c3a8e5" />
 
+<img width="769" height="1138" alt="image" src="https://github.com/user-attachments/assets/771572fd-0bc3-4cf6-9615-7cd9f733e5b3" />
+
+<img width="735" height="1120" alt="image" src="https://github.com/user-attachments/assets/a1a8df86-2d04-47dd-ad76-79fc226cbc4d" />
+
