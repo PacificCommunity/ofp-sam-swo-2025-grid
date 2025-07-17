@@ -28,11 +28,12 @@ You may already know some of these changes documented and coded, Kyuhan, but I t
  
 I would run the main branch first as a test 360 models. Firing off the other branch (or two), ought to be routine - but this has slightly smaller batches of files to send to condor?? Less risk splitting it? Perhaps?? More logical? Perhaps??
  
-
-Steepness (3)
-Recruitment Proportion (2)
-Movement (3)
-Data Weighting (5)
-Growth (2)
-Mortality (2)
+Axis Number | Axis label | Dimension of axis
+------------|------------|------------------
+1 | Steepness | 3
+2 | Recruitment Proportion | 2
+3 | Movement | 3
+4 | Data Weighting  | 5
+5 | Growth | 2
+6 | Mortality | 2
  
