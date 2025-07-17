@@ -20,3 +20,19 @@ Variable    | Levels                                 | Control file             
 Movement    | base, low, high                        | `MoveParm`                                  | `MG_parms`
 CPUE series | NZ, observer                           |                                             |
 Fballpark   | 0.2@2001                               |                                             |
+
+
+I'm putting this here. I have tried to make it comprehensive, describing each of the changes for each of the 6 uncertainty axes. The number of options has changed slightly from our earlier discussion, Arni (sorry some things developed slightly, out of necessity!). This gives a basic grid model "main branch" of 360 models - for which we have separate "CPUE branches", based on a different base model for each CPUE branch, either 2 (NZ out PICT 4 flag CPUE in) or 3 (aspirationally - NZ out, EU in, without the last two years) of these CPUE branches, giving 720 or 1080 models respectively.
+ 
+You may already know some of these changes documented and coded, Kyuhan, but I think it doesn't hurt to repeat them, as a check - and some I have never told you before, or modified slightly. I hope this makes sense!
+ 
+I would run the main branch first as a test 360 models. Firing off the other branch (or two), ought to be routine - but this has slightly smaller batches of files to send to condor?? Less risk splitting it? Perhaps?? More logical? Perhaps??
+ 
+
+Steepness (3)
+Recruitment Proportion (2)
+Movement (3)
+Data Weighting (5)
+Growth (2)
+Mortality (2)
+ 
