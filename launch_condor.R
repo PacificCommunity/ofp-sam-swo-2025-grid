@@ -16,9 +16,9 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "SWO_full_test/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
-condor_memory <- "7.5GB"                                        # Memory request for the Condor job (e.g., "6GB")
-condor_disk <- "14GB"
+remote_dir <- "SWO_full_test_quick/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
+condor_memory <- "10GB"                                        # Memory request for the Condor job (e.g., "6GB")
+condor_disk <- "15GB"
 condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
 branch <- "parallel"                                           # Branch of git repository to use 
 
@@ -27,7 +27,7 @@ branch <- "parallel"                                           # Branch of git r
 # ---------------------------------------
 
 nBatch=360              ## 360/4
-maxBatchIndex=20
+maxBatchIndex=1
 
 
 for (i in 1:maxBatchIndex) {
@@ -49,7 +49,7 @@ CondorBox::CondorBox(
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
-    custom_batch_name = paste0("full_", i),
+    custom_batch_name = paste0("full_quick", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
       BATCH_INDEX = paste0(i), 
