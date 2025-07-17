@@ -56,7 +56,7 @@ Axis Number | Axis label | Dimension of axis
 
 <img width="860" height="384" alt="image" src="https://github.com/user-attachments/assets/8dc0fc8d-e40b-411e-b295-f3ba2c5811a5" />
 
-And for the icing on the cake - the spearate branches of the CPUE tree/axis (possibly 3 of these?)
+And for the icing on the cake - the separate branches of the CPUE tree/axis (possibly 3 of these?):
 
 <img width="888" height="336" alt="image" src="https://github.com/user-attachments/assets/62c28978-9619-48f1-8691-398ed51163ac" />
 
