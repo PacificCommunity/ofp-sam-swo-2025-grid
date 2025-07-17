@@ -16,7 +16,6 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "ofp-sam-swo-2025-ensemble/Diag_base/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
 condor_memory <- "10GB"                                        # Memory request for the Condor job (e.g., "6GB")
 condor_disk <- "15GB"
 condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
@@ -29,6 +28,8 @@ branch <- "parallel"                                           # Branch of git r
 nBatch=360              ## 360 jobs
 maxBatchIndex=nBatch
 
+BaseCase="P_10_123_AltMove"  # Base case name
+remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
 
 for (i in 1:maxBatchIndex) {
   
@@ -56,7 +57,8 @@ CondorBox::CondorBox(
       #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
       SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
       nCORES="1",
-      VERBOSE = "FALSE"
+      VERBOSE = "FALSE",
+      BaseCase = BaseCase
     )  # BATCH_INDEX=1, 2, 3, ... 60
   )
 }

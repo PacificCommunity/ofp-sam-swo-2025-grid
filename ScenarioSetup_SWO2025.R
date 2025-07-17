@@ -59,17 +59,21 @@ batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
 SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
 VERBOSE <- as.logical(Sys.getenv("VERBOSE", FALSE))  # Default to FALSE if not set
 nCORES <- as.integer(Sys.getenv("nCORES", 4))  # Default to detectCores()-2 if not set
+BaseCase <- Sys.getenv("BaseCase", "P_10_123_AltMove")  # Default to "P_10_123_AltMove" if not set
+BaseDir <-paste0("diagnostic/", BaseCase, "/")  # Base directory for SS3 files
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {
   cat("Batch processing enabled\n")
   cat("Total batches:", batch_count, "\n")
   cat("Current batch:", batch_index, "\n")
+  cat("SS3_OPTIONS:", SS3_OPTIONS, "\n")
+  cat("VERBOSE mode:", VERBOSE, "\n")
+  cat("Number of cores:", nCORES, "\n")
+  cat("Base case directory:", BaseDir, "\n")
 } else {
   cat("Running in single batch mode\n")
 }
 
-
-BaseDir <- "diagnostic/P10_123_AltMove/"
 GridDir <- "grids/"
 
 base_ctl_file <- paste0(BaseDir, "swo2025.ctl")
