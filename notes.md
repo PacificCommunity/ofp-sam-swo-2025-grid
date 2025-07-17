@@ -37,3 +37,4 @@ Axis Number | Axis label | Dimension of axis
 5 | Growth | 2
 6 | Mortality | 2
  
+<img width="877" height="222" alt="image" src="https://github.com/user-attachments/assets/41205018-6d18-4c6b-8cbe-160f93159599" />
