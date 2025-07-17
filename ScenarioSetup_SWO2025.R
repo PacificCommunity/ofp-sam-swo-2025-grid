@@ -79,8 +79,8 @@ base_starter_file <- paste0(BaseDir, "starter.ss")
 exe_file <- "exe/ss_3.30.23.1/ss3"
 
 # Read base control file for reference
- ctlBase_original <- SS_readctl(file = base_ctl_file, datlist = base_dat_file)
- print(ctlBase_original)
+# ctlBase_original <- SS_readctl(file = base_ctl_file, datlist = base_dat_file)
+# print(ctlBase_original)
 
 ###############################
 ##### Scenario setup ##########
@@ -325,5 +325,5 @@ cat("Current FACTORIAL_FACTORS:", paste(FACTORIAL_FACTORS, collapse = ", "), "\n
 
 source("R/genGrid.R")
 
-source("R/runSS.R")
+#source("R/runSS.R")
 
