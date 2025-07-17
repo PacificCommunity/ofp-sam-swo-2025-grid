@@ -117,13 +117,13 @@ factor_groups <- list(
     
     "Base" = list(
       mg_params = list(
-        "RecrDist_GP_1_area_2_month_2" = list(INIT = 1.0986),
+        "RecrDist_GP_1_area_2_month_2" = list(INIT = 1.0986)
       )
     ),
     
     "MoreR2" = list(
       mg_params = list(
-        "RecrDist_GP_1_area_2_month_2" = list(INIT = 1.3863),
+        "RecrDist_GP_1_area_2_month_2" = list(INIT = 1.3863)
       )
     )
     
