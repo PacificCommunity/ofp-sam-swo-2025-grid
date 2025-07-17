@@ -121,7 +121,7 @@ for (i in 1:maxBatchIndex) {
     extract_archive = TRUE,
     direct_extract = TRUE,
     archive_name    = "output_archive.tar.gz",  # Archive file to extract
-    extract_folder  = "ofp-sam-swo-2025-ensemble/grids",  # Folder to extract from the archive
+    extract_folder  = paste0("ofp-sam-swo-2025-ensemble/grids/",BaseCase)
   )
   
 }
