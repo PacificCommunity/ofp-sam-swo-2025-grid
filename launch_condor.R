@@ -16,7 +16,7 @@ github_username <- "kyuhank"                                  # GitHub username 
 github_org <- "PacificCommunity"                              # GitHub organisation name (e.g., "PacificCommunity")
 github_repo <- "ofp-sam-swo-2025-ensemble"                       # GitHub repository name (e.g., "ofp-sam-docker4mfcl-example")
 docker_image <- "ghcr.io/pacificcommunity/ss3-3.30.23.1:v1.2"     # Docker image to use (e.g., "kyuhank/skj2025:1.0.4")
-remote_dir <- "SWO_full_test_quick/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
+remote_dir <- "ofp-sam-swo-2025-ensemble/Diag_base/"                 # Remote directory for CondorBox (e.g., "MFCLtest")
 condor_memory <- "10GB"                                        # Memory request for the Condor job (e.g., "6GB")
 condor_disk <- "15GB"
 condor_cpus <- 2                                               # CPU request for the Condor job (e.g., 4)
@@ -26,8 +26,8 @@ branch <- "parallel"                                           # Branch of git r
 # Run the job on Condor through CondorBox
 # ---------------------------------------
 
-nBatch=360              ## 360/4
-maxBatchIndex=1
+nBatch=360              ## 360 jobs
+maxBatchIndex=nBatch
 
 
 for (i in 1:maxBatchIndex) {
@@ -49,14 +49,14 @@ CondorBox::CondorBox(
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
-    custom_batch_name = paste0("full_quick", i),
+    custom_batch_name = paste0("SWO_Grid_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
       BATCH_INDEX = paste0(i), 
       #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
       SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
       nCORES="1",
-      VERBOSE = "TRUE"
+      VERBOSE = "FALSE"
     )  # BATCH_INDEX=1, 2, 3, ... 60
   )
 }
