@@ -145,22 +145,22 @@
   0.1 10 1        1          1      0       -1  0            0        0         0         0      0     0 # CohortGrowDev
 #  Movement
 #_ LO HI INIT     PRIOR     PR_SD PR_type PHASE env_var&link dev_link dev_minyr dev_maxyr dev_PH Block Block_Fxn
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_1_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_1_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_2_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_2_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_3_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_3_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_4_GP_1from_1to_2
-  -5   4 -2.59027 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_4_GP_1from_1to_2
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_1_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_1_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_2_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_2_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_3_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_3_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_4_GP_1from_2to_1
-  -5   4 -3.68888 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_4_GP_1from_2to_1
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_1_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_1_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_2_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_2_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_3_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_3_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_4_GP_1from_1to_2
+  -5   4 -3.57555 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_4_GP_1from_1to_2
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_1_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_1_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_2_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_2_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_3_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_3_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_A_seas_4_GP_1from_2to_1
+  -5   4 -3.05761 0         99      0       -3  0            0        0         0         0      0     0 # MoveParm_B_seas_4_GP_1from_2to_1
 #  Age Error from parameters
 #  catch multiplier
 #  fraction female, by GP
