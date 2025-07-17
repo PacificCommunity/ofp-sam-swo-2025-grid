@@ -2,30 +2,28 @@ Variable    | Levels                                 | Control file             
 ----------- | -------------------------------------- | ------------------------------------------- | --------------------------
 Growth      | internal, external                     | `L_at_Amin` and `parameter_offset_approach` | `MG_parms`
 Steepness   | 0.7, 0.8, 0.9                          | `SR_BH_steep`                               | `SR_parms`
-Natmort     | estimated, Hamel-Cope, 10th percentile | `NatM_Lorenzen_Fem_GP_1`                    | `MG_parms`
-DataWts     | 2\*age, 2\*weight, 2\*length           | `Input variance adjustments factors`        | `Variance_adjustment_list`
-RecProp     | 0.3, 0.5, 0.7                          | `RecrDist_GP_1_area_1_month_2`              | `MG_parms`
+Natmort     | estimated, Hamel-Cope                  | `NatM_Lorenzen_Fem_GP_1`                    | `MG_parms`
+DataWts     | 2\*weight, 2\*length                   | `Input variance adjustments factors`        | `Variance_adjustment_list`
+RecProp     | 1:3, 1:4                               | `RecrDist_GP_1_area_1_month_2`              | `MG_parms`
+Movement    | halve 1->2, halve 2->1                 | `MoveParm_A_seas_1_GP_1from_1to_2`          | `MG_parms`
 
 Grid size:
 
 ```
-Growth  Steepness  Natmort  DataWts  RecProp
-2     * 3        * 3      * 3      * 3       = 162
-```
+Growth  Steepness  Natmort  DataWts  RecProp  Movement
+2       * 3        * 2      * 5      * 2      * 3      = 360
+```   
 
 Probably not in grid:
 
 Variable    | Levels                                 | Control file                                | R object
 ----------- | -------------------------------------- | ------------------------------------------- | --------------------------
-Movement    | base, low, high                        | `MoveParm`                                  | `MG_parms`
-CPUE series | NZ, observer                           |                                             |
-Fballpark   | 0.2@2001                               |                                             |
+CPUE series | NZ, observer, EU                       |                                             |
 
+# Jemery's rant
 
-I'm putting this here. I have tried to make it comprehensive, describing each of the changes for each of the 6 uncertainty axes. The number of options has changed slightly from our earlier discussion, Arni (sorry some things developed slightly, out of necessity!). This gives a basic grid model "main branch" of 360 models - for which we have separate "CPUE branches", based on a different base model for each CPUE branch, either 2 (NZ out PICT 4 flag CPUE in) or 3 (aspirationally - NZ out, EU in, without the last two years) of these CPUE branches, giving 720 or 1080 models respectively.
- 
-You may already have some of these changes, documented and coded, Kyuhan, but I think it doesn't hurt to repeat them, as a check - and some I have never told you before, or else I have modified slightly. I hope this makes sense!
- 
+This describes each of the changes for each of the 6 uncertainty axes. The number of options has changed slightly from our earlier discussion, Arni (sorry some things developed slightly, out of necessity!). This gives a basic grid model "main branch" of 360 models - for which we have separate "CPUE branches", based on a different base model for each CPUE branch, either 2 (NZ out PICT 4 flag CPUE in) or 3 (aspirationally - NZ out, EU in, without the last two years) of these CPUE branches, giving 720 or 1080 models respectively.
+  
 I would run the main branch first as a test 360 models. Firing off the other branch (or two), ought to be routine - but this has slightly smaller batches of files to send to condor?? Less risk splitting it? Perhaps?? More logical? Perhaps??
  
 Axis Number | Axis label | Dimension of axis
@@ -56,6 +54,7 @@ Axis Number | Axis label | Dimension of axis
 
 <img width="860" height="384" alt="image" src="https://github.com/user-attachments/assets/8dc0fc8d-e40b-411e-b295-f3ba2c5811a5" />
 
+# Icing?
 And for the icing on the cake - the separate branches of the CPUE tree/axis (possibly 3 of these?):
 
 <img width="888" height="336" alt="image" src="https://github.com/user-attachments/assets/62c28978-9619-48f1-8691-398ed51163ac" />
