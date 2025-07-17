@@ -28,7 +28,11 @@ branch <- "parallel"                                           # Branch of git r
 nBatch=360              ## 360 jobs
 maxBatchIndex=nBatch
 
-BaseCase="P_10_123_AltMove"  # Base case name
+BaseCase="Q_10_127_Diag_inputs"  # Base case name
+#BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
+#BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
+
+
 remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
 
 for (i in 1:maxBatchIndex) {
