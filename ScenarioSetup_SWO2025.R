@@ -56,10 +56,10 @@ source("R/helpers.R")
 
 batch_count <- as.integer(Sys.getenv("BATCH_COUNT", 1))
 batch_index <- as.integer(Sys.getenv("BATCH_INDEX", 1))
-SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-stopph 2 -nohess")  # Get SS3 options from environment variable
+SS3_OPTIONS <- Sys.getenv("SS3_OPTIONS", "-maxfn 500 -cbs 2000000000 -gbs 5000000000")  # Get SS3 options from environment variable
 VERBOSE <- as.logical(Sys.getenv("VERBOSE", FALSE))  # Default to FALSE if not set
 nCORES <- as.integer(Sys.getenv("nCORES", 4))  # Default to detectCores()-2 if not set
-BaseCase <- Sys.getenv("BaseCase", "P_10_123_AltMove")  # Default to "P_10_123_AltMove" if not set
+BaseCase <- Sys.getenv("BaseCase", "Q_10_127_Diag_inputs")  # Default to "P_10_123_AltMove" if not set
 BaseDir <-paste0("diagnostic/", BaseCase, "/")  # Base directory for SS3 files
 
 if (nzchar(Sys.getenv("BATCH_COUNT"))) {

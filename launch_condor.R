@@ -32,11 +32,10 @@ BaseCase="Q_10_127_Diag_inputs"  # Base case name
 #BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
 #BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
 
-
 remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
 
 for (i in 1:maxBatchIndex) {
-  
+
 CondorBox::CondorBox(
     make_options = "ss3",
     remote_user = remote_user,
@@ -54,17 +53,22 @@ CondorBox::CondorBox(
     branch = branch, 
     rmclone_script = "no",
     ghcr_login = T,
+    exclude_slots=c("slot1@nouofpcand27",
+                    "slot1@nouofpcand28", 
+                    "slot1@nouofpcand29",
+                    "slot1@nouofpcand30"),   ## these slots are super slow..
     custom_batch_name = paste0("SWO_Grid_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
       BATCH_INDEX = paste0(i), 
       #SS3_OPTIONS = "-stopph 2 -nohess -cbs 2000000000 -gbs 5000000000",
-      SS3_OPTIONS = "-cbs 2000000000 -gbs 5000000000",
+      SS3_OPTIONS = "-maxfn 500 -cbs 2000000000 -gbs 5000000000",
       nCORES="1",
       VERBOSE = "FALSE",
       BaseCase = BaseCase
     )  # BATCH_INDEX=1, 2, 3, ... 60
   )
+  
 }
 
 
@@ -125,4 +129,3 @@ for (i in 1:maxBatchIndex) {
   )
   
 }
-
