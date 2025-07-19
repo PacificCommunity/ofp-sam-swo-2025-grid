@@ -28,8 +28,8 @@ branch <- "parallel"                                           # Branch of git r
 nBatch=360              ## 360 jobs
 maxBatchIndex=nBatch
 
-BaseCase="Q_10_127_Diag_inputs"  # Base case name
-#BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
+#BaseCase="Q_10_127_Diag_inputs"  # Base case name
+BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
 #BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
 
 remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
@@ -56,7 +56,8 @@ CondorBox::CondorBox(
     exclude_slots=c("slot1@nouofpcand27",
                     "slot1@nouofpcand28", 
                     "slot1@nouofpcand29",
-                    "slot1@nouofpcand30"),   ## these slots are super slow..
+                    "slot1@nouofpcand30",
+                    "slot_1@suvofpcand26.corp.spc.int"),   ## these slots are super slow..
     custom_batch_name = paste0("SWO_Grid_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
