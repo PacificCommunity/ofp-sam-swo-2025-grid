@@ -57,7 +57,9 @@ CondorBox::CondorBox(
                     "slot1@nouofpcand28", 
                     "slot1@nouofpcand29",
                     "slot1@nouofpcand30",
-                    "slot_1@suvofpcand26.corp.spc.int"),   ## these slots are super slow..
+                    "slot_1@suvofpcand26.corp.spc.int",
+                    "slot_2@suvofpcand26.corp.spc.int",
+                    "slot_3@suvofpcand26.corp.spc.int"),   ## these slots are super slow..
     custom_batch_name = paste0("SWO_Grid_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
