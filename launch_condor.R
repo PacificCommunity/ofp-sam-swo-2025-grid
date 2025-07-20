@@ -26,15 +26,15 @@ branch <- "parallel"                                           # Branch of git r
 # ---------------------------------------
 
 nBatch=360              ## 360 jobs
-maxBatchIndex=nBatch
+BatchIndex=c(93, 188, 339)
 
-#BaseCase="Q_10_127_Diag_inputs"  # Base case name
+BaseCase="Q_10_127_Diag_inputs"  # Base case name
 #BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
-BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
+#BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
 
 remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
 
-for (i in 1:maxBatchIndex) {
+for (i in BatchIndex) {
 
 CondorBox::CondorBox(
     make_options = "ss3",
@@ -79,7 +79,7 @@ CondorBox::CondorBox(
 ## Delete file (clone_job.sh) ##
 ################################
 
-for (i in 1:maxBatchIndex) {
+for (i in BatchIndex) {
   
   CondorBox::BatchFileHandler(
     remote_user   = remote_user,
@@ -95,7 +95,7 @@ for (i in 1:maxBatchIndex) {
 ## Extract grids directly to penguin ##
 #######################################
 
-for (i in 1:maxBatchIndex) {
+for (i in BatchIndex) {
   
   CondorBox::BatchFileHandler(
     remote_user   = remote_user,
@@ -117,7 +117,7 @@ for (i in 1:maxBatchIndex) {
 ## Extract grids directly to local directory ##
 ###############################################
 
-for (i in 1:maxBatchIndex) {
+for (i in BatchIndex) {
   
   CondorBox::BatchFileHandler(
     remote_user   = remote_user,
