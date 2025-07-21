@@ -26,11 +26,11 @@ branch <- "parallel"                                           # Branch of git r
 # ---------------------------------------
 
 nBatch=360              ## 360 jobs
-BatchIndex=44:360
+BatchIndex=1:360
 
 #BaseCase="Q_10_127_Diag_inputs"  # Base case name
-#BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
-BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
+BaseCase="Q_10_128_PICTCPUE_inputs"  # Base case name
+#BaseCase="Q_10_129_EUCPUE_inputs"  # Base case name
 
 remote_dir <- paste0(github_repo, "/", BaseCase, "/")  # Remote directory for the job (e.g., "ofp-sam-docker4mfcl-example/P_10_123_AltMove/"))
 
@@ -57,9 +57,9 @@ CondorBox::CondorBox(
                     "slot1@nouofpcand28", 
                     "slot1@nouofpcand29",
                     "slot1@nouofpcand30",
-                    "slot_1@suvofpcand26.corp.spc.int",
-                    "slot_2@suvofpcand26.corp.spc.int",
-                    "slot_3@suvofpcand26.corp.spc.int"),   ## these slots are super slow..
+                    "slot1_1@suvofpcand26.corp.spc.int",
+                    "slot1_2@suvofpcand26.corp.spc.int",
+                    "slot1_3@suvofpcand26.corp.spc.int"),   ## these slots are super slow..
     custom_batch_name = paste0("SWO_Grid_EU_", i),
     condor_environment = list(
       BATCH_COUNT = paste0(nBatch),
@@ -124,11 +124,11 @@ for (i in BatchIndex) {
     remote_host   = remote_host,
     folder_name   = paste0(remote_dir, "Batch_", i),
     action        = "fetch",
-    fetch_dir     =  "grids",  # Local directory to fetch the grids
+    fetch_dir     =  paste0("grids/",BaseCase),  # Local directory to fetch the grids
     extract_archive = TRUE,
     direct_extract = TRUE,
     archive_name    = "output_archive.tar.gz",  # Archive file to extract
-    extract_folder  = paste0("ofp-sam-swo-2025-ensemble/grids/",BaseCase)
+    extract_folder  = paste0("ofp-sam-swo-2025-ensemble/grids")
   )
   
 }
