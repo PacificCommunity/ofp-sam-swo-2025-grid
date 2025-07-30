@@ -14,8 +14,9 @@ r4ss <- function(i)
 
   # Select models of interest, prepare unique rds filenames
   model_runs <- grepv("Growth-External", model_runs, invert=TRUE)
-  rds_files <- file.path("../rds", paste0(basename(dirname(model_runs)), "_",
-                                          basename(model_runs), ".rds"))
+  rds_files <- sub("\\.\\./", "../rds/", model_runs)       # inside rds folder
+  rds_files <- sub("/Steepness", "_Steepness", rds_files)  # _ separators
+  rds_files <- paste0(rds_files, ".rds")                   # .rds extension
 
   # Read model results into r4ss object
   cat("Processing model", i, "... ")

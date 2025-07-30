@@ -1,3 +1,3 @@
 #!/bin/bash
 
-for i in {181..270}; do Rscript worker.R $i; done
+for i in {121..180}; do Rscript worker.R $i; done
