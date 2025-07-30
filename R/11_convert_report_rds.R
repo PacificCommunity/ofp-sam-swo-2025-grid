@@ -1,3 +1,5 @@
+# Convert Report.sso files r4ss objects saved as rds
+
 library(r4ss)
 
 # Create directory
