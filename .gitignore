@@ -3,4 +3,6 @@ condor.sub
 condor_run.sh
 
 # Grid result folders
-Q_10_*
+/Q_10_*.zip
+/Q_10_*/
+/rds
