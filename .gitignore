@@ -6,3 +6,6 @@ condor_run.sh
 /Q_10_*.zip
 /Q_10_*/
 /rds
+
+# Plot folder
+/plots/ensemble2
