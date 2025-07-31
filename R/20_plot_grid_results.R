@@ -19,7 +19,7 @@ model_list <- list(model_one=model, model_two=model)
 # REFERENCE POINTS EXTRACTION FUNCTIONS
 #===============================================================================
 
-extract_reference_points <- function(model)
+extract_refpts <- function(model)
 {
   annual <- model$annual_time_series
   derived <- model$derived_quants
@@ -78,7 +78,7 @@ create_ensemble <- function(model_list)
     run_name <- names(model_list)[i]
 
     # Extract reference points
-    ref_points <- extract_reference_points(model)
+    ref_points <- extract_refpts(model)
     refpt_list[[run_name]] <- data.frame(Run=run_name, ref_points)
 
     # Get model results
@@ -508,13 +508,13 @@ if(length(model_list) == 0) {
 #==============================================================================
 
 # Include your enhanced ensemble creation functions here
-# (All the functions from the previous artifacts: extract_reference_points,
-#  create_ensemble_with_reference_points, etc.)
+# (All the functions from the previous artifacts: extract_refpts,
+#  create_ensemble, etc.)
 
 cat("\n=== CREATING ENSEMBLE DATA WITH REFERENCE POINTS ===\n")
 
 # Create ensemble data with reference points
-ensemble_results <- create_ensemble_with_reference_points(model_list)
+ensemble_results <- create_ensemble(model_list)
 kb_data <- ensemble_results$timeseries
 ref_points_list <- ensemble_results$reference_points
 
