@@ -1,0 +1,28 @@
+Summary of plots in the ensemble2.zip archive
+
+File                   Plot type    Quantity
+Combined_Ribbon_plots  Ribbon       SB_SBmsy, F_Fmsy, SB, SB_SBF0
+Kobe_Plot_Overall      Scatterplot  Frecent_Fmsy, SBrecent_SBmsy
+Recruitment_CV         Barplot      sd(R)
+Recruitment_Periods    Boxplot      mean(R)
+Recruitment_Ribbon     Ribbon       Rec
+Ribbon_F_Fmsy          Ribbon       F_Fmsy
+Ribbon_F               Ribbon       F
+Ribbon_Recr            Ribbon       Rec
+Ribbon_SB_SBF0         Ribbon       SB_SBF0
+Ribbon_SB_SBmsy        Ribbon       SB_SBmsy
+Ribbon_SSB             Ribbon       SB
+
+Time series
+F
+Rec
+SB
+F_Fmsy
+SB_SBF0
+SB_SBmsy
+
+Constant
+Frecent_Fmsy
+SBrecent_SBmsy
+sd(R)
+mean(R)
