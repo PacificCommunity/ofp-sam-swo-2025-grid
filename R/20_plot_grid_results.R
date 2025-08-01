@@ -16,14 +16,13 @@ dir.create(plot_dir, showWarnings=FALSE)
 model_files <- dir(rds_dir, full=TRUE)
 model_1 <- readRDS(model_files[1])
 model_2 <- readRDS(model_files[2])
-model <- model_1
 model_list <- list(model_one=model_1, model_two=model_2)
-v <- "SB"
 
 # Convergence
-data.frame
-unname(unlist(sapply(model_list, `[`, "log_det_hessian")))
-sapply(model_list, `[`, "maximum_gradient_component")
+conv <- data.frame(Model=names(model_list))
+conv$Gradient <- unlist(sapply(model_list, `[`, "maximum_gradient_component"))
+conv$log_det_hessian <- unlist(sapply(model_list, `[`, "log_det_hessian"))
+conv$PDH <- conv$log_det_hessian > 1e-6  # safer than > 0.0 floating point
 
 # Create ensemble
 ensemble <- create_ensemble(model_list)
