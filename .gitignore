@@ -9,3 +9,4 @@ condor_run.sh
 
 # Plot folder
 /plots/ensemble2
+/plots/*.png
