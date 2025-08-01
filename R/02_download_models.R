@@ -1,5 +1,5 @@
 library(condor)
-source("utilities.R")
+source("utilities_condor.R")
 options(width=160)
 
 session <- ssh_connect("nouofpsubmit")
