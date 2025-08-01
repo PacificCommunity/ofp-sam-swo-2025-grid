@@ -1,11 +1,13 @@
 # Plot grid results
 
-library(r4ss)
+# library(r4ss)
 library(dplyr)
 library(ggplot2)
-library(tidyr)
-library(viridis)
-library(gridExtra)
+# library(tidyr)
+# library(viridis)
+# library(gridExtra)
+
+source("utilities_r4ss.R")
 
 rds_dir <- "../rds"     # model results in r4ss format, saved as rds files
 plot_dir <- "../plots"
@@ -15,125 +17,43 @@ model_files <- dir(rds_dir, full=TRUE)
 model_1 <- readRDS(model_files[1])
 model_2 <- readRDS(model_files[2])
 model <- model_1
-model_list <- list(model_one=model_1, model_two=model)
+model_list <- list(model_one=model_1, model_two=model_2)
+v <- "SB"
 
-#==============================================================================
-# READ MODELS AND CHECK CONVERGENCE
-#==============================================================================
+# Convergence
+data.frame
+unname(unlist(sapply(model_list, `[`, "log_det_hessian")))
+sapply(model_list, `[`, "maximum_gradient_component")
 
-successful_reads <- character()
-convergence_info <- data.frame(
-  Model = character(),
-  Converged = logical(),
-  Hessian_Positive = logical(),
-  Max_Gradient = numeric(),
-  Convergence_Level = numeric(),
-  Reason = character()
-)
+# Create ensemble
+ensemble <- create_ensemble(model_list)
 
-# Read each model
-for(i in seq_along(existing_all_dirs)) {
-  cat("Reading model", i, "of", length(existing_all_dirs), ":", existing_all_dirs[i], "\n")
+# Plots
+plot_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "F", "Rec", "SB_SBF0")
 
-    model <- SS_output(existing_full_paths[i], verbose = FALSE, printstats = FALSE, covar = TRUE)
-    conv_check <- check_convergence(model, existing_all_dirs[i])
-
-    # Add to convergence info
-    convergence_info <- rbind(convergence_info, data.frame(
-                                                  Model = existing_all_dirs[i],
-                                                  Converged = conv_check$converged,
-                                                  Hessian_Positive = conv_check$hess_positive,
-                                                  Max_Gradient = conv_check$max_grad,
-                                                  Convergence_Level = conv_check$convergence_level,
-                                                  Reason = conv_check$reason,
-                                                  stringsAsFactors = FALSE
-                                                ))
-
-    # Include model based on criteria
-    include_model <- conv_check$hess_positive
-    if(CONVERGENCE_FILTER && !is.na(conv_check$convergence_level)) {
-      include_model <- include_model && (conv_check$convergence_level <= MAX_CONVERGENCE_LEVEL)
-    }
-
-  }, error = function(e) {
-    cat("  ✗ Error reading:", e$message, "\n")
-  })
-}
-
-names(model_list) <- successful_reads
-
-cat("\n=== FILTERING SUMMARY ===\n")
-cat("Models meeting criteria:", length(model_list), "out of", length(existing_all_dirs), "\n")
-
-if(length(model_list) == 0) {
-  stop("No models passed filtering criteria!")
-}
-
-#==============================================================================
-# CREATE ENSEMBLE DATA WITH REFERENCE POINTS
-#==============================================================================
-
-# Include your enhanced ensemble creation functions here
-# (All the functions from the previous artifacts: extract_refpts,
-#  create_ensemble, etc.)
-
-cat("\n=== CREATING ENSEMBLE DATA WITH REFERENCE POINTS ===\n")
-
-# Create ensemble data with reference points
-ensemble_results <- create_ensemble(model_list)
-kb_data <- ensemble_results$timeseries
-ref_points_list <- ensemble_results$reference_points
-
-# Check data structure
-cat("Ensemble data created with", nrow(kb_data), "rows\n")
-cat("Variables available:", names(kb_data), "\n")
-cat("Year range:", min(kb_data$year), "to", max(kb_data$year), "\n")
-cat("Models included:", length(unique(kb_data$run)), "\n")
-
-# Create reference points table
-ref_table <- create_reference_points_table(ref_points_list)
-cat("Reference points extracted for", length(ref_points_list), "models\n")
-
-#==============================================================================
-# CREATE ESSENTIAL ENSEMBLE PLOTS
-#==============================================================================
-
-cat("\n=== CREATING ESSENTIAL ENSEMBLE PLOTS ===\n")
-
-# Create individual ribbon plots for each variable
-plot_vars <- c("SB_SBmsy", "F_Fmsy", "SSB", "F", "Rec", "SB_SBF0")
-plot_vars <- plot_vars[plot_vars %in% names(kb_data)]
-
-for(var in plot_vars) {
-  cat("Creating ribbon plot for variable:", var, "\n")
-
+for(v in plot_vars)
+{
+  cat("Creating ribbon plot for variable:", v, "\n")
   # Determine reference line and y-label
   ref_line <- NULL
-  y_label <- var
-
-  if(var == "SB_SBmsy") {
+  y_label <- v
+  if(v == "SB_SBmsy") {
     ref_line <- 1
     y_label <- "SB/SBmsy"
-  } else if(var == "F_Fmsy") {
+  } else if(v == "F_Fmsy") {
     ref_line <- 1
     y_label <- "F/Fmsy"
-  } else if(var == "SB_SBF0") {
+  } else if(v == "SB_SBF0") {
     y_label <- "SB/SB(F=0)"
   }
-
-  p <- create_ribbon_plot(kb_data, var,
-                          reference_line = ref_line,
-                          y_label = y_label)
-
-  if(!is.null(p)) {
-    ggsave(file.path(plot_dir, paste0("Ribbon_", var, ".png")),
-           plot = p, width = 12, height = 8, dpi = 300)
-  }
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label)
+  ggsave(file.path(plot_dir, paste0("Ribbon_", v, ".png")), p,
+         width=12, height=8, dpi=300)
 }
 
 # Create comprehensive combined ribbon plot
 cat("Creating combined ribbon plot\n")
-combined_vars <- c("SB_SBmsy", "F_Fmsy", "SSB", "SB_SBF0")
+combined_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "SB_SBF0")
 combined_vars <- combined_vars[combined_vars %in% names(kb_data)]
 
 if(length(combined_vars) >= 4) {

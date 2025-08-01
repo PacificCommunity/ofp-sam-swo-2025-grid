@@ -45,7 +45,7 @@ extract_refpts <- function(model)
 create_ensemble <- function(model_list)
 {
   tseries_list <- list()
-  refpt_list <- list()
+  refpts_list <- list()
 
   for(i in seq_along(model_list))
   {
@@ -53,37 +53,37 @@ create_ensemble <- function(model_list)
     run_name <- names(model_list)[i]
 
     # Extract reference points
-    ref_points <- extract_refpts(model)
-    refpt_list[[run_name]] <- data.frame(Run=run_name, ref_points)
+    rp <- extract_refpts(model)
+    refpts_list[[run_name]] <- data.frame(Model=run_name, rp)
 
     # Get model results
     annual <- model$annual_time_series[model$annual_time_series$Era == "TIME",]
     dynamic <- model$Dynamic_Bzero[model$Dynamic_Bzero$Era == "TIME",]
 
     # Extract time series
-    tseries <- data.frame(Run=run_name, Year=annual$year)
-    tseries$F <- annual$"F=Z-M"
-    tseries$Rec <- annual$recruits
-    tseries$SB <- annual$SSB
+    ts <- data.frame(Model=run_name, Year=annual$year)
+    ts$F <- annual$"F=Z-M"
+    ts$Rec <- annual$recruits
+    ts$SB <- annual$SSB
 
     # Calculate ratio time series
-    tseries$F_Fmsy <- tseries$F / ref_points$Fmsy
-    tseries$SB_SBF0 <- tseries$SB / dynamic$SSB_nofishing
-    tseries$SB_SBmsy <- tseries$SB / ref_points$SBmsy
+    ts$F_Fmsy <- ts$F / rp$Fmsy
+    ts$SB_SBF0 <- ts$SB / dynamic$SSB_nofishing
+    ts$SB_SBmsy <- ts$SB / rp$SBmsy
 
-    tseries_list[[i]] <- tseries
+    tseries_list[[i]] <- ts
   }
 
   # Combine data
-  timeseries <- do.call(rbind, tseries_list)
-  ref_points <- do.call(rbind, refpt_list)
-  row.names(ref_points) <- NULL
+  tseries <- do.call(rbind, tseries_list)
+  refpts <- do.call(rbind, refpts_list)
+  row.names(refpts) <- NULL
 
-  list(timeseries=timeseries, ref_points=ref_points)
+  list(tseries=tseries, refpts=refpts)
 }
 
 ribbon_plot <- function(kb_data, variable, title_suffix = "",
-                        reference_line = NULL, y_label = NULL) {
+                        ref_line = NULL, y_label = NULL) {
 
   if(!variable %in% names(kb_data)) {
     warning("Variable ", variable, " not found in data")
@@ -92,7 +92,7 @@ ribbon_plot <- function(kb_data, variable, title_suffix = "",
 
   # Calculate quantiles by year
   ribbon_data <- kb_data %>%
-    group_by(year) %>%
+    group_by(Year) %>%
     summarise(
       median = median(.data[[variable]], na.rm = TRUE),
       q25 = quantile(.data[[variable]], 0.25, na.rm = TRUE),
@@ -105,7 +105,7 @@ ribbon_plot <- function(kb_data, variable, title_suffix = "",
     )
 
   # Create plot
-  p <- ggplot(ribbon_data, aes(x = year)) +
+  p <- ggplot(ribbon_data, aes(x = Year)) +
     geom_ribbon(aes(ymin = q05, ymax = q95), alpha = 0.2, fill = "blue") +
     geom_ribbon(aes(ymin = q10, ymax = q90), alpha = 0.3, fill = "blue") +
     geom_ribbon(aes(ymin = q25, ymax = q75), alpha = 0.4, fill = "blue") +
@@ -124,8 +124,8 @@ ribbon_plot <- function(kb_data, variable, title_suffix = "",
     )
 
   # Add reference line if specified
-  if(!is.null(reference_line)) {
-    p <- p + geom_hline(yintercept = reference_line, linetype = "dashed",
+  if(!is.null(ref_line)) {
+    p <- p + geom_hline(yintercept = ref_line, linetype = "dashed",
                         color = "red", size = 1)
   }
 
@@ -224,7 +224,7 @@ recruitment_analysis <- function(kb_data) {
       cv_recr = sd_recr / mean_recr,
       min_recr = min(Rec, na.rm = TRUE),
       max_recr = max(Rec, na.rm = TRUE),
-      recent_recr = mean(Rec[year >= 2015], na.rm = TRUE),
+      recent_recr = mean(Rec[Year >= 2015], na.rm = TRUE),
       .groups = "drop"
     )
 
@@ -249,9 +249,9 @@ recruitment_analysis <- function(kb_data) {
   recr_comparison <- kb_data %>%
     mutate(
       period = case_when(
-        year < 2000 ~ "Historical (pre-2000)",
-        year >= 2000 & year < 2015 ~ "Recent (2000-2014)",
-        year >= 2015 ~ "Latest (2015+)",
+        Year < 2000 ~ "Historical (pre-2000)",
+        Year >= 2000 & Year < 2015 ~ "Recent (2000-2014)",
+        Year >= 2015 ~ "Latest (2015+)",
         TRUE ~ "Other"
       )
     ) %>%
