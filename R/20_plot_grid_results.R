@@ -1,11 +1,11 @@
 # Plot grid results
 
 # library(r4ss)
-library(dplyr)
-library(ggplot2)
+library(dplyr)      # %>%
+library(ggplot2)    # ggplot
 # library(tidyr)
 # library(viridis)
-# library(gridExtra)
+library(gridExtra)  # grid.arrange
 
 source("utilities_r4ss.R")
 
@@ -28,11 +28,9 @@ sapply(model_list, `[`, "maximum_gradient_component")
 # Create ensemble
 ensemble <- create_ensemble(model_list)
 
-# Plots
+# Single ribbon plots
 plot_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "F", "Rec", "SB_SBF0")
-
-for(v in plot_vars)
-{
+for(v in plot_vars) {
   cat("Creating ribbon plot for variable:", v, "\n")
   # Determine reference line and y-label
   ref_line <- NULL
@@ -51,40 +49,30 @@ for(v in plot_vars)
          width=12, height=8, dpi=300)
 }
 
-# Create comprehensive combined ribbon plot
-cat("Creating combined ribbon plot\n")
+# Multipanel ribbon plot
+cat("Creating multipanel ribbon plot\n")
 combined_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "SB_SBF0")
-combined_vars <- combined_vars[combined_vars %in% names(kb_data)]
-
-if(length(combined_vars) >= 4) {
-  combined_plots <- list()
-
-  for(var in combined_vars) {
-    ref_line <- if(var %in% c("SB_SBmsy", "F_Fmsy")) 1 else NULL
-    y_label <- switch(var,
-                      "SB_SBmsy" = "SB/SBmsy",
-                      "F_Fmsy" = "F/Fmsy",
-                      "SB_SBF0" = "SB/SB(F=0)",
-                      var)
-
-    p <- create_ribbon_plot(kb_data, var, reference_line = ref_line, y_label = y_label) +
-      theme(axis.title.x = element_blank()) # Remove x-axis title for grid
-    combined_plots[[var]] <- p
-  }
-
-  # Arrange plots in grid
-  combined_plot <- do.call(grid.arrange, c(combined_plots, ncol = 2))
-  ggsave(file.path(plot_dir, "Combined_Ribbon_Plots.png"),
-         plot = combined_plot, width = 16, height = 12, dpi = 300)
+combined_plots <- list()
+for(v in combined_vars) {
+  ref_line <- if(v %in% c("SB_SBmsy", "F_Fmsy")) 1 else NULL
+  y_label <- switch(v,
+                    "SB_SBmsy" = "SB/SBmsy",
+                    "F_Fmsy" = "F/Fmsy",
+                    "SB_SBF0" = "SB/SB(F=0)",
+                    v)
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label) +
+    theme(axis.title.x = element_blank())  # no x-axis title
+  combined_plots[[v]] <- p
 }
+combined_plot <- do.call(grid.arrange, c(combined_plots, ncol=2))
+ggsave(file.path(plot_dir, "Combined_Ribbon_Plots.png"),
+       combined_plot, width=16, height=12, dpi=300)
 
-# Create ONLY the overall Kobe plot
-cat("Creating overall Kobe plot\n")
-kobe_plot <- create_kobe_plot(ref_points_list)
-if(!is.null(kobe_plot)) {
-  ggsave(file.path(plot_dir, "Kobe_Plot_Overall.png"),
-         plot = kobe_plot, width = 12, height = 10, dpi = 300)
-}
+# Kobe plot
+cat("Creating Kobe plot\n")
+p <- kobe_plot(ensemble$refpts)
+ggsave(file.path(plot_dir, "Kobe_Plot_Overall.png"),
+       p, width=12, height=10, dpi=300)
 
 # Create recruitment analysis
 cat("Creating recruitment analysis\n")

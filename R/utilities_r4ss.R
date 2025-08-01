@@ -1,5 +1,4 @@
-extract_refpts <- function(model)
-{
+extract_refpts <- function(model) {
   annual <- model$annual_time_series
   derived <- model$derived_quants
   dynamic <- model$Dynamic_Bzero[model$Dynamic_Bzero$Era == "TIME",]
@@ -42,8 +41,7 @@ extract_refpts <- function(model)
   ref_points
 }
 
-create_ensemble <- function(model_list)
-{
+create_ensemble <- function(model_list) {
   tseries_list <- list()
   refpts_list <- list()
 
@@ -82,16 +80,16 @@ create_ensemble <- function(model_list)
   list(tseries=tseries, refpts=refpts)
 }
 
-ribbon_plot <- function(kb_data, variable, title_suffix = "",
+ribbon_plot <- function(tseries, variable, title_suffix = "",
                         ref_line = NULL, y_label = NULL) {
 
-  if(!variable %in% names(kb_data)) {
+  if(!variable %in% names(tseries)) {
     warning("Variable ", variable, " not found in data")
     return(NULL)
   }
 
   # Calculate quantiles by year
-  ribbon_data <- kb_data %>%
+  ribbon_data <- tseries %>%
     group_by(Year) %>%
     summarise(
       median = median(.data[[variable]], na.rm = TRUE),
@@ -208,15 +206,15 @@ kobe_plot <- function(ref_points_list, highlight_recent = TRUE) {
   return(p)
 }
 
-recruitment_analysis <- function(kb_data) {
+recruitment_analysis <- function(tseries) {
 
-  if(!"Rec" %in% names(kb_data)) {
+  if(!"Rec" %in% names(tseries)) {
     warning("Recruitment data not available")
     return(NULL)
   }
 
   # Calculate recruitment statistics by model
-  recr_stats <- kb_data %>%
+  recr_stats <- tseries %>%
     group_by(run) %>%
     summarise(
       mean_recr = mean(Rec, na.rm = TRUE),
@@ -229,7 +227,7 @@ recruitment_analysis <- function(kb_data) {
     )
 
   # Create recruitment ribbon plot
-  p1 <- create_ribbon_plot(kb_data, "Rec",
+  p1 <- create_ribbon_plot(tseries, "Rec",
                            title_suffix = "Variability Across Models",
                            y_label = "Recruitment")
 
@@ -246,7 +244,7 @@ recruitment_analysis <- function(kb_data) {
     theme(axis.text.y = element_text(size = 8))
 
   # Create recent vs historical recruitment comparison
-  recr_comparison <- kb_data %>%
+  recr_comparison <- tseries %>%
     mutate(
       period = case_when(
         Year < 2000 ~ "Historical (pre-2000)",
