@@ -6,14 +6,15 @@ library(gridExtra)  # grid.arrange
 
 source("utilities_r4ss.R")
 
-rds_dir <- "../rds"     # model results in r4ss format, saved as rds files
-plot_dir <- "../plots"
-dir.create(plot_dir, showWarnings=FALSE)
+# rds_dir <- "../rds"     # model results in r4ss format, saved as rds files
+# plot_dir <- "../plots"
+# dir.create(plot_dir, showWarnings=FALSE)
 
-model_files <- dir(rds_dir, full=TRUE)
-model_1 <- readRDS(model_files[1])
-model_2 <- readRDS(model_files[2])
-model_list <- list(model_one=model_1, model_two=model_2)
+# model_files <- dir(rds_dir, full=TRUE)
+# model_1 <- readRDS(model_files[1])
+# model_2 <- readRDS(model_files[2])
+# model_list <- list(model_one=model_1, model_two=model_2)
+model_list <- readRDS("../model_list/model_list.rds")
 
 # Convergence
 conv <- data.frame(Model=names(model_list))
