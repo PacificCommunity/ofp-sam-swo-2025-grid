@@ -40,4 +40,5 @@ tiny <- sub("M50th", "Mhac", tiny)
 
 names(model_list) <- tiny
 
-saveRDS(model_list, "../model_list.rds")
+dir.create("../model_list", showWarnings=FALSE)
+saveRDS(model_list, "../model_list/model_list.rds")
