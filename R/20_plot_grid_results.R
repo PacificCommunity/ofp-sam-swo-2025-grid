@@ -7,8 +7,8 @@ library(gridExtra)  # grid.arrange
 source("utilities_r4ss.R")
 
 # rds_dir <- "../rds"     # model results in r4ss format, saved as rds files
-# plot_dir <- "../plots"
-# dir.create(plot_dir, showWarnings=FALSE)
+plot_dir <- "../plots"
+dir.create(plot_dir, showWarnings=FALSE)
 
 # model_files <- dir(rds_dir, full=TRUE)
 # model_1 <- readRDS(model_files[1])
