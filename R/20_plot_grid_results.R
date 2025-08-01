@@ -1,10 +1,7 @@
 # Plot grid results
 
-# library(r4ss)
 library(dplyr)      # %>%
 library(ggplot2)    # ggplot
-# library(tidyr)
-# library(viridis)
 library(gridExtra)  # grid.arrange
 
 source("utilities_r4ss.R")
