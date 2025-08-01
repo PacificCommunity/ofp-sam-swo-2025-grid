@@ -5,7 +5,7 @@ extract_refpts <- function(model) {
 
   Clatest <- tail(annual$dead_catch_B_an, 1)
   Fmsy <- derived$Value[derived$Label == "annF_MSY"]
-  Frecent <- mean(derived$Value[derived$Label %in% paste0("F_", 2019:2022)])
+  Frecent <- mean(annual$"F=Z-M"[annual$year %in% 2019:2022])
   MSY <- derived$Value[derived$Label == "Dead_Catch_MSY"]
   SB0 <- derived$Value[derived$Label == "SSB_Virgin"]
   SBF0 <- mean(dynamic$SSB_nofishing[dynamic$Yr %in% 2013:2022])
