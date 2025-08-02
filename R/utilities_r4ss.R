@@ -117,7 +117,7 @@ ribbon_plot <- function(tseries, variable, title_suffix = "",
     if(!is.null(y_min)) {
       ylim(0,NA)
     }
-  
+
   # Add reference line if specified
   if(!is.null(ref_line)) {
     p <- p + geom_hline(yintercept = ref_line, linetype = "dashed",
@@ -176,4 +176,44 @@ kobe_plot <- function(refpts, highlight_recent = TRUE) {
   }
 
   p
+}
+
+# Add model information to data frame that has a Model column
+#
+# Before:
+# Model                 ...
+# N_h07_Rb_Vb_D05l_Mhac ...
+#
+# After:
+# CPUE Steepness RecProp Move  DataWts  Natmort   Model                 ...
+# NZ         0.7 Base    Base  05length HamelCope N_h07_Rb_Vb_D05l_Mhac ...
+model_info <- function(df)
+{
+  info <- do.call(rbind, strsplit(df$Model, "_"))
+  info <- as.data.frame(info)
+  names(info) <- c("CPUE", "Steepness", "RecProp", "Move", "DataWts", "Natmort")
+  info$CPUE[info$CPUE == "N"] <- "NZ"
+  info$CPUE[info$CPUE == "P"] <- "PICT"
+  info$Steepness <- as.numeric(substring(info$Steepness, 2)) / 10
+  info$RecProp[info$RecProp == "Rb"] <- "Base"
+  info$RecProp[info$RecProp == "R2"] <- "MoreR2"
+  info$Move[info$Move == "Vb"] <- "Base"
+  info$Move[info$Move == "V1"] <- "Half1to2"
+  info$Move[info$Move == "V2"] <- "Half2to1"
+  info$DataWts[info$DataWts == "Dbas"] <- "Base"
+  info$DataWts[info$DataWts == "D05l"] <- "05length"
+  info$DataWts[info$DataWts == "D20l"] <- "20length"
+  info$DataWts[info$DataWts == "D05w"] <- "05weight"
+  info$DataWts[info$DataWts == "D20w"] <- "20weight"
+  info$Natmort[info$Natmort == "Mhac"] <- "HamelCope"
+  info$Natmort[info$Natmort == "Mest"] <- "Estimated"
+  cbind(info, df)
+}
+
+bplot <- function(gridaxis, refpt, df=ensemble_info$refpts, div=1, ...)
+{
+  df[[refpt]] <- df[[refpt]] / div
+  z <- split(df[[refpt]], df[[gridaxis]])
+  boxplot(z, main=gridaxis, ...)
+  NULL
 }

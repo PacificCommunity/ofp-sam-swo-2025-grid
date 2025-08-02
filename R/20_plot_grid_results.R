@@ -25,6 +25,14 @@ conv$PDH <- conv$log_det_hessian > 1e-6  # safer than > 0.0 floating point
 # Create ensemble
 ensemble <- create_ensemble(model_list)
 
+# Grid axes
+ensemble_info <- list(tseries=model_info(ensemble$tseries),
+                      refpts=model_info(ensemble$refpts))
+par(mfrow=c(2,3))
+sapply(head(names(ensemble_info$refpts)), bplot, "Frecent_Fmsy", ylim=c(0, 0.7))
+sapply(head(names(ensemble_info$refpts)), bplot, "SBrecent", div=1000,
+       ylim=c(0, 120))
+
 # Single ribbon plots
 plot_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "F", "Rec", "SB_SBF0")
 for(v in plot_vars) {
