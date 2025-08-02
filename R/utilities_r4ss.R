@@ -81,7 +81,7 @@ create_ensemble <- function(model_list) {
 }
 
 ribbon_plot <- function(tseries, variable, title_suffix = "",
-                        ref_line = NULL, y_label = NULL) {
+                        ref_line = NULL, y_label = NULL, y_min = NULL) {
   # Calculate quantiles by year
   ribbon_data <- tseries %>%
     group_by(Year) %>%
@@ -113,8 +113,11 @@ ribbon_plot <- function(tseries, variable, title_suffix = "",
       plot.title = element_text(size = 14, face = "bold"),
       axis.title = element_text(size = 12),
       legend.position = "bottom"
-    )
-
+    ) +
+    if(!is.null(y_min)) {
+      ylim(0,NA)
+    }
+  
   # Add reference line if specified
   if(!is.null(ref_line)) {
     p <- p + geom_hline(yintercept = ref_line, linetype = "dashed",

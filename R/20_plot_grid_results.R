@@ -41,7 +41,7 @@ for(v in plot_vars) {
   } else if(v == "SB_SBF0") {
     y_label <- "SB/SB(F=0)"
   }
-  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label)
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label, y_min=0)
   ggsave(file.path(plot_dir, paste0("Ribbon_", v, ".png")), p,
          width=12, height=8, dpi=300)
 }
@@ -57,7 +57,7 @@ for(v in combined_vars) {
                     "F_Fmsy" = "F/Fmsy",
                     "SB_SBF0" = "SB/SB(F=0)",
                     v)
-  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label) +
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label, y_min=0) +
     theme(axis.title.x = element_blank())  # no x-axis title
   combined_plots[[v]] <- p
 }
