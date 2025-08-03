@@ -33,10 +33,10 @@ calc <- function(x)
     "90%ile"=quantile(x, 0.9, names=FALSE), Max=max(x))
 }
 rtab <- round(t(sapply(ensemble$refpts[-1], calc)), 2)
-rtab <- rtab[c("SBlatest", "SBrecent", "TBlatest", "TBrecent", "Flatest",
-               "Frecent", "SBmsy", "Fmsy", "Frecent_Fmsy", "Flatest_Fmsy",
-               "SBrecent_SBmsy", "SBlatest_SBmsy", "SBrecent_SBF0",
-               "SBlatest_SBF0"),]
+rtab <- rtab[c("Clatest", "SBlatest", "SBrecent", "TBlatest", "TBrecent",
+               "Flatest", "Frecent", "SBmsy", "MSY", "Fmsy", "Frecent_Fmsy",
+               "Flatest_Fmsy", "SBrecent_SBmsy", "SBlatest_SBmsy",
+               "SBrecent_SBF0", "SBlatest_SBF0"),]
 
 # Grid axes
 ensemble_info <- list(tseries=model_info(ensemble$tseries),
