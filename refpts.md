@@ -3,6 +3,7 @@
 ## SWO 2025
 
 ```
+F_latest   2022
 F_recent   2019-2022
 SB_F0      2013-2022
 SB_latest  2023

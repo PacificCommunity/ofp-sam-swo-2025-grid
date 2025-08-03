@@ -3,7 +3,8 @@ extract_refpts <- function(model) {
   derived <- model$derived_quants
   dynamic <- model$Dynamic_Bzero[model$Dynamic_Bzero$Era == "TIME",]
 
-  Clatest <- tail(annual$dead_catch_B_an, 1)
+  Clatest <- annual$dead_catch_B_an[annual$year == 2023]
+  Flatest <- annual$"F=Z-M"[annual$year == 2022]
   Fmsy <- derived$Value[derived$Label == "annF_MSY"]
   Frecent <- mean(annual$"F=Z-M"[annual$year %in% 2019:2022])
   MSY <- derived$Value[derived$Label == "Dead_Catch_MSY"]
@@ -12,6 +13,9 @@ extract_refpts <- function(model) {
   SBlatest <- derived$Value[derived$Label == "SSB_2023"]
   SBmsy <- derived$Value[derived$Label == "SSB_MSY"]
   SBrecent <- mean(derived$Value[derived$Label %in% paste0("SSB_", 2020:2023)])
+  TBlatest <- annual$Bio_all_an[annual$year == 2023]
+  TBrecent <- mean(annual$Bio_all_an[annual$year %in% 2020:2023])
+  Flatest_Fmsy <- Flatest / Fmsy
   Frecent_Fmsy <- Frecent / Fmsy
   SBlatest_SB0 <- SBlatest / SB0
   SBlatest_SBF0 <- SBlatest / SBF0
@@ -22,6 +26,7 @@ extract_refpts <- function(model) {
 
   ref_points <-
     list(Clatest=Clatest,
+         Flatest=Flatest,
          Fmsy=Fmsy,
          Frecent=Frecent,
          MSY=MSY,
@@ -30,6 +35,9 @@ extract_refpts <- function(model) {
          SBlatest=SBlatest,
          SBmsy=SBmsy,
          SBrecent=SBrecent,
+         TBlatest=TBlatest,
+         TBrecent=TBrecent,
+         Flatest_Fmsy=Flatest_Fmsy,
          Frecent_Fmsy=Frecent_Fmsy,
          SBlatest_SB0=SBlatest_SB0,
          SBlatest_SBF0=SBlatest_SBF0,

@@ -25,6 +25,19 @@ conv$PDH <- conv$log_det_hessian > 1e-6  # safer than > 0.0 floating point
 # Create ensemble
 ensemble <- create_ensemble(model_list)
 
+# Reference point table
+calc <- function(x)
+{
+  c(Mean=mean(x), Median=median(x), Min=min(x),
+    "10%ile"=quantile(x, 0.1, names=FALSE),
+    "90%ile"=quantile(x, 0.9, names=FALSE), Max=max(x))
+}
+rtab <- round(t(sapply(ensemble$refpts[-1], calc)), 2)
+rtab <- rtab[c("SBlatest", "SBrecent", "TBlatest", "TBrecent", "Flatest",
+               "Frecent", "SBmsy", "Fmsy", "Frecent_Fmsy", "Flatest_Fmsy",
+               "SBrecent_SBmsy", "SBlatest_SBmsy", "SBrecent_SBF0",
+               "SBlatest_SBF0"),]
+
 # Grid axes
 ensemble_info <- list(tseries=model_info(ensemble$tseries),
                       refpts=model_info(ensemble$refpts))
