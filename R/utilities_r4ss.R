@@ -225,3 +225,40 @@ bplot <- function(gridaxis, refpt, df=ensemble_info$refpts, div=1, ...)
   boxplot(z, main=gridaxis, ...)
   NULL
 }
+
+mean_and_quantiles <- function(x)
+{
+  c(Mean=mean(x), Median=median(x), Min=min(x),
+    "10%ile"=quantile(x, 0.1, names=FALSE),
+    "90%ile"=quantile(x, 0.9, names=FALSE), Max=max(x))
+}
+
+estimation_uncertainty <- function(model, nsim, pos=1e-6)
+{
+  # Extract model components
+  derived <- model$derived_quants
+  covar <- model$CoVar
+
+  # Extract B/Bmsy, F/Fmsy, and rho
+  BBmsy <- mean(derived$Value[derived$Label %in% paste0("Bratio_", 2020:2023)])
+  sigma_BBmsy <- mean(derived$StdDev[derived$Label %in%
+                                     paste0("Bratio_", 2020:2023)])
+  FFmsy <- mean(derived$Value[derived$Label %in% paste0("F_", 2019:2022)])
+  sigma_FFmsy <- mean(derived$StdDev[derived$Label %in%
+                                     paste0("F_", 2019:2022)])
+  rho <- covar$corr[covar$label.i == "Bratio_2023" & covar$label.j == "F_2022"]
+
+  # Simulate with correlation
+  mu <- c(BBmsy, FFmsy)
+  sd <- c(sigma_BBmsy, sigma_FFmsy)
+  Sigma <- matrix(c(sd[1]*sd[1],     sd[2]*sd[1]*rho,
+                    sd[1]*sd[2]*rho, sd[2]*sd[2]),
+                  nrow=2, ncol=2, byrow=TRUE)
+  X <- MASS::mvrnorm(n=nsim, mu=mu, Sigma)
+  draws <- data.frame(BBmsy=X[,1], FFmsy=X[,2])
+
+  if(is.numeric(pos))
+    draws[draws < 0] <- pos
+
+  draws
+}

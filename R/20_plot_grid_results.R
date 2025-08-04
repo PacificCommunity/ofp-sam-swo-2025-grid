@@ -6,14 +6,9 @@ library(gridExtra)  # grid.arrange
 
 source("utilities_r4ss.R")
 
-# rds_dir <- "../rds"     # model results in r4ss format, saved as rds files
 plot_dir <- "../plots"
 dir.create(plot_dir, showWarnings=FALSE)
 
-# model_files <- dir(rds_dir, full=TRUE)
-# model_1 <- readRDS(model_files[1])
-# model_2 <- readRDS(model_files[2])
-# model_list <- list(model_one=model_1, model_two=model_2)
 model_list <- readRDS("../model_list/model_list.rds")
 
 # Convergence
@@ -26,13 +21,7 @@ conv$PDH <- conv$log_det_hessian > 1e-6  # safer than > 0.0 floating point
 ensemble <- create_ensemble(model_list)
 
 # Reference point table
-calc <- function(x)
-{
-  c(Mean=mean(x), Median=median(x), Min=min(x),
-    "10%ile"=quantile(x, 0.1, names=FALSE),
-    "90%ile"=quantile(x, 0.9, names=FALSE), Max=max(x))
-}
-rtab <- round(t(sapply(ensemble$refpts[-1], calc)), 2)
+rtab <- round(t(sapply(ensemble$refpts[-1], mean_and_quantiles)), 2)
 rtab <- rtab[c("Clatest", "SBlatest", "SBrecent", "TBlatest", "TBrecent",
                "Flatest", "Frecent", "SBmsy", "MSY", "Fmsy", "Frecent_Fmsy",
                "Flatest_Fmsy", "SBrecent_SBmsy", "SBlatest_SBmsy",
