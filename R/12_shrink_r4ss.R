@@ -3,7 +3,10 @@
 shrink4ss <- function(rdsfile)
 {
   x <- readRDS(rdsfile)
-  select <- c("annual_time_series", "derived_quants", "Dynamic_Bzero",
+  x$CoVar <- x$CoVar[x$CoVar$label.i == "Bratio_2023" &
+                     x$CoVar$label.j == "F_2022",]
+  row.names(x$correlation) <- NULL
+  select <- c("annual_time_series", "derived_quants", "CoVar", "Dynamic_Bzero",
               "log_det_hessian", "maximum_gradient_component")
   x[select]
 }
