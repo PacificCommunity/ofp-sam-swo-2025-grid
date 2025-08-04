@@ -263,7 +263,7 @@ estimation_uncertainty <- function(model, nsim, pos=1e-6)
   draws
 }
 
-estimation_uncertainty_ts <- function(model, nsim, pos=1e-6)
+estimation_uncertainty_ts <- function(model, nsim)
 {
   sim <- function(n, mean, sd, probs=NULL)
   {
@@ -272,7 +272,6 @@ estimation_uncertainty_ts <- function(model, nsim, pos=1e-6)
   }
 
   # Extract model components
-  annual <- model$annual_time_series
   derived <- model$derived_quants
 
   est_sb <- derived$Value[grep("SSB_[12]", derived$Label)]
