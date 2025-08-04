@@ -83,7 +83,7 @@ create_generic_kobe_plot <- function(data,
                                      show_summary = c("none", "median", "mean"),
                                      summary_shape = c(median = 4, mean = 3),  
                                      summary_color = c(median = "red", mean = "blue"),
-                                     custom_point = NULL,   # list(x = , y = , color = "blue", shape = 19, size = 3)
+                                     custom_point = NULL,   
                                      perc_decimal_places = 2,
                                      show_quadrant_pct = FALSE,
                                      save_plot = FALSE,
@@ -164,19 +164,22 @@ create_generic_kobe_plot <- function(data,
     list(
       coord_cartesian(xlim = c(0, extended_max_x), ylim = ylim_val, expand = FALSE, clip = "on"),
       scale_x_continuous(limits = c(0, extended_max_x), expand = c(0,0), breaks = pretty(xlim_val)),
-      scale_y_continuous(limits = ylim_val, expand = c(0,0),
-                         sec.axis = if (!is.null(scenario_label)) sec_axis(~ ., name = scenario_label) else waiver()),
-      labs(x = if (show_xlab) x_label else NULL, y = if (show_ylab) y_label else NULL),
+      scale_y_continuous(limits = ylim_val, expand = c(0,0)),  # secondary axis 제거
+      labs(
+        x = if (show_xlab) x_label else NULL, 
+        y = if (show_ylab) y_label else NULL,
+        title = scenario_label  # scenario_label을 title로 추가
+      ),
       theme(
         axis.title.x       = element_text(size = 10),
         axis.title.y       = element_text(size = 10, margin = margin(r = 5)),
-        axis.title.y.right = element_text(size = 13, margin = margin(l = 15), face = "bold", angle = 270),
         axis.text.x        = element_text(size = 10),
         axis.text.y        = element_text(size = 10),
         panel.grid.minor   = element_blank(),
         panel.border       = element_rect(color = "black", fill = NA, size = 0.5),
         panel.grid.major   = element_line(color = "grey90", size = 0.3),
-        plot.margin        = margin(t = 5, r = 5, b = 3, l = 3, "pt")
+        plot.margin        = margin(t = 5, r = 5, b = 3, l = 3, "pt"),
+        plot.title         = element_text(size = 12, hjust = 0, face = "bold")  # title 스타일 추가
       )
     )
   ))
@@ -191,12 +194,15 @@ create_generic_kobe_plot <- function(data,
 }
 
 
+
+
 all <- create_generic_kobe_plot(draws_comb, 
                                 x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
+                                show_summary = "median", 
                                 scenario_label = "All combined")
 
+print(all)
 
 
 #unique_d_values <- unique(sapply(strsplit(draws_comb$Grid, "_"), function(x) x[6]))
@@ -206,9 +212,25 @@ all <- create_generic_kobe_plot(draws_comb,
 ```
 
 
+
+# all combined
+
+```{r all, echo=FALSE, message=F, fig.dim=c(10,8)}
+
+all_itself <- create_generic_kobe_plot(draws_comb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median")
+
+print(all_itself)
+
+```
+
+
+
 # Steepness
 
-```{r steepness, echo=FALSE, message=F, fig.dim=c(10,10)}
+```{r steepness, echo=FALSE, message=F, fig.dim=c(10,8)}
 
 ###############
 ## steepness ##
@@ -237,7 +259,7 @@ draws_h09 <- draws_comb %>%
                                 x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
                                 show_summary = "median",
-                                 scenario_label = "h=0.8")
+                                 scenario_label = "h=0.8 (diag)")
  
  h09 <- create_generic_kobe_plot(draws_h09, 
                                 x_label = bquote(SB[recent]/SB[MSY]),
@@ -246,7 +268,7 @@ draws_h09 <- draws_comb %>%
                                  scenario_label = "h=0.9")
  
  
- (h07|h08)/(h09|all)
+ (all|h07)/(h08|h09)
  
 
 ```
@@ -286,27 +308,27 @@ draws_h09 <- draws_comb %>%
                                 x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
                                 show_summary = "median",
-                                 scenario_label = "Base")
+                                 scenario_label = "Data weighting (diag)")
  
  
  D05l <- create_generic_kobe_plot(draws_D05l, 
                                 x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
                                 show_summary = "median",
-                                 scenario_label = "0.5Length")
+                                 scenario_label = "0.5 x Length")
  
  D05w <- create_generic_kobe_plot(draws_D05w, 
                                   x_label = bquote(SB[recent]/SB[MSY]),
                                   y_label = bquote(F[recent]/F[MSY]),
                                   show_summary = "median",
-                                 scenario_label = "0.5Weight")
+                                 scenario_label = "0.5 x Weight")
  
  
  D20l <- create_generic_kobe_plot(draws_D20l, 
                                   x_label = bquote(SB[recent]/SB[MSY]),
                                   y_label = bquote(F[recent]/F[MSY]),
                                   show_summary = "median",
-                                  scenario_label = "2Length")
+                                  scenario_label = "2 x Length")
  
  
  
@@ -314,7 +336,7 @@ draws_h09 <- draws_comb %>%
                                   x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
                                 show_summary = "median",
-                                  scenario_label = "2Weight")
+                                  scenario_label = "2 x Weight")
  
  
  (all|Dbase)/(D05l|D20l)/(D05w|D20w)
@@ -351,10 +373,97 @@ draws_h09 <- draws_comb %>%
                                 x_label = bquote(SB[recent]/SB[MSY]),
                                 y_label = bquote(F[recent]/F[MSY]),
                                 show_summary = "median",
-                                 scenario_label = "Estimated M")
+                                 scenario_label = "Estimated M (diag)")
  
 
- all/Mhac/Mest
+ all/Mest/Mhac
+ 
+
+```
+
+
+
+
+# Recruitment proportion
+
+```{r movement, echo=FALSE, message=F, fig.dim=c(8,12)}
+
+ ###############
+ ## weighting ##
+ ###############
+
+
+ draws_Rb <- draws_comb %>%
+   filter(grepl("Rb", Grid))
+
+ draws_R2 <- draws_comb %>%
+   filter(grepl("R2", Grid))
+
+
+ Rb <- create_generic_kobe_plot(draws_Rb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                scenario_label = "Rec Prop 1:3 (diag) ")
+ 
+ R2 <- create_generic_kobe_plot(draws_R2, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "Rec Prop 1:4")
+ 
+
+ all/Rb/R2
+ 
+
+```
+
+
+
+
+# Movement
+
+```{r growth, echo=FALSE, message=F, fig.dim=c(10, 8)}
+
+ ###############
+ ## weighting ##
+ ###############
+
+
+ draws_Vb <- draws_comb %>%
+   filter(grepl("Vb", Grid))
+
+ draws_V1 <- draws_comb %>%
+   filter(grepl("V1", Grid))
+
+ 
+ draws_V2 <- draws_comb %>%
+   filter(grepl("V2", Grid))
+
+ 
+
+ Vb <- create_generic_kobe_plot(draws_Vb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                scenario_label = "Move (diag)")
+ 
+ V1 <- create_generic_kobe_plot(draws_V1, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "Move halve 1 -> 2")
+ 
+ 
+V2 <- create_generic_kobe_plot(draws_V2, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "Move halve 2 -> 1")
+ 
+ 
+
+ (all|Vb)/(V1|V2)
  
 
 ```
