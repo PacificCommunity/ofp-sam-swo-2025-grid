@@ -1,0 +1,360 @@
+---
+title: "SWO Ensemble"
+author: "Prenom:Kyuhan, nom:Kim"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    self_contained: yes
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    highlight: tango
+    code_folding: hide
+    fig_width: 10
+    fig_height: 8
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+
+knitr::opts_chunk$set(dev = "png",
+                      dpi = 160,
+                      echo = F,
+                      cache = F,
+                      warning = F,
+                      message = F, 
+                      fig.path='../report/Figures/'
+                      )
+
+
+library(here)
+require(ggplot2)
+require(MASS)
+require(dplyr)
+require(ggdist)
+require(ggdensity)
+library(dplyr)
+library(patchwork)
+library(dplyr)
+library(cowplot)
+
+source("30_estimation_uncertainty.R")
+
+theme_set(theme_cowplot())
+
+draws_comb <-bind_rows(draws, .id = "Grid")
+
+
+ 
+ #####################################################################################
+ # ------------------------ Generic HDR Kobe Plot Function ------------------------ ##
+ #####################################################################################
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(ggforce)
+library(rlang)
+
+create_generic_kobe_plot <- function(data, 
+                                     x_var = "BBmsy", 
+                                     y_var = "FFmsy",
+                                     x_ref = 1, 
+                                     y_ref = 1,
+                                     x_label = NULL,
+                                     y_label = NULL,
+                                     scenario_label = NULL,
+                                     xlim_val = c(0, 5.5), 
+                                     ylim_val = c(0, 1.5),
+                                     show_xlab = TRUE, 
+                                     show_ylab = TRUE,
+                                     quadrant_labels = c("Healthy", "Overfished", "Overfishing", "Critical"),
+                                     quadrant_colors = c("#51C87A", "yellow", "darkorange", "#DC143C"),
+                                     show_points = FALSE,
+                                     point_alpha = 0.12,
+                                     point_size = 1,  
+                                     point_color = "grey40",
+                                     hdr_probs = c(0.5, 0.75, 0.9),
+                                     hdr_colors = c("black", "black", "black"),   
+                                     hdr_alphas = c(0.2, 0.2, 0.2),
+                                     show_summary = c("none", "median", "mean"),
+                                     summary_shape = c(median = 4, mean = 3),  
+                                     summary_color = c(median = "red", mean = "blue"),
+                                     custom_point = NULL,   # list(x = , y = , color = "blue", shape = 19, size = 3)
+                                     perc_decimal_places = 2,
+                                     show_quadrant_pct = FALSE,
+                                     save_plot = FALSE,
+                                     save_filename = "kobe_plot.png",
+                                     save_width = 8,
+                                     save_height = 6,
+                                     save_units = "in",
+                                     save_dpi = 300,
+                                     save_device = NULL) {
+  
+  summary_opt <- match.arg(show_summary)
+  
+  if (is.null(x_label)) x_label <- x_var
+  if (is.null(y_label)) y_label <- y_var
+  
+  max_x <- xlim_val[2]
+  max_y <- ylim_val[2]
+  extended_max_x <- max_x * 1.05
+  
+  # Base, quadrants, points, reference lines
+  layers <- list(
+    ggplot(data, aes(x = !!sym(x_var), y = !!sym(y_var))),
+    annotate("rect", xmin = 0, xmax = x_ref, ymin = 0, ymax = y_ref, fill = quadrant_colors[2], alpha = 0.30),
+    annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = 0, ymax = y_ref, fill = quadrant_colors[1], alpha = 0.35),
+    annotate("rect", xmin = 0, xmax = x_ref, ymin = y_ref, ymax = max_y, fill = quadrant_colors[4], alpha = 0.28),
+    annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = y_ref, ymax = max_y, fill = quadrant_colors[3], alpha = 0.30),
+    if (show_points) geom_point(alpha = point_alpha, size = point_size, color = point_color, show.legend = FALSE),
+    geom_vline(xintercept = x_ref, linetype = "dashed", color = "black", size = 0.8),
+    geom_hline(yintercept = y_ref, linetype = "dashed", color = "black", size = 0.8)
+  )
+  
+  # HDR layers
+  hdr_layers <- lapply(seq_along(hdr_probs), function(i) {
+    geom_hdr(method = "kde",
+             probs = hdr_probs[i],
+             alpha = hdr_alphas[i],
+             fill = hdr_colors[i],
+             show.legend = FALSE,
+             xlim = c(-1, max_x * 2),
+             ylim = c(-1, max_y * 2))
+  })
+  
+  # Summary layer
+  summary_layer <- NULL
+  if (summary_opt %in% c("median", "mean")) {
+    stats <- data %>% 
+      summarize(
+        x_val = if (summary_opt == "median") median(!!sym(x_var), na.rm = TRUE) else mean(!!sym(x_var), na.rm = TRUE),
+        y_val = if (summary_opt == "median") median(!!sym(y_var), na.rm = TRUE) else mean(!!sym(y_var), na.rm = TRUE)
+      )
+    summary_layer <- geom_point(
+      data = stats,
+      aes(x = x_val, y = y_val),
+      shape = summary_shape[summary_opt],
+      color = summary_color[summary_opt],
+      size = 4,
+      stroke = 1.2
+    )
+  }
+  
+  # Custom point layer
+  custom_layer <- NULL
+  if (!is.null(custom_point)) {
+    custom_layer <- geom_point(
+      data = tibble(x = custom_point$x, y = custom_point$y),
+      aes(x = x, y = y),
+      shape = custom_point$shape %||% 19,
+      color = custom_point$color %||% "blue",
+      size = custom_point$size %||% 3
+    )
+  }
+  
+  # Assemble plot
+  p <- Reduce(`+`, c(
+    layers,
+    hdr_layers,
+    list(summary_layer, custom_layer),
+    list(
+      coord_cartesian(xlim = c(0, extended_max_x), ylim = ylim_val, expand = FALSE, clip = "on"),
+      scale_x_continuous(limits = c(0, extended_max_x), expand = c(0,0), breaks = pretty(xlim_val)),
+      scale_y_continuous(limits = ylim_val, expand = c(0,0),
+                         sec.axis = if (!is.null(scenario_label)) sec_axis(~ ., name = scenario_label) else waiver()),
+      labs(x = if (show_xlab) x_label else NULL, y = if (show_ylab) y_label else NULL),
+      theme(
+        axis.title.x       = element_text(size = 10),
+        axis.title.y       = element_text(size = 10, margin = margin(r = 5)),
+        axis.title.y.right = element_text(size = 13, margin = margin(l = 15), face = "bold", angle = 270),
+        axis.text.x        = element_text(size = 10),
+        axis.text.y        = element_text(size = 10),
+        panel.grid.minor   = element_blank(),
+        panel.border       = element_rect(color = "black", fill = NA, size = 0.5),
+        panel.grid.major   = element_line(color = "grey90", size = 0.3),
+        plot.margin        = margin(t = 5, r = 5, b = 3, l = 3, "pt")
+      )
+    )
+  ))
+  
+  if (save_plot) {
+    ggsave(filename = save_filename, plot = p,
+           width = save_width, height = save_height,
+           units = save_units, dpi = save_dpi, device = save_device)
+  }
+  
+  return(p)
+}
+
+
+all <- create_generic_kobe_plot(draws_comb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                scenario_label = "All combined")
+
+
+
+#unique_d_values <- unique(sapply(strsplit(draws_comb$Grid, "_"), function(x) x[6]))
+#print(unique_d_values)
+
+
+```
+
+
+# Steepness
+
+```{r steepness, echo=FALSE, message=F, fig.dim=c(10,10)}
+
+###############
+## steepness ##
+###############
+
+
+
+draws_h07 <- draws_comb %>% 
+  filter(grepl("h07", Grid))
+
+draws_h08 <- draws_comb %>% 
+  filter(grepl("h08", Grid))
+
+draws_h09 <- draws_comb %>% 
+  filter(grepl("h09", Grid))
+
+
+ h07 <- create_generic_kobe_plot(draws_h07, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                scenario_label = "h=0.7")
+ 
+ 
+ h08 <- create_generic_kobe_plot(draws_h08, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "h=0.8")
+ 
+ h09 <- create_generic_kobe_plot(draws_h09, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "h=0.9")
+ 
+ 
+ (h07|h08)/(h09|all)
+ 
+
+```
+
+
+
+# Data weighting
+
+```{r data_weighting, echo=FALSE, message=F, fig.dim=c(12,12)}
+
+
+ ###############
+ ## weighting ##
+ ###############
+ 
+ 
+ draws_Base <- draws_comb %>% 
+   filter(grepl("Dbas", Grid))
+  
+ draws_D05l <- draws_comb %>% 
+   filter(grepl("D05l", Grid))
+ 
+ draws_D05w <- draws_comb %>% 
+   filter(grepl("D05w", Grid))
+ 
+ draws_D20l <- draws_comb %>% 
+   filter(grepl("D20l", Grid))
+ 
+ draws_D20w <- draws_comb %>% 
+   filter(grepl("D20w", Grid))
+ 
+ draws_Base <- draws_comb %>% 
+   filter(grepl("Dbas", Grid))
+ 
+ 
+ Dbase <- create_generic_kobe_plot(draws_Base, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "Base")
+ 
+ 
+ D05l <- create_generic_kobe_plot(draws_D05l, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "0.5Length")
+ 
+ D05w <- create_generic_kobe_plot(draws_D05w, 
+                                  x_label = bquote(SB[recent]/SB[MSY]),
+                                  y_label = bquote(F[recent]/F[MSY]),
+                                  show_summary = "median",
+                                 scenario_label = "0.5Weight")
+ 
+ 
+ D20l <- create_generic_kobe_plot(draws_D20l, 
+                                  x_label = bquote(SB[recent]/SB[MSY]),
+                                  y_label = bquote(F[recent]/F[MSY]),
+                                  show_summary = "median",
+                                  scenario_label = "2Length")
+ 
+ 
+ 
+ D20w <- create_generic_kobe_plot(draws_D20w, 
+                                  x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                  scenario_label = "2Weight")
+ 
+ 
+ (all|Dbase)/(D05l|D20l)/(D05w|D20w)
+
+```
+
+
+
+
+
+# Natural mortality
+
+```{r natM, echo=FALSE, message=F, fig.dim=c(8,12)}
+
+ ###############
+ ## weighting ##
+ ###############
+
+
+ draws_Mhac <- draws_comb %>%
+   filter(grepl("Mhac", Grid))
+
+ draws_Mest <- draws_comb %>%
+   filter(grepl("Mest", Grid))
+
+
+ Mhac <- create_generic_kobe_plot(draws_Mhac, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                scenario_label = "Hamel and Cope")
+ 
+ Mest <- create_generic_kobe_plot(draws_Mest, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median",
+                                 scenario_label = "Estimated M")
+ 
+
+ all/Mhac/Mest
+ 
+
+```
