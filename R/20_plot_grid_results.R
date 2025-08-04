@@ -35,6 +35,16 @@ sapply(head(names(ensemble_info$refpts)), bplot, "Frecent_Fmsy", ylim=c(0, 0.7))
 sapply(head(names(ensemble_info$refpts)), bplot, "SBrecent", div=1000,
        ylim=c(0, 120))
 
+png("../plots/grid_axes_ffmsy.png", width=2400, height=3000, res=220)
+par(mfrow=c(2,3))
+bplot("CPUE", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy")
+bplot("Steepness", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
+bplot("RecProp", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
+bplot("Move", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy")
+bplot("DataWts", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
+bplot("Natmort", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
+dev.off()
+
 # Single ribbon plots
 plot_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "F", "Rec", "SB_SBF0")
 for(v in plot_vars) {
