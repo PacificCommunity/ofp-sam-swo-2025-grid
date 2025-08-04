@@ -262,3 +262,35 @@ estimation_uncertainty <- function(model, nsim, pos=1e-6)
 
   draws
 }
+
+estimation_uncertainty_ts <- function(model, nsim, pos=1e-6)
+{
+  sim <- function(n, mean, sd, probs=NULL)
+  {
+    draws <- mapply(rnorm, n=n, mean=mean, sd=sd)
+    draws
+  }
+
+  # Extract model components
+  annual <- model$annual_time_series
+  derived <- model$derived_quants
+
+  est_sb <- derived$Value[grep("SSB_[12]", derived$Label)]
+  est_rec <- derived$Value[grep("Recr_[12]", derived$Label)]
+  est_ffmsy <- derived$Value[grep("F_[12]", derived$Label)]
+  est_bbmsy <- derived$Value[grep("Bratio_[12]", derived$Label)]
+  est_bbmsy <- c(est_bbmsy[1], est_bbmsy)  # year 1 same as year 2
+
+  sigma_sb <- derived$StdDev[grep("SSB_[12]", derived$Label)]
+  sigma_rec <- derived$StdDev[grep("Recr_[12]", derived$Label)]
+  sigma_ffmsy <- derived$StdDev[grep("F_[12]", derived$Label)]
+  sigma_bbmsy <- derived$StdDev[grep("Bratio_[12]", derived$Label)]
+  sigma_bbmsy <- c(sigma_bbmsy[1], sigma_bbmsy)  # year 1 same as year 2
+
+  sb <- sim(nsim, est_sb, sigma_sb)
+  rec <- sim(nsim, est_rec, sigma_rec)
+  ffmsy <- sim(nsim, est_ffmsy, sigma_ffmsy)
+  bbmsy <- sim(nsim, est_bbmsy, sigma_bbmsy)
+
+  list(sb=sb, rec=rec, ffmsy=ffmsy, bbmsy=bbmsy)
+}
