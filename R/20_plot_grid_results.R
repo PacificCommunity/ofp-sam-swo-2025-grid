@@ -51,6 +51,22 @@ bplot("Natmort", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="",
       col=c("gray60", "gray90"))
 dev.off()
 
+png("../plots/grid_axes_bbmsy.png", width=2400, height=3000, res=220)
+par(mfrow=c(2,3))
+bplot("CPUE", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="SBrecent / SBmsy",
+      col=c("gray60", "gray90"))
+bplot("Steepness", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="",
+      col=c("gray90", "gray60", "gray90"))
+bplot("RecProp", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="",
+      col=c("gray60", "gray90"))
+bplot("Move", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="SBrecent / SBmsy",
+      col=c("gray60", "gray90", "gray90"))
+bplot("DataWts", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="",
+      col=c(rep("gray90", 4), "gray60"))
+bplot("Natmort", "SBrecent_SBmsy", ylim=c(0, 4.5), ylab="",
+      col=c("gray60", "gray90"))
+dev.off()
+
 # Single ribbon plots
 plot_vars <- c("SB_SBmsy", "F_Fmsy", "SB", "F", "Rec", "SB_SBF0")
 for(v in plot_vars) {
