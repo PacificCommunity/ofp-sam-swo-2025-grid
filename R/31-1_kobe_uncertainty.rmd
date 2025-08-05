@@ -62,6 +62,7 @@ library(rlang)
 create_generic_kobe_plot <- function(data, 
                                      x_var = "BBmsy", 
                                      y_var = "FFmsy",
+                                     year_var = NULL,
                                      x_ref = 1, 
                                      y_ref = 1,
                                      x_label = NULL,
@@ -83,7 +84,56 @@ create_generic_kobe_plot <- function(data,
                                      show_summary = c("none", "median", "mean"),
                                      summary_shape = c(median = 4, mean = 3),  
                                      summary_color = c(median = "red", mean = "blue"),
-                                     custom_point = NULL,   
+                                     custom_point = NULL,
+                                     # Snail plot parameters
+                                     show_snail = FALSE,
+                                     use_viridis = TRUE,
+                                     viridis_option = "D",
+                                     viridis_direction = -1,                      # -1: yellow = old years
+                                     viridis_begin = 0.1,
+                                     viridis_end = 0.9,
+                                     snail_line_color = "darkblue",
+                                     snail_line_size = 1.5,
+                                     snail_alpha_range = c(0.1, 1),
+                                     alpha_scaling = c("linear", "exponential", "power"),
+                                     alpha_power = 2,
+                                     arrow_frequency = 1,
+                                     arrow_size = 0.2,
+                                     arrow_angle = 15,
+                                     arrow_type = "open",
+                                     # Year label dot parameters
+                                     year_point_color = "black",                  # Year label dot color
+                                     year_point_size = 4,                         # Year label dot size
+                                     year_point_shape = 19,                       # Year label dot shape
+                                     year_point_stroke = 1,                       # Year label dot stroke
+                                     # Point parameters
+                                     last_point_color = "red",
+                                     last_point_size = 6,
+                                     last_point_shape = 19,
+                                     show_first_point = TRUE,
+                                     first_point_color = "green",
+                                     first_point_size = 5,
+                                     first_point_shape = 2,
+                                     # Year label parameters
+                                     show_year_labels = FALSE,
+                                     year_label_interval = 2,
+                                     show_first_last_year = TRUE,
+                                     year_label_size = 3.5,
+                                     year_label_color = "black",
+                                     year_label_fill = "white",
+                                     year_label_alpha = 0.8,
+                                     year_label_vjust = -1.2,
+                                     year_label_hjust = 0.5,
+                                     year_label_border = TRUE,
+                                     # Legend parameters
+                                     show_legend = TRUE,
+                                     legend_position = c(0.95, 0.95),
+                                     legend_justification = c(1, 1),
+                                     legend_direction = "vertical",
+                                     legend_background = TRUE,
+                                     legend_title = "Year",
+                                     legend_key_width = 1,
+                                     legend_key_height = 8,
                                      perc_decimal_places = 2,
                                      show_quadrant_pct = FALSE,
                                      save_plot = FALSE,
@@ -94,7 +144,11 @@ create_generic_kobe_plot <- function(data,
                                      save_dpi = 300,
                                      save_device = NULL) {
   
+  # Load required libraries
+  require(viridis)
+  
   summary_opt <- match.arg(show_summary)
+  alpha_scaling <- match.arg(alpha_scaling)
   
   if (is.null(x_label)) x_label <- x_var
   if (is.null(y_label)) y_label <- y_var
@@ -103,32 +157,313 @@ create_generic_kobe_plot <- function(data,
   max_y <- ylim_val[2]
   extended_max_x <- max_x * 1.05
   
-  # Base, quadrants, points, reference lines
+  # Prepare data for snail plot
+  if (show_snail && !is.null(year_var)) {
+    data <- data[order(data[[year_var]]), ]
+    
+    # Calculate alpha values by year
+    years_normalized <- (data[[year_var]] - min(data[[year_var]])) / 
+                       (max(data[[year_var]]) - min(data[[year_var]]))
+    
+    if (alpha_scaling == "exponential") {
+      alpha_normalized <- exp(years_normalized * 2) / exp(2)
+    } else if (alpha_scaling == "power") {
+      alpha_normalized <- years_normalized^alpha_power
+    } else {
+      alpha_normalized <- years_normalized
+    }
+    
+    data$alpha_mapped <- snail_alpha_range[1] + 
+                        alpha_normalized * (snail_alpha_range[2] - snail_alpha_range[1])
+    
+    # Separate first and last points
+    first_point <- data[1, ]
+    last_point <- data[nrow(data), ]
+    
+    # Generate year label data
+    years_to_label <- c()
+    if (show_year_labels) {
+      years_all <- data[[year_var]]
+      
+      if (show_first_last_year) {
+        years_to_label <- c(min(years_all), max(years_all))
+      }
+      
+      if (year_label_interval > 0 && length(years_all) > 2) {
+        middle_indices <- seq(1 + year_label_interval, 
+                             length(years_all) - year_label_interval, 
+                             by = year_label_interval)
+        if (length(middle_indices) > 0) {
+          middle_years <- years_all[middle_indices]
+          years_to_label <- unique(c(years_to_label, middle_years))
+        }
+      }
+      
+      label_data <- data[data[[year_var]] %in% years_to_label, ]
+    }
+    
+    # Generate line segment data
+    line_data <- data.frame(
+      x = numeric(0),
+      y = numeric(0), 
+      xend = numeric(0),
+      yend = numeric(0),
+      alpha_val = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    if (nrow(data) > 1) {
+      for (i in 1:(nrow(data) - 1)) {
+        x_val <- data[i, x_var]
+        y_val <- data[i, y_var] 
+        xend_val <- data[i + 1, x_var]
+        yend_val <- data[i + 1, y_var]
+        alpha_val <- data[i + 1, "alpha_mapped"]
+        year_val <- data[i + 1, year_var]
+        
+        if (!is.na(x_val) && !is.na(y_val) && !is.na(xend_val) && !is.na(yend_val)) {
+          line_data <- rbind(line_data, data.frame(
+            x = x_val,
+            y = y_val,
+            xend = xend_val,
+            yend = yend_val,
+            alpha_val = alpha_val,
+            year_val = year_val
+          ))
+        }
+      }
+    }
+    
+    # Generate arrow segment data (excluding year labels)
+    arrow_data_normal <- data.frame(
+      x = numeric(0),
+      y = numeric(0), 
+      xend = numeric(0),
+      yend = numeric(0),
+      alpha_val = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    # Year label point data
+    year_points_data <- data.frame(
+      x = numeric(0),
+      y = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    if (nrow(data) > 1) {
+      for (i in seq(1, nrow(data) - 1, by = arrow_frequency)) {
+        if (i + 1 <= nrow(data)) {
+          x_val <- data[i, x_var]
+          y_val <- data[i, y_var] 
+          xend_val <- data[i + 1, x_var]
+          yend_val <- data[i + 1, y_var]
+          alpha_val <- data[i + 1, "alpha_mapped"]
+          year_val <- data[i, year_var]
+          year_end_val <- data[i + 1, year_var]
+          
+          if (!is.na(x_val) && !is.na(y_val) && !is.na(xend_val) && !is.na(yend_val)) {
+            # Exclude first and last segments
+            if (i > 1 && i < nrow(data) - 1) {
+              # Check if year label
+              is_year_label <- show_year_labels && (year_val %in% years_to_label)
+              
+              if (is_year_label) {
+                # Year label as point
+                year_points_data <- rbind(year_points_data, data.frame(
+                  x = x_val,
+                  y = y_val,
+                  year_val = year_val
+                ))
+              } else {
+                # Regular arrow
+                arrow_data_normal <- rbind(arrow_data_normal, data.frame(
+                  x = x_val,
+                  y = y_val,
+                  xend = xend_val,
+                  yend = yend_val,
+                  alpha_val = alpha_val,
+                  year_val = year_end_val
+                ))
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  # Base layers with quadrants and reference lines
   layers <- list(
     ggplot(data, aes(x = !!sym(x_var), y = !!sym(y_var))),
     annotate("rect", xmin = 0, xmax = x_ref, ymin = 0, ymax = y_ref, fill = quadrant_colors[2], alpha = 0.30),
     annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = 0, ymax = y_ref, fill = quadrant_colors[1], alpha = 0.35),
     annotate("rect", xmin = 0, xmax = x_ref, ymin = y_ref, ymax = max_y, fill = quadrant_colors[4], alpha = 0.28),
     annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = y_ref, ymax = max_y, fill = quadrant_colors[3], alpha = 0.30),
-    if (show_points) geom_point(alpha = point_alpha, size = point_size, color = point_color, show.legend = FALSE),
+    if (show_points && !show_snail) geom_point(alpha = point_alpha, size = point_size, color = point_color, show.legend = FALSE),
     geom_vline(xintercept = x_ref, linetype = "dashed", color = "black", size = 0.8),
     geom_hline(yintercept = y_ref, linetype = "dashed", color = "black", size = 0.8)
   )
   
   # HDR layers
-  hdr_layers <- lapply(seq_along(hdr_probs), function(i) {
-    geom_hdr(method = "kde",
-             probs = hdr_probs[i],
-             alpha = hdr_alphas[i],
-             fill = hdr_colors[i],
-             show.legend = FALSE,
-             xlim = c(-1, max_x * 2),
-             ylim = c(-1, max_y * 2))
-  })
+  hdr_layers <- list()
+  if (!show_snail) {
+    hdr_layers <- lapply(seq_along(hdr_probs), function(i) {
+      geom_hdr(method = "kde",
+               probs = hdr_probs[i],
+               alpha = hdr_alphas[i],
+               fill = hdr_colors[i],
+               show.legend = FALSE,
+               xlim = c(-1, max_x * 2),
+               ylim = c(-1, max_y * 2))
+    })
+  }
+  
+  # Snail plot layers
+  snail_layers <- list()
+  if (show_snail && !is.null(year_var)) {
+    
+    # Connection lines (with viridis colors)
+    if (nrow(line_data) > 0) {
+      if (use_viridis) {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = line_data,
+                      aes(x = x, y = y, xend = xend, yend = yend, 
+                          color = year_val, alpha = alpha_val),
+                      size = snail_line_size,
+                      show.legend = TRUE)
+        )
+      } else {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = line_data,
+                      aes(x = x, y = y, xend = xend, yend = yend, alpha = alpha_val),
+                      color = snail_line_color,
+                      size = snail_line_size,
+                      show.legend = FALSE)
+        )
+      }
+    }
+    
+    # Regular arrows (excluding year labels)
+    if (nrow(arrow_data_normal) > 0) {
+      if (use_viridis) {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = arrow_data_normal,
+                      aes(x = x, y = y, xend = xend, yend = yend, 
+                          color = year_val, alpha = alpha_val),
+                      arrow = arrow(type = arrow_type,
+                                   angle = arrow_angle,
+                                   length = unit(arrow_size, "inches")),
+                      size = snail_line_size * 1.2,
+                      show.legend = FALSE)
+        )
+      } else {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = arrow_data_normal,
+                      aes(x = x, y = y, xend = xend, yend = yend, alpha = alpha_val),
+                      arrow = arrow(type = arrow_type,
+                                   angle = arrow_angle,
+                                   length = unit(arrow_size, "inches")),
+                      color = snail_line_color,
+                      size = snail_line_size * 1.2,
+                      show.legend = FALSE)
+        )
+      }
+    }
+    
+    # Year label points (black)
+    if (nrow(year_points_data) > 0) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = year_points_data,
+                  aes(x = x, y = y),
+                  color = year_point_color,      # Black
+                  size = year_point_size,
+                  shape = year_point_shape,
+                  stroke = year_point_stroke,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Color scale (viridis reversed)
+    if (use_viridis) {
+      snail_layers <- append(snail_layers,
+        scale_color_viridis_c(option = viridis_option,
+                             direction = viridis_direction,    # -1: yellow = old years
+                             begin = viridis_begin,
+                             end = viridis_end,
+                             name = legend_title,
+                             guide = guide_colorbar(title.position = "top",
+                                                   title.hjust = 0.5,
+                                                   barwidth = legend_key_width,
+                                                   barheight = legend_key_height))
+      )
+    }
+    
+    # Alpha scale
+    snail_layers <- append(snail_layers,
+      scale_alpha_identity(guide = "none")
+    )
+    
+    # First point
+    if (show_first_point && exists("first_point")) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = first_point,
+                  aes(x = !!sym(x_var), y = !!sym(y_var)),
+                  color = first_point_color,
+                  size = first_point_size,
+                  shape = first_point_shape,
+                  stroke = 2,
+                  alpha = 1,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Last point
+    if (exists("last_point")) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = last_point,
+                  aes(x = !!sym(x_var), y = !!sym(y_var)),
+                  color = last_point_color,
+                  size = last_point_size,
+                  shape = last_point_shape,
+                  alpha = 1,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Year labels
+    if (show_year_labels && exists("label_data")) {
+      if (year_label_border) {
+        snail_layers <- append(snail_layers,
+          geom_label(data = label_data,
+                    aes(label = !!sym(year_var)),
+                    size = year_label_size,
+                    color = year_label_color,
+                    fill = year_label_fill,
+                    alpha = year_label_alpha,
+                    vjust = year_label_vjust,
+                    hjust = year_label_hjust,
+                    label.padding = unit(0.15, "lines"),
+                    label.r = unit(0.1, "lines"),
+                    show.legend = FALSE)
+        )
+      } else {
+        snail_layers <- append(snail_layers,
+          geom_text(data = label_data,
+                   aes(label = !!sym(year_var)),
+                   size = year_label_size,
+                   color = year_label_color,
+                   vjust = year_label_vjust,
+                   hjust = year_label_hjust,
+                   show.legend = FALSE)
+        )
+      }
+    }
+  }
   
   # Summary layer
   summary_layer <- NULL
-  if (summary_opt %in% c("median", "mean")) {
+  if (summary_opt %in% c("median", "mean") && !show_snail) {
     stats <- data %>% 
       summarize(
         x_val = if (summary_opt == "median") median(!!sym(x_var), na.rm = TRUE) else mean(!!sym(x_var), na.rm = TRUE),
@@ -146,7 +481,7 @@ create_generic_kobe_plot <- function(data,
   
   # Custom point layer
   custom_layer <- NULL
-  if (!is.null(custom_point)) {
+  if (!is.null(custom_point) && !show_snail) {
     custom_layer <- geom_point(
       data = tibble(x = custom_point$x, y = custom_point$y),
       aes(x = x, y = y),
@@ -160,15 +495,16 @@ create_generic_kobe_plot <- function(data,
   p <- Reduce(`+`, c(
     layers,
     hdr_layers,
+    snail_layers,
     list(summary_layer, custom_layer),
     list(
       coord_cartesian(xlim = c(0, extended_max_x), ylim = ylim_val, expand = FALSE, clip = "on"),
       scale_x_continuous(limits = c(0, extended_max_x), expand = c(0,0), breaks = pretty(xlim_val)),
-      scale_y_continuous(limits = ylim_val, expand = c(0,0)),  # secondary axis 제거
+      scale_y_continuous(limits = ylim_val, expand = c(0,0)),
       labs(
         x = if (show_xlab) x_label else NULL, 
         y = if (show_ylab) y_label else NULL,
-        title = scenario_label  # scenario_label을 title로 추가
+        title = scenario_label
       ),
       theme(
         axis.title.x       = element_text(size = 10),
@@ -179,7 +515,14 @@ create_generic_kobe_plot <- function(data,
         panel.border       = element_rect(color = "black", fill = NA, size = 0.5),
         panel.grid.major   = element_line(color = "grey90", size = 0.3),
         plot.margin        = margin(t = 5, r = 5, b = 3, l = 3, "pt"),
-        plot.title         = element_text(size = 12, hjust = 0, face = "bold")  # title 스타일 추가
+        plot.title         = element_text(size = 12, hjust = 0, face = "bold"),
+        legend.position    = if (show_snail && show_legend && use_viridis) legend_position else "none",
+        legend.justification = legend_justification,
+        legend.direction   = legend_direction,
+        legend.background  = if (show_snail && show_legend && legend_background) 
+                            element_rect(fill = "white", color = "black", size = 0.3) else element_blank(),
+        legend.margin      = margin(5, 5, 5, 5),
+        legend.box.margin  = margin(0, 0, 0, 0)
       )
     )
   ))
@@ -192,6 +535,7 @@ create_generic_kobe_plot <- function(data,
   
   return(p)
 }
+
 
 
 
@@ -386,7 +730,7 @@ draws_h09 <- draws_comb %>%
 
 # Recruitment proportion
 
-```{r movement, echo=FALSE, message=F, fig.dim=c(8,12)}
+```{r rec, echo=FALSE, message=F, fig.dim=c(8,12)}
 
  ###############
  ## weighting ##
@@ -423,7 +767,7 @@ draws_h09 <- draws_comb %>%
 
 # Movement
 
-```{r growth, echo=FALSE, message=F, fig.dim=c(10, 8)}
+```{r movement, echo=FALSE, message=F, fig.dim=c(10, 8)}
 
  ###############
  ## weighting ##
@@ -467,3 +811,65 @@ V2 <- create_generic_kobe_plot(draws_V2,
  
 
 ```
+
+
+
+
+
+
+# timeSeries kobe
+
+```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
+
+
+kobe_ts=read.csv(file="../model_list/kobe.csv")
+
+create_generic_kobe_plot(
+  data = kobe_ts,
+  x_var = "SB_SBmsy",
+  y_var = "F_Fmsy",
+  year_var = "Year",
+  show_snail = TRUE,
+  
+  # Viridis settings
+  use_viridis = TRUE,
+  viridis_option = "viridis",          # Green scale
+  viridis_direction = -1,              # Yellow = old years
+  viridis_begin = 0.1,
+  viridis_end = 1,
+  
+  # Year labels (black dots)
+  show_year_labels = TRUE,
+  show_first_last_year = TRUE,
+  year_label_interval = 10,
+  year_point_color = "blue",
+  year_point_size = 2,
+  year_label_size = 4,
+  
+  # Line settings
+  snail_line_size = 1,
+  arrow_frequency = 1,
+  
+  # Points
+  show_first_point = FALSE,
+  last_point_color = "red",
+  last_point_size = 3,
+  
+  # Legend
+  show_legend = TRUE,
+  legend_position = c(0.98, 0.92),
+  
+  arrow_size = 0.1,
+  arrow_angle = 40, 
+  y_label = bquote(F[t]/F["MSY,t"]),
+  x_label = bquote(SB[t]/SB["MSY,t"]),
+  
+  scenario_label ="Kobe (time-dynamic)"
+)
+
+
+
+
+
+```
+
