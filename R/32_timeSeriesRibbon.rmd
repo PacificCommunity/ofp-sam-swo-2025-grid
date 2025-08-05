@@ -1,0 +1,180 @@
+---
+title: "SWO Ensemble Model: Time Series Plots"
+author: "Prenom:Kyuhan, nom:Kim"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    self_contained: yes
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    highlight: tango
+    code_folding: hide
+    fig_width: 10
+    fig_height: 8
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+
+knitr::opts_chunk$set(dev = "png",
+                      dpi = 160,
+                      echo = F,
+                      cache = F,
+                      warning = F,
+                      message = F, 
+                      fig.path='../report/Figures/ts/'
+                      )
+
+
+library(here)
+require(ggplot2)
+require(MASS)
+require(dplyr)
+require(ggdist)
+require(ggdensity)
+library(dplyr)
+library(patchwork)
+library(dplyr)
+library(cowplot)
+
+load("../model_list/estimation_uncertainty_ts.RData")
+
+
+theme_set(theme_cowplot())
+
+plot_ribbon <- function(data,
+                        x_label = "Year", 
+                        y_label = "Value",
+                        colors = c("blue", "blue", "blue", "black"),
+                        start_year = NULL,
+                        year_interval = NULL,
+                        y_divide = 1,          # divide y-axis values by this (e.g., 1000)
+                        y_suffix = NULL) {     # optional suffix for y-label (e.g., " (000s)")
+  
+  required_rows <- c("5%", "10%", "25%", "50%", "75%", "90%", "95%")
+  if (!all(required_rows %in% rownames(data))) {
+    stop("`data` must have rows named: ", paste(required_rows, collapse = ", "))
+  }
+
+  n <- ncol(data)
+  time_vals <- 1:n
+  if (is.null(start_year)) {
+    label_vals <- time_vals
+  } else {
+    label_vals <- start_year + 0:(n - 1)
+  }
+  
+  # build data frame and apply y scaling
+  df <- data.frame(
+    time = time_vals,
+    p5  = as.numeric(data["5%", ]) / y_divide,
+    p10 = as.numeric(data["10%", ]) / y_divide,
+    p25 = as.numeric(data["25%", ]) / y_divide,
+    p50 = as.numeric(data["50%", ]) / y_divide,
+    p75 = as.numeric(data["75%", ]) / y_divide,
+    p90 = as.numeric(data["90%", ]) / y_divide,
+    p95 = as.numeric(data["95%", ]) / y_divide
+  )
+  
+  # x-axis breaks and labels
+  if (is.null(start_year)) {
+    x_breaks <- pretty_breaks()(time_vals)
+    x_labels <- x_breaks
+  } else {
+    years <- label_vals
+    if (is.null(year_interval)) {
+      span <- max(years) - min(years)
+      interval <- ceiling(span / 6)
+    } else {
+      interval <- year_interval
+    }
+    labs_years <- seq(from = min(years), to = max(years), by = interval)
+    valid_idx <- which((labs_years - start_year + 1) >= 1 & (labs_years - start_year + 1) <= n)
+    x_breaks <- labs_years[valid_idx] - start_year + 1
+    x_labels <- labs_years[valid_idx]
+  }
+  
+  p <- ggplot(df, aes(x = time)) +
+    geom_ribbon(aes(ymin = p5, ymax = p95), fill = colors[1], alpha = 0.1) +
+    geom_ribbon(aes(ymin = p10, ymax = p90), fill = colors[2], alpha = 0.2) +
+    geom_ribbon(aes(ymin = p25, ymax = p75), fill = colors[3], alpha = 0.2) +
+    geom_line(aes(y = p50), color = colors[4], size = 1) +
+    labs(x = x_label, y = y_label) +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
+    ) +
+    scale_x_continuous(breaks = x_breaks, labels = x_labels)
+  
+  return(p)
+}
+```
+
+
+# B/Bmsy
+
+```{r bbmsy, echo=FALSE, message=F, fig.dim=c(8,6)}
+
+BBmsy <- plot_ribbon(bbmsy,
+                     x_label = "Year",
+                     y_label = bquote(B/B[MSY]),
+                     start_year = 1952, year_interval = 10)
+
+print(BBmsy)
+
+```
+
+
+
+# F/Fmsy
+
+```{r ffmsy, echo=FALSE, message=F, fig.dim=c(8,6)}
+
+FFmsy <- plot_ribbon(ffmsy,
+                     x_label = "Year",
+                     y_label = bquote(F/F[MSY]),
+                     start_year = 1952, year_interval = 10)
+
+print(FFmsy)
+
+```
+
+
+
+
+# SB
+
+```{r sb, echo=FALSE, message=F, fig.dim=c(8,6)}
+
+SB <- plot_ribbon(sb,
+                     x_label = "Year",
+                     y_label = bquote(SB~"("~10^3~tonnes~")"),
+                     y_divide = 1000,
+                     start_year = 1952, year_interval = 10)
+
+print(SB)
+
+```
+
+
+
+
+# Rec
+
+```{r rec, echo=FALSE, message=F, fig.dim=c(8,6)}
+
+Rec <- plot_ribbon(rec,
+                     x_label = "Year",
+                     y_label = "Recruitment", 
+                     y_divide = 1,
+                     start_year = 1952, year_interval = 10)
+
+print(Rec)
+
+```
+
+
