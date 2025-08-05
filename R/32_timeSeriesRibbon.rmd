@@ -50,11 +50,14 @@ theme_set(theme_cowplot())
 plot_ribbon <- function(data,
                         x_label = "Year", 
                         y_label = "Value",
+                        y_axis_zero_start = TRUE,
+                        x_axis_min = 1950,
                         colors = c("blue", "blue", "blue", "black"),
                         start_year = NULL,
                         year_interval = NULL,
-                        y_divide = 1,          # divide y-axis values by this (e.g., 1000)
-                        y_suffix = NULL) {     # optional suffix for y-label (e.g., " (000s)")
+                        y_divide = 1,
+                        y_suffix = NULL,
+                        add_hline = FALSE) {
   
   required_rows <- c("5%", "10%", "25%", "50%", "75%", "90%", "95%")
   if (!all(required_rows %in% rownames(data))) {
@@ -87,16 +90,29 @@ plot_ribbon <- function(data,
     x_labels <- x_breaks
   } else {
     years <- label_vals
+    
+    # Extend years to include x_axis_min if specified
+    if (!is.null(x_axis_min) && x_axis_min < min(years)) {
+      years <- c(x_axis_min:min(years), years)
+    }
+    
     if (is.null(year_interval)) {
       span <- max(years) - min(years)
       interval <- ceiling(span / 6)
     } else {
       interval <- year_interval
     }
+    
     labs_years <- seq(from = min(years), to = max(years), by = interval)
-    valid_idx <- which((labs_years - start_year + 1) >= 1 & (labs_years - start_year + 1) <= n)
-    x_breaks <- labs_years[valid_idx] - start_year + 1
-    x_labels <- labs_years[valid_idx]
+    
+    # Convert years to time positions for breaks
+    x_breaks <- labs_years - start_year + 1
+    x_labels <- labs_years
+    
+    # Only keep breaks that are within reasonable range
+    valid_idx <- x_breaks <= n + 10  # Allow some extension beyond data
+    x_breaks <- x_breaks[valid_idx]
+    x_labels <- x_labels[valid_idx]
   }
   
   p <- ggplot(df, aes(x = time)) +
@@ -110,8 +126,20 @@ plot_ribbon <- function(data,
     ) +
     scale_x_continuous(breaks = x_breaks, labels = x_labels)
   
+  # Add horizontal line if requested
+  if (add_hline) {
+    p <- p + geom_hline(yintercept = 1, color = "red", linetype = "dashed", size = 1)
+  }
+  
+  # Set y axis limits only
+  if (y_axis_zero_start) {
+    p <- p + coord_cartesian(ylim = c(0, NA))
+  }
+  
   return(p)
 }
+
+
 ```
 
 
@@ -121,7 +149,8 @@ plot_ribbon <- function(data,
 
 BBmsy <- plot_ribbon(bbmsy,
                      x_label = "Year",
-                     y_label = bquote(B/B[MSY]),
+                     add_hline = TRUE,
+                     y_label = bquote(SB/SB[MSY]),
                      start_year = 1952, year_interval = 10)
 
 print(BBmsy)
@@ -136,6 +165,7 @@ print(BBmsy)
 
 FFmsy <- plot_ribbon(ffmsy,
                      x_label = "Year",
+                     add_hline = TRUE,
                      y_label = bquote(F/F[MSY]),
                      start_year = 1952, year_interval = 10)
 
@@ -169,9 +199,10 @@ print(SB)
 
 Rec <- plot_ribbon(rec,
                      x_label = "Year",
-                     y_label = "Recruitment", 
+                     y_label = bquote("Recruitment ("~10^3~")"),
                      y_divide = 1,
-                     start_year = 1952, year_interval = 10)
+                     start_year = 1952, 
+                     year_interval = 10)
 
 print(Rec)
 
