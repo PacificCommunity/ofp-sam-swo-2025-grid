@@ -194,7 +194,7 @@ kobe_plot <- function(refpts, highlight_recent = TRUE) {
 #
 # After:
 # CPUE Steepness RecProp Move  DataWts  Natmort   Model                 ...
-# NZ         0.7 Base    Base  05length HamelCope N_h07_Rb_Vb_D05l_Mhac ...
+# NZ         0.7 Diag    Diag  05length HamelCope N_h07_Rb_Vb_D05l_Mhac ...
 model_info <- function(df)
 {
   info <- do.call(rbind, strsplit(df$Model, "_"))
@@ -203,12 +203,12 @@ model_info <- function(df)
   info$CPUE[info$CPUE == "N"] <- "NZ"
   info$CPUE[info$CPUE == "P"] <- "PICT"
   info$Steepness <- as.numeric(substring(info$Steepness, 2)) / 10
-  info$RecProp[info$RecProp == "Rb"] <- "Base"
+  info$RecProp[info$RecProp == "Rb"] <- "Diag"
   info$RecProp[info$RecProp == "R2"] <- "MoreR2"
-  info$Move[info$Move == "Vb"] <- "Base"
+  info$Move[info$Move == "Vb"] <- "Diag"
   info$Move[info$Move == "V1"] <- "Half1to2"
   info$Move[info$Move == "V2"] <- "Half2to1"
-  info$DataWts[info$DataWts == "Dbas"] <- "Base"
+  info$DataWts[info$DataWts == "Dbas"] <- "Diag"
   info$DataWts[info$DataWts == "D05l"] <- "05length"
   info$DataWts[info$DataWts == "D20l"] <- "20length"
   info$DataWts[info$DataWts == "D05w"] <- "05weight"

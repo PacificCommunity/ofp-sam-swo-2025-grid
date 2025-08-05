@@ -37,12 +37,18 @@ sapply(head(names(ensemble_info$refpts)), bplot, "SBrecent", div=1000,
 
 png("../plots/grid_axes_ffmsy.png", width=2400, height=3000, res=220)
 par(mfrow=c(2,3))
-bplot("CPUE", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy")
-bplot("Steepness", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
-bplot("RecProp", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
-bplot("Move", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy")
-bplot("DataWts", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
-bplot("Natmort", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="")
+bplot("CPUE", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy",
+      col=c("gray60", "gray90"))
+bplot("Steepness", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="",
+      col=c("gray90", "gray60", "gray90"))
+bplot("RecProp", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="",
+      col=c("gray60", "gray90"))
+bplot("Move", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="Frecent / Fmsy",
+      col=c("gray60", "gray90", "gray90"))
+bplot("DataWts", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="",
+      col=c(rep("gray90", 4), "gray60"))
+bplot("Natmort", "Frecent_Fmsy", ylim=c(0, 0.7), ylab="",
+      col=c("gray60", "gray90"))
 dev.off()
 
 # Single ribbon plots
@@ -61,7 +67,8 @@ for(v in plot_vars) {
   } else if(v == "SB_SBF0") {
     y_label <- "SB/SB(F=0)"
   }
-  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label, y_min=0)
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label,
+                   y_min=0)
   ggsave(file.path(plot_dir, paste0("Ribbon_", v, ".png")), p,
          width=12, height=8, dpi=300)
 }
@@ -77,7 +84,8 @@ for(v in combined_vars) {
                     "F_Fmsy" = "F/Fmsy",
                     "SB_SBF0" = "SB/SB(F=0)",
                     v)
-  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label, y_min=0) +
+  p <- ribbon_plot(ensemble$tseries, v, ref_line=ref_line, y_label=y_label,
+                   y_min=0) +
     theme(axis.title.x = element_blank())  # no x-axis title
   combined_plots[[v]] <- p
 }
