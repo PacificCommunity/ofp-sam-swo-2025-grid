@@ -52,6 +52,7 @@ plot_ribbon <- function(data,
                         y_label = "Value",
                         y_axis_zero_start = TRUE,
                         x_axis_min = 1950,
+                        show_grid = TRUE,          # logical, show background grid lines
                         colors = c("blue", "blue", "blue", "black"),
                         start_year = NULL,
                         year_interval = NULL,
@@ -71,7 +72,7 @@ plot_ribbon <- function(data,
   } else {
     label_vals <- start_year + 0:(n - 1)
   }
-  
+
   # build data frame and apply y scaling
   df <- data.frame(
     time = time_vals,
@@ -83,61 +84,74 @@ plot_ribbon <- function(data,
     p90 = as.numeric(data["90%", ]) / y_divide,
     p95 = as.numeric(data["95%", ]) / y_divide
   )
-  
+
   # x-axis breaks and labels
   if (is.null(start_year)) {
     x_breaks <- pretty_breaks()(time_vals)
     x_labels <- x_breaks
   } else {
     years <- label_vals
-    
+
     # Extend years to include x_axis_min if specified
     if (!is.null(x_axis_min) && x_axis_min < min(years)) {
       years <- c(x_axis_min:min(years), years)
     }
-    
+
     if (is.null(year_interval)) {
       span <- max(years) - min(years)
       interval <- ceiling(span / 6)
     } else {
       interval <- year_interval
     }
-    
+
     labs_years <- seq(from = min(years), to = max(years), by = interval)
-    
+
     # Convert years to time positions for breaks
     x_breaks <- labs_years - start_year + 1
     x_labels <- labs_years
-    
+
     # Only keep breaks that are within reasonable range
-    valid_idx <- x_breaks <= n + 10  # Allow some extension beyond data
+    valid_idx <- x_breaks <= n + 10
     x_breaks <- x_breaks[valid_idx]
     x_labels <- x_labels[valid_idx]
   }
-  
+
   p <- ggplot(df, aes(x = time)) +
     geom_ribbon(aes(ymin = p5, ymax = p95), fill = colors[1], alpha = 0.1) +
     geom_ribbon(aes(ymin = p10, ymax = p90), fill = colors[2], alpha = 0.2) +
     geom_ribbon(aes(ymin = p25, ymax = p75), fill = colors[3], alpha = 0.2) +
     geom_line(aes(y = p50), color = colors[4], size = 1) +
     labs(x = x_label, y = y_label) +
-    theme(
-      plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
-    ) +
     scale_x_continuous(breaks = x_breaks, labels = x_labels)
-  
+
+  # Apply theme with grid options
+  if (show_grid) {
+    p <- p + theme(
+      plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+      panel.grid.major = element_line(color = "grey90", size = 0.5),
+      panel.grid.minor = element_line(color = "grey95", size = 0.25)
+    )
+  } else {
+    p <- p + theme(
+      plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )
+  }
+
   # Add horizontal line if requested
   if (add_hline) {
     p <- p + geom_hline(yintercept = 1, color = "red", linetype = "dashed", size = 1)
   }
-  
+
   # Set y axis limits only
   if (y_axis_zero_start) {
     p <- p + coord_cartesian(ylim = c(0, NA))
   }
-  
+
   return(p)
 }
+
 
 
 ```
