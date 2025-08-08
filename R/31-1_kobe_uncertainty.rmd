@@ -949,3 +949,117 @@ print(noError)
 
 ```
 
+
+
+
+# majuro
+
+```{r majuro, echo=FALSE, message=F, fig.dim=c(6,6)}
+
+
+load("../model_list/ensemble.RData")
+
+ensemble<-ensemble$refpts %>% as.data.frame()
+
+
+diag<-ensemble %>% filter(Model== "N_h08_Rb_Vb_Dbas_Mest") 
+
+
+
+
+majuro<- create_generic_kobe_plot(as.data.frame(ensemble),
+                                    y_var="Frecent_Fmsy",
+                                    x_var="SBrecent_SBF0", 
+                                    y_ref = 1,
+                                    x_ref= 0.2,
+                                    xlim_val = c(0, 1),
+                                    quadrant_colors = c("#51C87A", "#DC143C", "darkorange", "#DC143C"),
+                                     show_summary = "median",  show_hdr = F,
+                                    show_points = TRUE,
+                                    point_alpha = 0.3, 
+                                    x_label = bquote(SB[recent]/SB["F=0"]),
+                                    y_label = bquote(F[recent]/F[MSY]),
+                                    custom_point = list(y = diag$Frecent_Fmsy,
+                                                        x= diag$SBrecent_SBF0,
+                                                        shape = 19, 
+                                                        color = "blue", 
+                                                        size = 2.5), 
+                                    point_size = 2.5,
+                                    summary_shape = c(median = 19), 
+                                    summary_size = 2.5,
+                                    scenario_label=NULL)
+
+print(majuro)
+
+
+```
+
+
+
+
+
+
+# timeSeries majuro
+
+```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
+
+
+majuro_ts=read.csv(file="../model_list/majuro.csv")
+
+
+create_generic_kobe_plot(
+  data = majuro_ts,
+  x_var = "SB_SBF0",
+  y_var = "F_Fmsy",
+  year_var = "Year",
+  show_snail = TRUE,
+  y_ref = 1,
+  x_ref= 0.2,
+  xlim_val = c(0, 1),
+  quadrant_colors = c("#51C87A", "#DC143C", "darkorange", "#DC143C"),
+  show_summary = "median",
+  show_hdr = F,
+  # Viridis settings
+  use_viridis = TRUE,
+  viridis_option = "viridis",          # Green scale
+  viridis_direction = -1,              # Yellow = old years
+  viridis_begin = 0.1,
+  viridis_end = 1,
+  
+  # Year labels (black dots)
+  show_year_labels = TRUE,
+  show_first_last_year = TRUE,
+  year_label_interval = 10,
+  year_point_color = "blue",
+  year_point_size = 2,
+  year_label_size = 4,
+  
+  # Line settings
+  snail_line_size = 1,
+  arrow_frequency = 1,
+  
+  # Points
+  show_first_point = FALSE,
+  last_point_color = "red",
+  last_point_size = 3,
+  
+  # Legend
+  show_legend = TRUE,
+  legend_position = c(0.98, 0.92),
+  
+  arrow_size = 0.1,
+  arrow_angle = 40, 
+  y_label = bquote(F[t]/F["MSY,t"]),
+  x_label = bquote(SB[t]/SB["F=0,t"]),
+  
+  scenario_label ="Majuro (time-dynamic)"
+)
+
+
+
+
+
+```
+
+
+
