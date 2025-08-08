@@ -954,7 +954,7 @@ print(noError)
 
 # majuro
 
-```{r majuro, echo=FALSE, message=F, fig.dim=c(6,6)}
+```{r majuro, echo=FALSE, message=F, fig.dim=c(8,6)}
 
 
 load("../model_list/ensemble.RData")
@@ -1001,7 +1001,7 @@ print(majuro)
 
 # timeSeries majuro
 
-```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
+```{r majuro_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
 
 
 majuro_ts=read.csv(file="../model_list/majuro.csv")
