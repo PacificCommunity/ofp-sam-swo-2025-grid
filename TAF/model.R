@@ -1,7 +1,7 @@
 # Run analysis, write model results
 
 # Before: model_list.rds (boot/data)
-# After:  uncertainty_refpt.rds, uncertainty_ts.rds (model)
+# After:  ensemble.rds, estimation_refpts.rds, estimation_ts.rds (model)
 
 library(TAF)
 source("boot/software/utilities_r4ss.R")
@@ -11,19 +11,24 @@ mkdir("model")
 # Read model results
 model_list <- readRDS("boot/data/model_list.rds")
 
-# Simulate reference point draws to incorporate estimation uncertainty
+# Create ensemble
+ensemble <- create_ensemble(model_list)
+ensemble <- list(tseries=model_info(ensemble$tseries),
+                 refpts=model_info(ensemble$refpts))
+
+# Estimation uncertainty simulation
 set.seed(1)
 nsim <- 1000
 draws <- lapply(model_list, estimation_uncertainty, n=nsim)
 
-# Uncertainty about reference points
+# Estimation uncertainty about reference points
 BBmsy <- sapply(draws, `[`, "BBmsy")
 BBmsy <- unlist(BBmsy, use.names=FALSE)
 FFmsy <- sapply(draws, `[`, "FFmsy")
 FFmsy <- unlist(FFmsy, use.names=FALSE)
-uncertainty_refpt <- data.frame(BBmsy, FFmsy)
+estimation_refpts <- data.frame(FFmsy, BBmsy)
 
-# Uncertainty about time series
+# Estimation uncertainty about time series
 message("Simulating time series")
 sims <- lapply(model_list, estimation_uncertainty_ts, nsim=nsim)
 message("Calculating quantiles")
@@ -40,8 +45,9 @@ ffmsy <- apply(ffmsy, 2, quantile, probs=probs)
 bbmsy <- sapply(sims, `[`, "bbmsy")
 bbmsy <- do.call(rbind, bbmsy)
 bbmsy <- apply(bbmsy, 2, quantile, probs=probs)
-uncertainty_ts <- list(SB=sb, Rec=rec, FFmsy=ffmsy, BBmsy=bbmsy)
+estimation_ts <- list(SB=sb, Rec=rec, FFmsy=ffmsy, BBmsy=bbmsy)
 
 # Save list objects
-saveRDS(uncertainty_refpt, "model/uncertainty_refpt.rds")
-saveRDS(uncertainty_ts, "model/uncertainty_ts.rds")
+saveRDS(ensemble, "model/ensemble.rds")
+saveRDS(estimation_refpts, "model/estimation_refpts.rds")
+saveRDS(estimation_ts, "model/estimation_ts.rds")
