@@ -1,7 +1,7 @@
 # Run analysis, write model results
 
 # Before: model_list.rds (boot/data)
-# After:  ensemble.rds, estimation_refpts.rds, estimation_ts.rds (model)
+# After:  grid_results.rds, refpts_est.rds, tseries_est.rds (model)
 
 library(TAF)
 source("boot/software/utilities_r4ss.R")
@@ -11,10 +11,10 @@ mkdir("model")
 # Read model results
 model_list <- readRDS("boot/data/model_list.rds")
 
-# Create ensemble
-ensemble <- create_ensemble(model_list)
-ensemble <- list(tseries=model_info(ensemble$tseries),
-                 refpts=model_info(ensemble$refpts))
+# Calculate grid results
+grid_results <- create_ensemble(model_list)
+grid_results <- list(tseries=model_info(grid_results$tseries),
+                 refpts=model_info(grid_results$refpts))
 
 # Estimation uncertainty simulation
 set.seed(1)
@@ -26,7 +26,7 @@ BBmsy <- sapply(draws, `[`, "BBmsy")
 BBmsy <- unlist(BBmsy, use.names=FALSE)
 FFmsy <- sapply(draws, `[`, "FFmsy")
 FFmsy <- unlist(FFmsy, use.names=FALSE)
-estimation_refpts <- data.frame(FFmsy, BBmsy)
+refpts_est <- data.frame(FFmsy, BBmsy)
 
 # Estimation uncertainty about time series
 message("Simulating time series")
@@ -45,9 +45,9 @@ ffmsy <- apply(ffmsy, 2, quantile, probs=probs)
 bbmsy <- sapply(sims, `[`, "bbmsy")
 bbmsy <- do.call(rbind, bbmsy)
 bbmsy <- apply(bbmsy, 2, quantile, probs=probs)
-estimation_ts <- list(SB=sb, Rec=rec, FFmsy=ffmsy, BBmsy=bbmsy)
+tseries_est <- list(SB=sb, Rec=rec, FFmsy=ffmsy, BBmsy=bbmsy)
 
 # Save list objects
-saveRDS(ensemble, "model/ensemble.rds")
-saveRDS(estimation_refpts, "model/estimation_refpts.rds")
-saveRDS(estimation_ts, "model/estimation_ts.rds")
+saveRDS(grid_results, "model/grid_results.rds")
+saveRDS(refpts_est, "model/refpts_est.rds")
+saveRDS(tseries_est, "model/tseries_est.rds")
