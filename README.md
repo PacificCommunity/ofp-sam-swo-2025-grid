@@ -30,7 +30,7 @@ Natural mortality                |      2 | **Estimated**, Fixed
 
 The grid takes requires substantial storage on disk and memory: the 360 `Report.sso` files take around 40 GB on disk, and the 360 r4ss model objects would also take 40 GB if loaded into one R session.
 
-This challenge was solved by stripping down each r4ss model object to include only the elements required for the grid analysis. The [model_list.rds](model_list.rds) file contains a list of 360 r4ss model objects, where each grid model contains the following elements:
+This challenge was solved by stripping down each r4ss model object to include only the elements required for the grid analysis. The `model_list.rds` file (5 MB) in the `model_list` folder contains a list of 360 r4ss model objects, where each grid model contains the following elements:
 
 ```
 annual_time_series
