@@ -17,5 +17,5 @@ conv$log_det_hessian <- unlist(sapply(model_list, `[`, "log_det_hessian"))
 conv$PDH <- conv$log_det_hessian > 1e-6  # safer than > 0.0 floating point
 conv <- model_info(conv)
 
-# Write convergence table and ensemble list
+# Write convergence table
 write.taf(conv, dir="data")
