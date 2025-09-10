@@ -18,6 +18,7 @@ tseries_est <- readRDS("model/tseries_est.rds")
 refpts_table <- taf2xtab(refpts_table)
 refpts_table <- round(refpts_table, 2)
 refpts_table[refpts_table > 100] <- round(refpts_table[refpts_table > 100])
+refpts_table <- xtab2taf(refpts_table, "Metric")
 
 # Write table
 write.taf(refpts_table, dir="report")
