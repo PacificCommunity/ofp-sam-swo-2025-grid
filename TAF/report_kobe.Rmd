@@ -1,0 +1,1068 @@
+---
+title: "SWO Ensemble"
+author: "Prenom:Kyuhan, nom:Kim"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    self_contained: yes
+    thumbnails: false
+    lightbox: true
+    gallery: false
+    highlight: tango
+    code_folding: hide
+    fig_width: 10
+    fig_height: 8
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+#setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+
+knitr::opts_chunk$set(dev = "png",
+                      dpi = 160,
+                      echo = F,
+                      cache = F,
+                      warning = F,
+                      message = F, 
+                      fig.path='../../report/Figures/Kobe_Majuro/'
+                      )
+
+
+library(here)
+require(ggplot2)
+require(MASS)
+require(dplyr)
+require(ggdist)
+require(ggdensity)
+library(dplyr)
+library(patchwork)
+library(dplyr)
+library(cowplot)
+
+#source("../../../R/30_estimation_uncertainty.R")
+
+load("../../../model_list/estimation_uncertainty_ts.RData")
+
+
+theme_set(theme_cowplot())
+
+draws_comb <-bind_rows(draws, .id = "Grid")
+
+
+ 
+ #####################################################################################
+ # ------------------------ Generic HDR Kobe Plot Function ------------------------ ##
+ #####################################################################################
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(ggforce)
+library(rlang)
+
+create_generic_kobe_plot <- function(data, 
+                                     x_var = "BBmsy",                    # X-axis variable name
+                                     y_var = "FFmsy",                    # Y-axis variable name
+                                     year_var = NULL,                    # Year variable for time series plots
+                                     x_ref = 1,                          # X-axis reference line value
+                                     y_ref = 1,                          # Y-axis reference line value
+                                     x_label = NULL,                     # Custom X-axis label
+                                     y_label = NULL,                     # Custom Y-axis label
+                                     scenario_label = NULL,              # Plot title/scenario label
+                                     xlim_val = c(0, 5.5),              # X-axis limits
+                                     ylim_val = c(0, 1.5),              # Y-axis limits
+                                     show_xlab = TRUE,                   # Show X-axis label
+                                     show_ylab = TRUE,                   # Show Y-axis label
+                                     # Quadrant configuration
+                                     quadrant_labels = c("Healthy", "Overfished", "Overfishing", "Critical"),
+                                     quadrant_colors = c("#51C87A", "yellow", "darkorange", "#DC143C"),
+                                     # Point display options
+                                     show_points = FALSE,                # Show individual data points
+                                     point_alpha = 0.12,                 # Point transparency
+                                     point_size = 1,                     # Point size
+                                     point_color = "grey40",             # Point color
+                                     # HDR (Highest Density Region) options
+                                     show_hdr = TRUE,                    # Show/hide HDR contours
+                                     hdr_probs = c(0.5, 0.75, 0.9),     # HDR probability levels
+                                     hdr_colors = c("black", "black", "black"),    # HDR colors
+                                     hdr_alphas = c(0.2, 0.2, 0.2),     # HDR transparency levels
+                                     # Summary statistics options
+                                     show_summary = c("none", "median", "mean"),  # Summary point type
+                                     summary_shape = c(median = 4, mean = 3),     # Summary point shapes
+                                     summary_color = c(median = "red", mean = "blue"), # Summary point colors
+                                     summary_size = 4,                   # Summary point size
+                                     custom_point = NULL,                # Custom point to add
+                                     # Snail plot parameters (time series trajectory)
+                                     show_snail = FALSE,                 # Enable snail/trajectory plot
+                                     use_viridis = TRUE,                 # Use viridis color palette
+                                     viridis_option = "D",               # Viridis color option
+                                     viridis_direction = -1,             # Color direction (-1: yellow = old years)
+                                     viridis_begin = 0.1,                # Viridis color range start
+                                     viridis_end = 0.9,                  # Viridis color range end
+                                     snail_line_color = "darkblue",      # Line color for trajectory
+                                     snail_line_size = 1.5,              # Line thickness
+                                     snail_alpha_range = c(0.1, 1),      # Alpha range for trajectory
+                                     alpha_scaling = c("linear", "exponential", "power"), # Alpha scaling method
+                                     alpha_power = 2,                    # Power for alpha scaling
+                                     arrow_frequency = 1,                # Frequency of direction arrows
+                                     arrow_size = 0.2,                   # Arrow size
+                                     arrow_angle = 15,                   # Arrow angle
+                                     arrow_type = "open",                # Arrow type
+                                     # Year label dot parameters
+                                     year_point_color = "black",         # Year label point color
+                                     year_point_size = 4,                # Year label point size
+                                     year_point_shape = 19,              # Year label point shape
+                                     year_point_stroke = 1,              # Year label point stroke
+                                     # First and last point parameters
+                                     last_point_color = "red",           # Last point color
+                                     last_point_size = 6,                # Last point size
+                                     last_point_shape = 19,              # Last point shape
+                                     show_first_point = TRUE,            # Show first point
+                                     first_point_color = "green",        # First point color
+                                     first_point_size = 5,               # First point size
+                                     first_point_shape = 2,              # First point shape
+                                     # Year label parameters
+                                     show_year_labels = FALSE,           # Show year labels
+                                     year_label_interval = 2,            # Year label interval
+                                     show_first_last_year = TRUE,        # Show first and last year labels
+                                     year_label_size = 3.5,              # Year label text size
+                                     year_label_color = "black",         # Year label text color
+                                     year_label_fill = "white",          # Year label background fill
+                                     year_label_alpha = 0.8,             # Year label transparency
+                                     year_label_vjust = -1.2,            # Year label vertical adjustment
+                                     year_label_hjust = 0.5,             # Year label horizontal adjustment
+                                     year_label_border = TRUE,           # Show year label border
+                                     # Legend parameters
+                                     show_legend = TRUE,                 # Show color legend
+                                     legend_position = c(0.95, 0.95),   # Legend position
+                                     legend_justification = c(1, 1),    # Legend justification
+                                     legend_direction = "vertical",      # Legend direction
+                                     legend_background = TRUE,           # Show legend background
+                                     legend_title = "Year",              # Legend title
+                                     legend_key_width = 1,               # Legend key width
+                                     legend_key_height = 8,              # Legend key height
+                                     # Additional parameters
+                                     perc_decimal_places = 2,            # Decimal places for percentages
+                                     show_quadrant_pct = FALSE,          # Show quadrant percentages
+                                     # Save options
+                                     save_plot = FALSE,                  # Save plot to file
+                                     save_filename = "kobe_plot.png",    # Save filename
+                                     save_width = 8,                     # Save width
+                                     save_height = 6,                    # Save height
+                                     save_units = "in",                  # Save units
+                                     save_dpi = 300,                     # Save DPI
+                                     save_device = NULL) {               # Save device
+  
+  # Load required libraries
+  require(viridis)
+  
+  # Match arguments for validation
+  summary_opt <- match.arg(show_summary)
+  alpha_scaling <- match.arg(alpha_scaling)
+  
+  # Set default labels if not provided
+  if (is.null(x_label)) x_label <- x_var
+  if (is.null(y_label)) y_label <- y_var
+  
+  # Calculate plot boundaries
+  max_x <- xlim_val[2]
+  max_y <- ylim_val[2]
+  extended_max_x <- max_x * 1.05
+  
+  # Prepare data for snail plot (time series trajectory)
+  if (show_snail && !is.null(year_var)) {
+    # Sort data by year
+    data <- data[order(data[[year_var]]), ]
+    
+    # Calculate alpha values by year for trajectory visualization
+    years_normalized <- (data[[year_var]] - min(data[[year_var]])) / 
+                       (max(data[[year_var]]) - min(data[[year_var]]))
+    
+    # Apply alpha scaling method
+    if (alpha_scaling == "exponential") {
+      alpha_normalized <- exp(years_normalized * 2) / exp(2)
+    } else if (alpha_scaling == "power") {
+      alpha_normalized <- years_normalized^alpha_power
+    } else {
+      alpha_normalized <- years_normalized
+    }
+    
+    # Map to alpha range
+    data$alpha_mapped <- snail_alpha_range[1] + 
+                        alpha_normalized * (snail_alpha_range[2] - snail_alpha_range[1])
+    
+    # Extract first and last points for special highlighting
+    first_point <- data[1, ]
+    last_point <- data[nrow(data), ]
+    
+    # Generate year label data based on settings
+    years_to_label <- c()
+    if (show_year_labels) {
+      years_all <- data[[year_var]]
+      
+      # Add first and last years if requested
+      if (show_first_last_year) {
+        years_to_label <- c(min(years_all), max(years_all))
+      }
+      
+      # Add intermediate years based on interval
+      if (year_label_interval > 0 && length(years_all) > 2) {
+        middle_indices <- seq(1 + year_label_interval, 
+                             length(years_all) - year_label_interval, 
+                             by = year_label_interval)
+        if (length(middle_indices) > 0) {
+          middle_years <- years_all[middle_indices]
+          years_to_label <- unique(c(years_to_label, middle_years))
+        }
+      }
+      
+      label_data <- data[data[[year_var]] %in% years_to_label, ]
+    }
+    
+    # Generate line segment data for trajectory
+    line_data <- data.frame(
+      x = numeric(0),
+      y = numeric(0), 
+      xend = numeric(0),
+      yend = numeric(0),
+      alpha_val = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    # Create line segments connecting consecutive years
+    if (nrow(data) > 1) {
+      for (i in 1:(nrow(data) - 1)) {
+        x_val <- data[i, x_var]
+        y_val <- data[i, y_var] 
+        xend_val <- data[i + 1, x_var]
+        yend_val <- data[i + 1, y_var]
+        alpha_val <- data[i + 1, "alpha_mapped"]
+        year_val <- data[i + 1, year_var]
+        
+        # Only add valid segments (no missing values)
+        if (!is.na(x_val) && !is.na(y_val) && !is.na(xend_val) && !is.na(yend_val)) {
+          line_data <- rbind(line_data, data.frame(
+            x = x_val,
+            y = y_val,
+            xend = xend_val,
+            yend = yend_val,
+            alpha_val = alpha_val,
+            year_val = year_val
+          ))
+        }
+      }
+    }
+    
+    # Generate arrow segment data (excluding year labels)
+    arrow_data_normal <- data.frame(
+      x = numeric(0),
+      y = numeric(0), 
+      xend = numeric(0),
+      yend = numeric(0),
+      alpha_val = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    # Year label point data
+    year_points_data <- data.frame(
+      x = numeric(0),
+      y = numeric(0),
+      year_val = numeric(0)
+    )
+    
+    # Create arrows to show direction of trajectory
+    if (nrow(data) > 1) {
+      for (i in seq(1, nrow(data) - 1, by = arrow_frequency)) {
+        if (i + 1 <= nrow(data)) {
+          x_val <- data[i, x_var]
+          y_val <- data[i, y_var] 
+          xend_val <- data[i + 1, x_var]
+          yend_val <- data[i + 1, y_var]
+          alpha_val <- data[i + 1, "alpha_mapped"]
+          year_val <- data[i, year_var]
+          year_end_val <- data[i + 1, year_var]
+          
+          if (!is.na(x_val) && !is.na(y_val) && !is.na(xend_val) && !is.na(yend_val)) {
+            # Exclude first and last segments from arrows
+            if (i > 1 && i < nrow(data) - 1) {
+              # Check if this year should have a label
+              is_year_label <- show_year_labels && (year_val %in% years_to_label)
+              
+              if (is_year_label) {
+                # Add as year label point instead of arrow
+                year_points_data <- rbind(year_points_data, data.frame(
+                  x = x_val,
+                  y = y_val,
+                  year_val = year_val
+                ))
+              } else {
+                # Add as regular arrow
+                arrow_data_normal <- rbind(arrow_data_normal, data.frame(
+                  x = x_val,
+                  y = y_val,
+                  xend = xend_val,
+                  yend = yend_val,
+                  alpha_val = alpha_val,
+                  year_val = year_end_val
+                ))
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  # Create base layers with quadrants and reference lines
+  layers <- list(
+    ggplot(data, aes(x = !!sym(x_var), y = !!sym(y_var))),
+    # Create four quadrants with different colors and transparency
+    annotate("rect", xmin = 0, xmax = x_ref, ymin = 0, ymax = y_ref, fill = quadrant_colors[2], alpha = 0.30),        # Overfished
+    annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = 0, ymax = y_ref, fill = quadrant_colors[1], alpha = 0.35),    # Healthy
+    annotate("rect", xmin = 0, xmax = x_ref, ymin = y_ref, ymax = max_y, fill = quadrant_colors[4], alpha = 0.28),             # Critical
+    annotate("rect", xmin = x_ref, xmax = extended_max_x, ymin = y_ref, ymax = max_y, fill = quadrant_colors[3], alpha = 0.30), # Overfishing
+    # Add individual points if requested and not showing snail plot
+    if (show_points && !show_snail) geom_point(alpha = point_alpha, size = point_size, color = point_color, show.legend = FALSE),
+    # Add reference lines at x_ref and y_ref
+    geom_vline(xintercept = x_ref, linetype = "dashed", color = "black", size = 0.8),
+    geom_hline(yintercept = y_ref, linetype = "dashed", color = "black", size = 0.8)
+  )
+  
+  # Create HDR (Highest Density Region) layers
+  hdr_layers <- list()
+  if (!show_snail && show_hdr) {  # Only show HDR if not snail plot and HDR is enabled
+    hdr_layers <- lapply(seq_along(hdr_probs), function(i) {
+      geom_hdr(method = "kde",                    # Use kernel density estimation
+               probs = hdr_probs[i],              # Probability level
+               alpha = hdr_alphas[i],             # Transparency
+               fill = hdr_colors[i],              # Fill color
+               show.legend = FALSE,               # Don't show in legend
+               xlim = c(-1, max_x * 2),          # Extend limits for calculation
+               ylim = c(-1, max_y * 2))          # Extend limits for calculation
+    })
+  } else {
+    hdr_layers <- list()
+  }
+  
+  # Create snail plot layers (time series trajectory)
+  snail_layers <- list()
+  if (show_snail && !is.null(year_var)) {
+    
+    # Add connection lines with viridis colors if enabled
+    if (nrow(line_data) > 0) {
+      if (use_viridis) {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = line_data,
+                      aes(x = x, y = y, xend = xend, yend = yend, 
+                          color = year_val, alpha = alpha_val),
+                      size = snail_line_size,
+                      show.legend = TRUE)
+        )
+      } else {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = line_data,
+                      aes(x = x, y = y, xend = xend, yend = yend, alpha = alpha_val),
+                      color = snail_line_color,
+                      size = snail_line_size,
+                      show.legend = FALSE)
+        )
+      }
+    }
+    
+    # Add regular arrows (excluding year labels)
+    if (nrow(arrow_data_normal) > 0) {
+      if (use_viridis) {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = arrow_data_normal,
+                      aes(x = x, y = y, xend = xend, yend = yend, 
+                          color = year_val, alpha = alpha_val),
+                      arrow = arrow(type = arrow_type,
+                                   angle = arrow_angle,
+                                   length = unit(arrow_size, "inches")),
+                      size = snail_line_size * 1.2,
+                      show.legend = FALSE)
+        )
+      } else {
+        snail_layers <- append(snail_layers,
+          geom_segment(data = arrow_data_normal,
+                      aes(x = x, y = y, xend = xend, yend = yend, alpha = alpha_val),
+                      arrow = arrow(type = arrow_type,
+                                   angle = arrow_angle,
+                                   length = unit(arrow_size, "inches")),
+                      color = snail_line_color,
+                      size = snail_line_size * 1.2,
+                      show.legend = FALSE)
+        )
+      }
+    }
+    
+    # Add year label points (shown as black dots)
+    if (nrow(year_points_data) > 0) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = year_points_data,
+                  aes(x = x, y = y),
+                  color = year_point_color,
+                  size = year_point_size,
+                  shape = year_point_shape,
+                  stroke = year_point_stroke,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Add viridis color scale for trajectory
+    if (use_viridis) {
+      snail_layers <- append(snail_layers,
+        scale_color_viridis_c(option = viridis_option,
+                             direction = viridis_direction,    # -1: yellow = old years
+                             begin = viridis_begin,
+                             end = viridis_end,
+                             name = legend_title,
+                             guide = guide_colorbar(title.position = "top",
+                                                   title.hjust = 0.5,
+                                                   barwidth = legend_key_width,
+                                                   barheight = legend_key_height))
+      )
+    }
+    
+    # Set alpha scale to use identity (no legend for alpha)
+    snail_layers <- append(snail_layers,
+      scale_alpha_identity(guide = "none")
+    )
+    
+    # Add first point with special highlighting
+    if (show_first_point && exists("first_point")) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = first_point,
+                  aes(x = !!sym(x_var), y = !!sym(y_var)),
+                  color = first_point_color,
+                  size = first_point_size,
+                  shape = first_point_shape,
+                  stroke = 2,
+                  alpha = 1,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Add last point with special highlighting
+    if (exists("last_point")) {
+      snail_layers <- append(snail_layers,
+        geom_point(data = last_point,
+                  aes(x = !!sym(x_var), y = !!sym(y_var)),
+                  color = last_point_color,
+                  size = last_point_size,
+                  shape = last_point_shape,
+                  alpha = 1,
+                  show.legend = FALSE)
+      )
+    }
+    
+    # Add year labels as text or labels
+    if (show_year_labels && exists("label_data")) {
+      if (year_label_border) {
+        # Use geom_label for bordered labels
+        snail_layers <- append(snail_layers,
+          geom_label(data = label_data,
+                    aes(label = !!sym(year_var)),
+                    size = year_label_size,
+                    color = year_label_color,
+                    fill = year_label_fill,
+                    alpha = year_label_alpha,
+                    vjust = year_label_vjust,
+                    hjust = year_label_hjust,
+                    label.padding = unit(0.15, "lines"),
+                    label.r = unit(0.1, "lines"),
+                    show.legend = FALSE)
+        )
+      } else {
+        # Use geom_text for simple text labels
+        snail_layers <- append(snail_layers,
+          geom_text(data = label_data,
+                   aes(label = !!sym(year_var)),
+                   size = year_label_size,
+                   color = year_label_color,
+                   vjust = year_label_vjust,
+                   hjust = year_label_hjust,
+                   show.legend = FALSE)
+        )
+      }
+    }
+  }
+  
+  # Create summary statistics layer (median or mean point)
+  summary_layer <- NULL
+  if (summary_opt %in% c("median", "mean") && !show_snail) {
+    stats <- data %>% 
+      summarize(
+        x_val = if (summary_opt == "median") median(!!sym(x_var), na.rm = TRUE) else mean(!!sym(x_var), na.rm = TRUE),
+        y_val = if (summary_opt == "median") median(!!sym(y_var), na.rm = TRUE) else mean(!!sym(y_var), na.rm = TRUE)
+      )
+    summary_layer <- geom_point(
+      data = stats,
+      aes(x = x_val, y = y_val),
+      shape = summary_shape[summary_opt],
+      color = summary_color[summary_opt],
+      size = summary_size,                       # Use the new summary_size parameter
+      stroke = 1.2
+    )
+  }
+  
+  # Create custom point layer if specified
+  custom_layer <- NULL
+  if (!is.null(custom_point) && !show_snail) {
+    custom_layer <- geom_point(
+      data = tibble(x = custom_point$x, y = custom_point$y),
+      aes(x = x, y = y),
+      shape = custom_point$shape %||% 19,
+      color = custom_point$color %||% "blue",
+      size = custom_point$size %||% 3,
+      stroke = custom_point$stroke %||% 1.2
+    )
+  }
+  
+  # Assemble the complete plot by combining all layers
+  p <- Reduce(`+`, c(
+    layers,           # Base layers (quadrants, reference lines)
+    hdr_layers,       # HDR contours
+    snail_layers,     # Snail plot trajectory
+    list(summary_layer, custom_layer),  # Summary and custom points
+    list(
+      # Set coordinate system and limits
+      coord_cartesian(xlim = c(0, extended_max_x), ylim = ylim_val, expand = FALSE, clip = "on"),
+      scale_x_continuous(limits = c(0, extended_max_x), expand = c(0,0), breaks = pretty(xlim_val)),
+      scale_y_continuous(limits = ylim_val, expand = c(0,0)),
+      # Set labels
+      labs(
+        x = if (show_xlab) x_label else NULL, 
+        y = if (show_ylab) y_label else NULL,
+        title = scenario_label
+      ),
+      # Apply theme settings
+      theme(
+        axis.title.x       = element_text(size = 10),
+        axis.title.y       = element_text(size = 10, margin = margin(r = 5)),
+        axis.text.x        = element_text(size = 10),
+        axis.text.y        = element_text(size = 10),
+        panel.grid.minor   = element_blank(),
+        panel.border       = element_rect(color = "black", fill = NA, size = 0.5),
+        panel.grid.major   = element_line(color = "grey90", size = 0.3),
+        plot.margin        = margin(t = 5, r = 5, b = 3, l = 3, "pt"),
+        plot.title         = element_text(size = 12, hjust = 0, face = "bold"),
+        legend.position    = if (show_snail && show_legend && use_viridis) legend_position else "none",
+        legend.justification = legend_justification,
+        legend.direction   = legend_direction,
+        legend.background  = if (show_snail && show_legend && legend_background) 
+                            element_rect(fill = "white", color = "black", size = 0.3) else element_blank(),
+        legend.margin      = margin(5, 5, 5, 5),
+        legend.box.margin  = margin(0, 0, 0, 0)
+      )
+    )
+  ))
+  
+  # Save plot to file if requested
+  if (save_plot) {
+    ggsave(filename = save_filename, plot = p,
+           width = save_width, height = save_height,
+           units = save_units, dpi = save_dpi, device = save_device)
+  }
+  
+  # Return the completed plot object
+  return(p)
+}
+
+
+
+
+
+
+all <- create_generic_kobe_plot(draws_comb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median", 
+                                scenario_label = "All combined")
+
+print(all)
+
+
+#unique_d_values <- unique(sapply(strsplit(draws_comb$Grid, "_"), function(x) x[6]))
+#print(unique_d_values)
+
+
+```
+
+
+
+# all combined
+
+```{r all, echo=FALSE, message=F, fig.dim=c(10,8)}
+
+all_itself <- create_generic_kobe_plot(draws_comb, 
+                                x_label = bquote(SB[recent]/SB[MSY]),
+                                y_label = bquote(F[recent]/F[MSY]),
+                                show_summary = "median")
+
+print(all_itself)
+
+```
+
+
+
+<!-- # Steepness -->
+
+<!-- ```{r steepness, echo=FALSE, message=F, fig.dim=c(10,8)} -->
+
+<!-- ############### -->
+<!-- ## steepness ## -->
+<!-- ############### -->
+
+
+
+<!-- draws_h07 <- draws_comb %>%  -->
+<!--   filter(grepl("h07", Grid)) -->
+
+<!-- draws_h08 <- draws_comb %>%  -->
+<!--   filter(grepl("h08", Grid)) -->
+
+<!-- draws_h09 <- draws_comb %>%  -->
+<!--   filter(grepl("h09", Grid)) -->
+
+
+<!--  h07 <- create_generic_kobe_plot(draws_h07,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "h=0.7") -->
+
+
+<!--  h08 <- create_generic_kobe_plot(draws_h08,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "h=0.8 (diag)") -->
+
+<!--  h09 <- create_generic_kobe_plot(draws_h09,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "h=0.9") -->
+
+
+<!--  (all|h07)/(h08|h09) -->
+
+
+<!-- ``` -->
+
+
+
+<!-- # Data weighting -->
+
+<!-- ```{r data_weighting, echo=FALSE, message=F, fig.dim=c(12,12)} -->
+
+
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Base <- draws_comb %>%  -->
+<!--    filter(grepl("Dbas", Grid)) -->
+
+<!--  draws_D05l <- draws_comb %>%  -->
+<!--    filter(grepl("D05l", Grid)) -->
+
+<!--  draws_D05w <- draws_comb %>%  -->
+<!--    filter(grepl("D05w", Grid)) -->
+
+<!--  draws_D20l <- draws_comb %>%  -->
+<!--    filter(grepl("D20l", Grid)) -->
+
+<!--  draws_D20w <- draws_comb %>%  -->
+<!--    filter(grepl("D20w", Grid)) -->
+
+<!--  draws_Base <- draws_comb %>%  -->
+<!--    filter(grepl("Dbas", Grid)) -->
+
+
+<!--  Dbase <- create_generic_kobe_plot(draws_Base,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Data weighting (diag)") -->
+
+
+<!--  D05l <- create_generic_kobe_plot(draws_D05l,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "0.5 x Length") -->
+
+<!--  D05w <- create_generic_kobe_plot(draws_D05w,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                   y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                   show_summary = "median", -->
+<!--                                  scenario_label = "0.5 x Weight") -->
+
+
+<!--  D20l <- create_generic_kobe_plot(draws_D20l,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                   y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                   show_summary = "median", -->
+<!--                                   scenario_label = "2 x Length") -->
+
+
+
+<!--  D20w <- create_generic_kobe_plot(draws_D20w,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                   scenario_label = "2 x Weight") -->
+
+
+<!--  (all|Dbase)/(D05l|D20l)/(D05w|D20w) -->
+
+<!-- ``` -->
+
+
+
+
+
+<!-- # Natural mortality -->
+
+<!-- ```{r natM, echo=FALSE, message=F, fig.dim=c(8,12)} -->
+
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Mhac <- draws_comb %>% -->
+<!--    filter(grepl("Mhac", Grid)) -->
+
+<!--  draws_Mest <- draws_comb %>% -->
+<!--    filter(grepl("Mest", Grid)) -->
+
+
+<!--  Mhac <- create_generic_kobe_plot(draws_Mhac,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Hamel and Cope") -->
+
+<!--  Mest <- create_generic_kobe_plot(draws_Mest,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Estimated M (diag)") -->
+
+
+<!--  all/Mest/Mhac -->
+
+
+<!-- ``` -->
+
+
+
+
+<!-- # Recruitment proportion -->
+
+<!-- ```{r rec, echo=FALSE, message=F, fig.dim=c(8,12)} -->
+
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Rb <- draws_comb %>% -->
+<!--    filter(grepl("Rb", Grid)) -->
+
+<!--  draws_R2 <- draws_comb %>% -->
+<!--    filter(grepl("R2", Grid)) -->
+
+
+<!--  Rb <- create_generic_kobe_plot(draws_Rb,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Rec Prop 1:3 (diag) ") -->
+
+<!--  R2 <- create_generic_kobe_plot(draws_R2,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Rec Prop 1:4") -->
+
+
+<!--  all/Rb/R2 -->
+
+
+<!-- ``` -->
+
+
+
+
+<!-- # Movement -->
+
+<!-- ```{r movement, echo=FALSE, message=F, fig.dim=c(10, 8)} -->
+
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Vb <- draws_comb %>% -->
+<!--    filter(grepl("Vb", Grid)) -->
+
+<!--  draws_V1 <- draws_comb %>% -->
+<!--    filter(grepl("V1", Grid)) -->
+
+
+<!--  draws_V2 <- draws_comb %>% -->
+<!--    filter(grepl("V2", Grid)) -->
+
+
+
+<!--  Vb <- create_generic_kobe_plot(draws_Vb,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Move (diag)") -->
+
+<!--  V1 <- create_generic_kobe_plot(draws_V1,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Move halve 1 -> 2") -->
+
+
+<!-- V2 <- create_generic_kobe_plot(draws_V2,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Move halve 2 -> 1") -->
+
+
+
+<!--  (all|Vb)/(V1|V2) -->
+
+
+<!-- ``` -->
+
+
+
+
+
+
+# timeSeries kobe
+
+```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
+
+
+kobe_ts=read.csv(file="../../../model_list/kobe.csv")
+
+create_generic_kobe_plot(
+  data = kobe_ts,
+  x_var = "SB_SBmsy",
+  y_var = "F_Fmsy",
+  year_var = "Year",
+  show_snail = TRUE,
+  
+  # Viridis settings
+  use_viridis = TRUE,
+  viridis_option = "viridis",          # Green scale
+  viridis_direction = -1,              # Yellow = old years
+  viridis_begin = 0.1,
+  viridis_end = 1,
+  
+  # Year labels (black dots)
+  show_year_labels = TRUE,
+  show_first_last_year = TRUE,
+  year_label_interval = 10,
+  year_point_color = "blue",
+  year_point_size = 2,
+  year_label_size = 4,
+  
+  # Line settings
+  snail_line_size = 1,
+  arrow_frequency = 1,
+  
+  # Points
+  show_first_point = FALSE,
+  last_point_color = "red",
+  last_point_size = 3,
+  
+  # Legend
+  show_legend = TRUE,
+  legend_position = c(0.98, 0.92),
+  
+  arrow_size = 0.1,
+  arrow_angle = 40, 
+  y_label = bquote(F[t]/F["MSY,t"]),
+  x_label = bquote(SB[t]/SB["MSY,t"]),
+  
+  scenario_label ="Kobe (time-dynamic)"
+)
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+# No Estimation Error
+
+```{r no_error, echo=FALSE, message=F, fig.dim=c(8, 6)}
+
+no_error <- draws_comb %>%
+  group_by(Grid) %>%
+  summarise(
+    BBmsy = mean(BBmsy),
+    FFmsy = mean(FFmsy),
+    .groups = 'drop'
+  )
+
+diag<-no_error %>% filter(Grid == "N_h08_Rb_Vb_Dbas_Mest") 
+
+noError <- create_generic_kobe_plot(no_error, 
+                                    x_label = bquote(SB[recent]/SB[MSY]),
+                                    y_label = bquote(F[recent]/F[MSY]),
+                                    show_summary = "median",  show_hdr = F,
+                                    show_points = TRUE,
+                                    point_alpha = 0.3, 
+                                    custom_point = list(x = diag$BBmsy, y = diag$FFmsy, 
+                                                        shape = 19, 
+                                                        color = "blue", 
+                                                        size = 2.5), 
+                                    point_size = 2.5,
+                                    summary_shape = c(median = 19), 
+                                    summary_size = 2.5,
+                                    scenario_label=NULL)
+
+print(noError)
+
+
+```
+
+
+
+
+# majuro
+
+```{r majuro, echo=FALSE, message=F, fig.dim=c(8,6)}
+
+
+load("../../../model_list/ensemble.RData")
+
+ensemble<-ensemble$refpts %>% as.data.frame()
+
+
+diag<-ensemble %>% filter(Model== "N_h08_Rb_Vb_Dbas_Mest") 
+
+
+
+
+majuro<- create_generic_kobe_plot(as.data.frame(ensemble),
+                                    y_var="Frecent_Fmsy",
+                                    x_var="SBrecent_SBF0", 
+                                    y_ref = 1,
+                                    x_ref= 0.2,
+                                    xlim_val = c(0, 1),
+                                    quadrant_colors = c("#51C87A", "#DC143C", "darkorange", "#DC143C"),
+                                     show_summary = "median",  show_hdr = F,
+                                    show_points = TRUE,
+                                    point_alpha = 0.3, 
+                                    x_label = bquote(SB[recent]/SB["F=0"]),
+                                    y_label = bquote(F[recent]/F[MSY]),
+                                    custom_point = list(y = diag$Frecent_Fmsy,
+                                                        x= diag$SBrecent_SBF0,
+                                                        shape = 19, 
+                                                        color = "blue", 
+                                                        size = 2.5), 
+                                    point_size = 2.5,
+                                    summary_shape = c(median = 19), 
+                                    summary_size = 2.5,
+                                    scenario_label=NULL)
+
+print(majuro)
+
+
+```
+
+
+
+
+
+
+# timeSeries majuro
+
+```{r majuro_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
+
+
+majuro_ts=read.csv(file="../../../model_list/majuro.csv")
+
+
+create_generic_kobe_plot(
+  data = majuro_ts,
+  x_var = "SB_SBF0",
+  y_var = "F_Fmsy",
+  year_var = "Year",
+  show_snail = TRUE,
+  y_ref = 1,
+  x_ref= 0.2,
+  xlim_val = c(0, 1),
+  quadrant_colors = c("#51C87A", "#DC143C", "darkorange", "#DC143C"),
+  show_summary = "median",
+  show_hdr = F,
+  # Viridis settings
+  use_viridis = TRUE,
+  viridis_option = "viridis",          # Green scale
+  viridis_direction = -1,              # Yellow = old years
+  viridis_begin = 0.1,
+  viridis_end = 1,
+  
+  # Year labels (black dots)
+  show_year_labels = TRUE,
+  show_first_last_year = TRUE,
+  year_label_interval = 10,
+  year_point_color = "blue",
+  year_point_size = 2,
+  year_label_size = 4,
+  
+  # Line settings
+  snail_line_size = 1,
+  arrow_frequency = 1,
+  
+  # Points
+  show_first_point = FALSE,
+  last_point_color = "red",
+  last_point_size = 3,
+  
+  # Legend
+  show_legend = TRUE,
+  legend_position = c(0.98, 0.92),
+  
+  arrow_size = 0.1,
+  arrow_angle = 40, 
+  y_label = bquote(F[t]/F["MSY,t"]),
+  x_label = bquote(SB[t]/SB["F=0,t"]),
+  
+  scenario_label ="Majuro (time-dynamic)"
+)
+
+
+
+
+
+```
+
+
+
