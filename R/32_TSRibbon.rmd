@@ -27,7 +27,7 @@ knitr::opts_chunk$set(dev = "png",
                       cache = F,
                       warning = F,
                       message = F, 
-                      fig.path='../report/Figures/ts/'
+                      fig.path='../../report/Figures/ts/'
                       )
 
 
@@ -42,7 +42,7 @@ library(patchwork)
 library(dplyr)
 library(cowplot)
 
-load("../model_list/estimation_uncertainty_ts.RData")
+load("../../../model_list/estimation_uncertainty_ts.RData")
 
 
 theme_set(theme_cowplot())

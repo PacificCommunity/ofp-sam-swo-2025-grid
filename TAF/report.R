@@ -14,6 +14,10 @@ refpts_table <- read.taf("output/refpts_table.csv")
 tseries <- read.taf("output/tseries.csv")
 tseries_est <- readRDS("model/tseries_est.rds")
 
+# Generating plots
+rmarkdown::render("boot/software/32_TSRibbon.rmd", output_dir = "report")
+rmarkdown::render("boot/software/31-1_kobe_uncertainty.rmd", output_dir = "report")
+
 # Round reference point table
 refpts_table <- taf2xtab(refpts_table)
 refpts_table <- round(refpts_table, 2)

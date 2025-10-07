@@ -27,7 +27,7 @@ knitr::opts_chunk$set(dev = "png",
                       cache = F,
                       warning = F,
                       message = F, 
-                      fig.path='../report/Figures/'
+                      fig.path='../../report/Figures/Kobe_Majuro/'
                       )
 
 
@@ -42,7 +42,10 @@ library(patchwork)
 library(dplyr)
 library(cowplot)
 
-source("30_estimation_uncertainty.R")
+#source("../../../R/30_estimation_uncertainty.R")
+
+load("../../../model_list/estimation_uncertainty_ts.RData")
+
 
 theme_set(theme_cowplot())
 
@@ -605,245 +608,245 @@ print(all_itself)
 
 
 
-# Steepness
+<!-- # Steepness -->
 
-```{r steepness, echo=FALSE, message=F, fig.dim=c(10,8)}
+<!-- ```{r steepness, echo=FALSE, message=F, fig.dim=c(10,8)} -->
 
-###############
-## steepness ##
-###############
-
-
-
-draws_h07 <- draws_comb %>% 
-  filter(grepl("h07", Grid))
-
-draws_h08 <- draws_comb %>% 
-  filter(grepl("h08", Grid))
-
-draws_h09 <- draws_comb %>% 
-  filter(grepl("h09", Grid))
-
-
- h07 <- create_generic_kobe_plot(draws_h07, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                scenario_label = "h=0.7")
- 
- 
- h08 <- create_generic_kobe_plot(draws_h08, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "h=0.8 (diag)")
- 
- h09 <- create_generic_kobe_plot(draws_h09, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "h=0.9")
- 
- 
- (all|h07)/(h08|h09)
- 
-
-```
+<!-- ############### -->
+<!-- ## steepness ## -->
+<!-- ############### -->
 
 
 
-# Data weighting
+<!-- draws_h07 <- draws_comb %>%  -->
+<!--   filter(grepl("h07", Grid)) -->
 
-```{r data_weighting, echo=FALSE, message=F, fig.dim=c(12,12)}
+<!-- draws_h08 <- draws_comb %>%  -->
+<!--   filter(grepl("h08", Grid)) -->
+
+<!-- draws_h09 <- draws_comb %>%  -->
+<!--   filter(grepl("h09", Grid)) -->
 
 
- ###############
- ## weighting ##
- ###############
- 
- 
- draws_Base <- draws_comb %>% 
-   filter(grepl("Dbas", Grid))
-  
- draws_D05l <- draws_comb %>% 
-   filter(grepl("D05l", Grid))
- 
- draws_D05w <- draws_comb %>% 
-   filter(grepl("D05w", Grid))
- 
- draws_D20l <- draws_comb %>% 
-   filter(grepl("D20l", Grid))
- 
- draws_D20w <- draws_comb %>% 
-   filter(grepl("D20w", Grid))
- 
- draws_Base <- draws_comb %>% 
-   filter(grepl("Dbas", Grid))
- 
- 
- Dbase <- create_generic_kobe_plot(draws_Base, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "Data weighting (diag)")
- 
- 
- D05l <- create_generic_kobe_plot(draws_D05l, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "0.5 x Length")
- 
- D05w <- create_generic_kobe_plot(draws_D05w, 
-                                  x_label = bquote(SB[recent]/SB[MSY]),
-                                  y_label = bquote(F[recent]/F[MSY]),
-                                  show_summary = "median",
-                                 scenario_label = "0.5 x Weight")
- 
- 
- D20l <- create_generic_kobe_plot(draws_D20l, 
-                                  x_label = bquote(SB[recent]/SB[MSY]),
-                                  y_label = bquote(F[recent]/F[MSY]),
-                                  show_summary = "median",
-                                  scenario_label = "2 x Length")
- 
- 
- 
- D20w <- create_generic_kobe_plot(draws_D20w, 
-                                  x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                  scenario_label = "2 x Weight")
- 
- 
- (all|Dbase)/(D05l|D20l)/(D05w|D20w)
+<!--  h07 <- create_generic_kobe_plot(draws_h07,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "h=0.7") -->
 
-```
+
+<!--  h08 <- create_generic_kobe_plot(draws_h08,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "h=0.8 (diag)") -->
+
+<!--  h09 <- create_generic_kobe_plot(draws_h09,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "h=0.9") -->
+
+
+<!--  (all|h07)/(h08|h09) -->
+
+
+<!-- ``` -->
 
 
 
+<!-- # Data weighting -->
+
+<!-- ```{r data_weighting, echo=FALSE, message=F, fig.dim=c(12,12)} -->
 
 
-# Natural mortality
-
-```{r natM, echo=FALSE, message=F, fig.dim=c(8,12)}
-
- ###############
- ## weighting ##
- ###############
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
 
 
- draws_Mhac <- draws_comb %>%
-   filter(grepl("Mhac", Grid))
+<!--  draws_Base <- draws_comb %>%  -->
+<!--    filter(grepl("Dbas", Grid)) -->
 
- draws_Mest <- draws_comb %>%
-   filter(grepl("Mest", Grid))
+<!--  draws_D05l <- draws_comb %>%  -->
+<!--    filter(grepl("D05l", Grid)) -->
+
+<!--  draws_D05w <- draws_comb %>%  -->
+<!--    filter(grepl("D05w", Grid)) -->
+
+<!--  draws_D20l <- draws_comb %>%  -->
+<!--    filter(grepl("D20l", Grid)) -->
+
+<!--  draws_D20w <- draws_comb %>%  -->
+<!--    filter(grepl("D20w", Grid)) -->
+
+<!--  draws_Base <- draws_comb %>%  -->
+<!--    filter(grepl("Dbas", Grid)) -->
 
 
- Mhac <- create_generic_kobe_plot(draws_Mhac, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                scenario_label = "Hamel and Cope")
- 
- Mest <- create_generic_kobe_plot(draws_Mest, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "Estimated M (diag)")
- 
+<!--  Dbase <- create_generic_kobe_plot(draws_Base,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Data weighting (diag)") -->
 
- all/Mest/Mhac
- 
 
-```
+<!--  D05l <- create_generic_kobe_plot(draws_D05l,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "0.5 x Length") -->
+
+<!--  D05w <- create_generic_kobe_plot(draws_D05w,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                   y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                   show_summary = "median", -->
+<!--                                  scenario_label = "0.5 x Weight") -->
+
+
+<!--  D20l <- create_generic_kobe_plot(draws_D20l,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                   y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                   show_summary = "median", -->
+<!--                                   scenario_label = "2 x Length") -->
+
+
+
+<!--  D20w <- create_generic_kobe_plot(draws_D20w,  -->
+<!--                                   x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                   scenario_label = "2 x Weight") -->
+
+
+<!--  (all|Dbase)/(D05l|D20l)/(D05w|D20w) -->
+
+<!-- ``` -->
 
 
 
 
-# Recruitment proportion
 
-```{r rec, echo=FALSE, message=F, fig.dim=c(8,12)}
+<!-- # Natural mortality -->
 
- ###############
- ## weighting ##
- ###############
+<!-- ```{r natM, echo=FALSE, message=F, fig.dim=c(8,12)} -->
 
-
- draws_Rb <- draws_comb %>%
-   filter(grepl("Rb", Grid))
-
- draws_R2 <- draws_comb %>%
-   filter(grepl("R2", Grid))
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
 
 
- Rb <- create_generic_kobe_plot(draws_Rb, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                scenario_label = "Rec Prop 1:3 (diag) ")
- 
- R2 <- create_generic_kobe_plot(draws_R2, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "Rec Prop 1:4")
- 
+<!--  draws_Mhac <- draws_comb %>% -->
+<!--    filter(grepl("Mhac", Grid)) -->
 
- all/Rb/R2
- 
-
-```
+<!--  draws_Mest <- draws_comb %>% -->
+<!--    filter(grepl("Mest", Grid)) -->
 
 
+<!--  Mhac <- create_generic_kobe_plot(draws_Mhac,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Hamel and Cope") -->
+
+<!--  Mest <- create_generic_kobe_plot(draws_Mest,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Estimated M (diag)") -->
 
 
-# Movement
-
-```{r movement, echo=FALSE, message=F, fig.dim=c(10, 8)}
-
- ###############
- ## weighting ##
- ###############
+<!--  all/Mest/Mhac -->
 
 
- draws_Vb <- draws_comb %>%
-   filter(grepl("Vb", Grid))
+<!-- ``` -->
 
- draws_V1 <- draws_comb %>%
-   filter(grepl("V1", Grid))
 
- 
- draws_V2 <- draws_comb %>%
-   filter(grepl("V2", Grid))
 
- 
 
- Vb <- create_generic_kobe_plot(draws_Vb, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                scenario_label = "Move (diag)")
- 
- V1 <- create_generic_kobe_plot(draws_V1, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "Move halve 1 -> 2")
- 
- 
-V2 <- create_generic_kobe_plot(draws_V2, 
-                                x_label = bquote(SB[recent]/SB[MSY]),
-                                y_label = bquote(F[recent]/F[MSY]),
-                                show_summary = "median",
-                                 scenario_label = "Move halve 2 -> 1")
- 
- 
+<!-- # Recruitment proportion -->
 
- (all|Vb)/(V1|V2)
- 
+<!-- ```{r rec, echo=FALSE, message=F, fig.dim=c(8,12)} -->
 
-```
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Rb <- draws_comb %>% -->
+<!--    filter(grepl("Rb", Grid)) -->
+
+<!--  draws_R2 <- draws_comb %>% -->
+<!--    filter(grepl("R2", Grid)) -->
+
+
+<!--  Rb <- create_generic_kobe_plot(draws_Rb,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Rec Prop 1:3 (diag) ") -->
+
+<!--  R2 <- create_generic_kobe_plot(draws_R2,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Rec Prop 1:4") -->
+
+
+<!--  all/Rb/R2 -->
+
+
+<!-- ``` -->
+
+
+
+
+<!-- # Movement -->
+
+<!-- ```{r movement, echo=FALSE, message=F, fig.dim=c(10, 8)} -->
+
+<!--  ############### -->
+<!--  ## weighting ## -->
+<!--  ############### -->
+
+
+<!--  draws_Vb <- draws_comb %>% -->
+<!--    filter(grepl("Vb", Grid)) -->
+
+<!--  draws_V1 <- draws_comb %>% -->
+<!--    filter(grepl("V1", Grid)) -->
+
+
+<!--  draws_V2 <- draws_comb %>% -->
+<!--    filter(grepl("V2", Grid)) -->
+
+
+
+<!--  Vb <- create_generic_kobe_plot(draws_Vb,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                 scenario_label = "Move (diag)") -->
+
+<!--  V1 <- create_generic_kobe_plot(draws_V1,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Move halve 1 -> 2") -->
+
+
+<!-- V2 <- create_generic_kobe_plot(draws_V2,  -->
+<!--                                 x_label = bquote(SB[recent]/SB[MSY]), -->
+<!--                                 y_label = bquote(F[recent]/F[MSY]), -->
+<!--                                 show_summary = "median", -->
+<!--                                  scenario_label = "Move halve 2 -> 1") -->
+
+
+
+<!--  (all|Vb)/(V1|V2) -->
+
+
+<!-- ``` -->
 
 
 
@@ -855,7 +858,7 @@ V2 <- create_generic_kobe_plot(draws_V2,
 ```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
 
 
-kobe_ts=read.csv(file="../model_list/kobe.csv")
+kobe_ts=read.csv(file="../../../model_list/kobe.csv")
 
 create_generic_kobe_plot(
   data = kobe_ts,
@@ -957,7 +960,7 @@ print(noError)
 ```{r majuro, echo=FALSE, message=F, fig.dim=c(8,6)}
 
 
-load("../model_list/ensemble.RData")
+load("../../../model_list/ensemble.RData")
 
 ensemble<-ensemble$refpts %>% as.data.frame()
 
@@ -1004,7 +1007,7 @@ print(majuro)
 ```{r majuro_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
 
 
-majuro_ts=read.csv(file="../model_list/majuro.csv")
+majuro_ts=read.csv(file="../../../model_list/majuro.csv")
 
 
 create_generic_kobe_plot(
