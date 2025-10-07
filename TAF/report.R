@@ -16,8 +16,8 @@ tseries <- read.taf("output/tseries.csv")
 tseries_est <- readRDS("model/tseries_est.rds")
 
 # Generate plots
-# render("report_tseries.Rmd", output_dir = "report")
-# render("report_kobe.Rmd", output_dir = "report")
+render("report_tseries.Rmd", output_dir = "report")
+render("report_kobe.Rmd", output_dir = "report")
 
 # Round reference point table
 refpts_table <- taf2xtab(refpts_table)

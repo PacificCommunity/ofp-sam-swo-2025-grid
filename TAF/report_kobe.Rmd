@@ -27,7 +27,7 @@ knitr::opts_chunk$set(dev = "png",
                       cache = F,
                       warning = F,
                       message = F, 
-                      fig.path='../../report/Figures/Kobe_Majuro/'
+                      fig.path='report/kobe/'
                       )
 
 
@@ -42,10 +42,7 @@ library(patchwork)
 library(dplyr)
 library(cowplot)
 
-#source("../../../R/30_estimation_uncertainty.R")
-
-load("../../../model_list/estimation_uncertainty_ts.RData")
-
+draws <- readRDS("model/draws.rds")
 
 theme_set(theme_cowplot())
 
@@ -858,7 +855,7 @@ print(all_itself)
 ```{r kobe_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
 
 
-kobe_ts=read.csv(file="../../../model_list/kobe.csv")
+kobe_ts=read.csv(file="output/kobe.csv")
 
 create_generic_kobe_plot(
   data = kobe_ts,
@@ -960,10 +957,7 @@ print(noError)
 ```{r majuro, echo=FALSE, message=F, fig.dim=c(8,6)}
 
 
-load("../../../model_list/ensemble.RData")
-
-ensemble<-ensemble$refpts %>% as.data.frame()
-
+ensemble<- read.csv(file="output/refpts.csv")
 
 diag<-ensemble %>% filter(Model== "N_h08_Rb_Vb_Dbas_Mest") 
 
@@ -1007,7 +1001,7 @@ print(majuro)
 ```{r majuro_ts, echo=FALSE, message=F, fig.dim=c(8, 6)}
 
 
-majuro_ts=read.csv(file="../../../model_list/majuro.csv")
+majuro_ts=read.csv(file="output/majuro.csv")
 
 
 create_generic_kobe_plot(

@@ -1,7 +1,7 @@
 # Run analysis, write model results
 
 # Before: model_list.rds (boot/data)
-# After:  grid_results.rds, refpts_est.rds, tseries_est.rds (model)
+# After:  draws.rds, grid_results.rds, refpts_est.rds, tseries_est.rds (model)
 
 library(TAF)
 source("boot/software/utilities_r4ss.R")
@@ -48,6 +48,7 @@ bbmsy <- apply(bbmsy, 2, quantile, probs=probs)
 tseries_est <- list(SB=sb, Rec=rec, FFmsy=ffmsy, BBmsy=bbmsy)
 
 # Save list objects
+saveRDS(draws, "model/draws.rds")
 saveRDS(grid_results, "model/grid_results.rds")
 saveRDS(refpts_est, "model/refpts_est.rds")
 saveRDS(tseries_est, "model/tseries_est.rds")

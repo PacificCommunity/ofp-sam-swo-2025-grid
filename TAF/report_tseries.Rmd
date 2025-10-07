@@ -27,7 +27,7 @@ knitr::opts_chunk$set(dev = "png",
                       cache = F,
                       warning = F,
                       message = F, 
-                      fig.path='../../report/Figures/ts/'
+                      fig.path='report/tseries/'
                       )
 
 
@@ -42,8 +42,11 @@ library(patchwork)
 library(dplyr)
 library(cowplot)
 
-load("../../../model_list/estimation_uncertainty_ts.RData")
-
+tseries_est <- readRDS("model/tseries_est.rds")
+bbmsy <- tseries_est$BBmsy
+ffmsy <- tseries_est$FFmsy
+rec <- tseries_est$Rec
+sb <- tseries_est$SB
 
 theme_set(theme_cowplot())
 

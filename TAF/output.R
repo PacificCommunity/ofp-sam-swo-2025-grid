@@ -1,7 +1,8 @@
 # Extract results of interest, write CSV output tables
 
 # Before: grid_results.rds, refpts_est.rds (model)
-# After:  refpts.csv, refpts_table.csv, tseries.csv (output)
+# After:  kobe.csv, majuro.csv, refpts.csv, refpts_table.csv,
+#         tseries.csv (output)
 
 library(TAF)
 source("boot/software/utilities_r4ss.R")
@@ -33,7 +34,14 @@ refpts_est$Metric[refpts_est$Metric=="FFmsy"] <- "Frecent/Fmsy (est)"
 # Combine reference point tables
 refpts_table <- rbind(refpts_table, refpts_est)
 
+# Prepare Kobe and Majuro tables for diagnostic model
+diagnostic <- subset(grid_results$tseries, Model == "N_h08_Rb_Vb_Dbas_Mest")
+kobe <- diagnostic[c("Year", "SB_SBmsy", "F_Fmsy")]
+majuro <- diagnostic[c("Year", "SB_SBF0", "F_Fmsy")]
+
 # Write table
+write.taf(kobe, dir="output")
+write.taf(majuro, dir="output")
 write.taf(refpts, dir="output")
 write.taf(refpts_table, dir="output")
 write.taf(tseries, dir="output")
